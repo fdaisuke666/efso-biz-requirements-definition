@@ -6,7 +6,7 @@
 <title>EFSO アーキテクチャ判断資料</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-:root{--bg:#0e1117;--surface:#161b27;--surface2:#1e2535;--border:#2a3348;--text:#e8ecf0;--muted:#7a8899;--blue:#3b82f6;--green:#10b981;--amber:#f59e0b;}
+:root{--bg:#0e1117;--surface:#161b27;--border:#2a3348;--text:#e8ecf0;--muted:#7a8899;--blue:#3b82f6;--green:#10b981;--amber:#f59e0b;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
@@ -18,26 +18,28 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 .header-sub{font-size:15px;color:var(--muted);font-weight:300;}
 .main{flex:1;padding:48px 80px;}
 .section-label{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px;}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;text-decoration:none;color:inherit;display:block;transition:border-color .2s,transform .15s;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
 .card.blue::before{background:var(--blue);}
 .card.green::before{background:var(--green);}
+.card.amber::before{background:var(--amber);}
 .card:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-2px);}
 .card-num{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;margin-bottom:10px;}
 .card-num.blue{color:var(--blue);}
 .card-num.green{color:var(--green);}
+.card-num.amber{color:var(--amber);}
 .card-title{font-size:18px;font-weight:700;line-height:1.3;margin-bottom:10px;}
 .card-desc{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:20px;}
-.card-meta{display:flex;gap:12px;flex-wrap:wrap;}
+.card-meta{display:flex;gap:8px;flex-wrap:wrap;}
 .card-tag{font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;border-radius:3px;}
 .card-tag.owner{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid rgba(59,130,246,.25);}
 .card-tag.status{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25);}
 .card-tag.domain{background:rgba(122,136,153,.1);color:var(--muted);border:1px solid var(--border);}
 .card-arrow{position:absolute;bottom:24px;right:24px;font-size:18px;color:var(--border);transition:color .2s;}
 .card:hover .card-arrow{color:var(--muted);}
-.link-note{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:12px;color:var(--muted);}
-.link-note::before{content:'ℹ';color:var(--blue);font-size:14px;}
+.link-note{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:12px;color:var(--muted);}
+.link-note-icon{color:var(--blue);font-size:14px;flex-shrink:0;margin-top:1px;}
 .footer{padding:24px 80px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;display:flex;justify-content:space-between;}
 </style>
 </head>
@@ -50,6 +52,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <div class="main">
   <p class="section-label">ドキュメント一覧 — 優先度：高</p>
   <div class="cards">
+
     <a class="card blue" href="issue09_warehouse-location.html">
       <div class="card-num blue"># 9</div>
       <div class="card-title">倉庫ロケーション管理の<br>責務境界</div>
@@ -61,6 +64,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       </div>
       <div class="card-arrow">→</div>
     </a>
+
     <a class="card green" href="issue15_inventory-transfer.html">
       <div class="card-num green">#15</div>
       <div class="card-title">移動出荷/入荷の<br>Core 管理範囲</div>
@@ -72,8 +76,24 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       </div>
       <div class="card-arrow">→</div>
     </a>
+
+    <a class="card amber" href="issue11_purchase-management.html">
+      <div class="card-num amber">#11</div>
+      <div class="card-title">仕入管理の<br>Core スコープ</div>
+      <div class="card-desc">仕入管理機能を EFSO Core に含めるか、GWCS に残すか。<br>GWCS 段階廃止方針と整合。#23（finance ドメイン分離）と連動。Option A 推奨。</div>
+      <div class="card-meta">
+        <span class="card-tag owner">CTO + 開発</span>
+        <span class="card-tag status">要方針 Fix</span>
+        <span class="card-tag domain">仕入先入荷/返送</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
   </div>
-  <div class="link-note">#9 と #15 は「Core = 論理在庫 / WMS = 物理実行」という同一テーマ。同一セッションでまとめて方針 Fix することを推奨。</div>
+  <div class="link-note">
+    <span class="link-note-icon">ℹ</span>
+    <span>#9 と #15 は「Core = 論理在庫 / WMS = 物理実行」という同一テーマ。同一セッションでまとめて方針 Fix することを推奨。#11 は #23（finance 独立ドメイン化）と同時判断を推奨。</span>
+  </div>
 </div>
 <div class="footer">
   <span>EFSO Project — Architecture Decision Docs</span>
