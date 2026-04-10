@@ -7,113 +7,162 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 :root {
-  --bg:#0e1117; --surface:#161b27; --surface2:#1e2535; --border:#2a3348;
-  --text:#e8ecf0; --muted:#7a8899;
-  --blue:#3b82f6; --green:#10b981; --amber:#f59e0b; --red:#ef4444;
-  --purple:#8b5cf6; --teal:#14b8a6; --cyan:#06b6d4;
+  --bg:#f4f5f7; --surface:#fff; --surface2:#f8f9fb; --border:#e2e6ea;
+  --text:#1a202c; --muted:#64748b;
+  --blue:#2563eb; --green:#059669; --amber:#d97706; --red:#dc2626;
+  --purple:#7c3aed; --teal:#0d9488; --orange:#ea580c; --cyan:#0891b2;
+  --pad:clamp(20px,5vw,72px);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.7;}
-.back-link{display:flex;align-items:center;gap:6px;padding:12px 80px;font-size:12px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border);width:100%;background:var(--surface2);}
-.back-link:hover{color:var(--text);}
-.cover{padding:64px 80px 56px;border-bottom:1px solid var(--border);background:linear-gradient(140deg,#0e1117 0%,#161b27 50%,#1a1a0f 100%);position:relative;overflow:hidden;}
-.cover::before{content:'';position:absolute;top:-100px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(245,158,11,0.09) 0%,transparent 65%);pointer-events:none;}
-.cover-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.3);border-radius:4px;padding:4px 14px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--amber);letter-spacing:.06em;margin-bottom:24px;}
-.cover-tag::before{content:'●';font-size:7px;}
-.cover h1{font-size:38px;font-weight:700;line-height:1.22;letter-spacing:-.5px;margin-bottom:8px;}
+.back-link{display:flex;align-items:center;gap:6px;padding:10px var(--pad);font-size:12px;color:var(--muted);text-decoration:none;background:var(--surface);border-bottom:1px solid var(--border);}
+.back-link:hover{color:var(--amber);}
+.cover{background:var(--surface);border-bottom:1px solid var(--border);padding:clamp(32px,5vw,52px) var(--pad) clamp(24px,4vw,40px);position:relative;}
+.cover::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),#fbbf24);}
+.cover-tag{display:inline-flex;align-items:center;gap:6px;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:3px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--amber);letter-spacing:.05em;margin-bottom:16px;}
+.cover-tag::before{content:'◆';font-size:6px;}
+.cover h1{font-size:clamp(22px,4vw,30px);font-weight:700;line-height:1.22;margin-bottom:8px;}
 .cover h1 em{color:var(--amber);font-style:normal;}
-.cover-sub{font-size:16px;color:var(--muted);font-weight:300;margin-bottom:36px;}
-.cover-meta{display:flex;gap:28px;flex-wrap:wrap;}
-.meta-item{display:flex;flex-direction:column;gap:3px;}
+.cover-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.cover-meta{display:flex;gap:20px;flex-wrap:wrap;}
+.meta-item{display:flex;flex-direction:column;gap:2px;}
 .meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
 .meta-value{font-size:13px;color:var(--text);font-weight:500;}
-.section{padding:48px 80px;border-bottom:1px solid var(--border);}
+.section{padding:clamp(24px,4vw,40px) var(--pad);border-bottom:1px solid var(--border);background:var(--surface);}
+.section:nth-child(even){background:var(--surface2);}
 .section:last-child{border-bottom:none;}
-.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
-.sec-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 9px;}
-.sec-title{font-size:20px;font-weight:700;letter-spacing:-.3px;}
-.amber{color:var(--amber);} .green{color:var(--green);}
-.sys-grid{display:grid;grid-template-columns:1fr 48px 1fr 48px 1fr;gap:0;align-items:center;margin-bottom:20px;}
-.sys-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
-.sys-box.core{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.05);}
-.sys-box.gwcs{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.05);}
-.sys-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:10px;}
+.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.sec-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#fff;border-radius:3px;padding:2px 8px;font-weight:500;}
+.sec-num.amber{background:var(--amber);}
+.sec-num.green{background:var(--green);}
+.sec-num.red{background:var(--red);}
+.sec-num.orange{background:var(--orange);}
+.sec-num.blue{background:var(--blue);}
+.sec-title{font-size:17px;font-weight:700;}
+/* System map */
+.sys-grid{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;gap:0;align-items:center;margin-bottom:18px;}
+.sys-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.sys-box.core{border-top:3px solid var(--amber);background:#fffbeb;}
+.sys-box.gwcs{border-top:3px solid var(--purple);background:#f5f3ff;}
+.sys-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;}
 .sys-name.a{color:var(--amber);} .sys-name.p{color:var(--purple);} .sys-name.g{color:var(--muted);}
 .sys-fn{font-size:12px;color:var(--muted);line-height:1.9;}
 .sys-fn span{display:block;padding:2px 0;border-bottom:1px solid var(--border);}
 .sys-fn span:last-child{border-bottom:none;}
-.sys-fn span.hi{color:var(--amber);}
-.arr-col{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 4px;}
+.sys-fn span.hi{color:var(--amber);font-weight:500;}
+.arr-col{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 2px;}
 .arr-label{font-size:9px;color:var(--muted);text-align:center;line-height:1.4;}
-.flow-row{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;}
-.fstep{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:118px;flex-shrink:0;}
-.fstep.hi{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06);}
-.fstep-lbl{font-size:10px;color:var(--muted);margin-bottom:3px;}
-.fstep-name{font-size:12px;font-weight:500;line-height:1.4;}
-.farr{color:var(--muted);font-size:16px;padding:0 6px;flex-shrink:0;}
-.issue-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
-.issue-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;}
-.issue-num{font-size:10px;color:var(--amber);font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:6px;}
-.issue-title{font-size:13px;font-weight:700;margin-bottom:8px;}
+/* Flow */
+.flow-row{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.fstep{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;min-width:108px;flex-shrink:0;}
+.fstep.hi{border-color:#fde68a;background:#fffbeb;}
+.fstep-lbl{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.fstep-name{font-size:12px;font-weight:600;line-height:1.3;color:var(--text);}
+.farr{color:var(--muted);font-size:16px;padding:0 4px;flex-shrink:0;}
+/* Issues */
+.issue-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+.issue-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.issue-num{font-size:10px;color:var(--amber);font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:5px;}
+.issue-title{font-size:13px;font-weight:700;margin-bottom:7px;}
 .issue-body{font-size:12px;color:var(--muted);line-height:1.8;}
-.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-.opt-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;position:relative;}
-.opt-card.a{border-color:rgba(16,185,129,.4);}
-.opt-card.b{border-color:rgba(139,92,246,.4);}
-.opt-card.recommended::after{content:'推奨';position:absolute;top:16px;right:16px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 11px;border-radius:20px;}
-.opt-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;margin-bottom:6px;}
+/* Options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.opt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;position:relative;}
+.opt-card.a{border-top:3px solid var(--green);}
+.opt-card.b{border-top:3px solid var(--purple);}
+.opt-card.recommended::after{content:'推奨';position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;}
+.opt-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:5px;}
 .opt-label.a{color:var(--green);} .opt-label.b{color:var(--purple);}
-.opt-title{font-size:15px;font-weight:700;margin-bottom:14px;line-height:1.4;}
-.mini-arch{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:14px;margin-bottom:14px;}
-.mini-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.opt-title{font-size:13px;font-weight:700;margin-bottom:10px;line-height:1.4;}
+.mini-arch{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px;margin-bottom:10px;}
+.mini-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
 .mini-row:last-child{margin-bottom:0;}
-.mbox{flex:1;border-radius:5px;padding:6px 10px;font-size:11px;font-weight:500;text-align:center;}
-.mbox.core{background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.3);color:#fcd34d;}
-.mbox.gwcs{background:rgba(139,92,246,.13);border:1px solid rgba(139,92,246,.3);color:#c4b5fd;}
-.mbox.il{background:rgba(6,182,212,.13);border:1px solid rgba(6,182,212,.3);color:#67e8f9;}
-.mbox.dead{background:rgba(239,68,68,.07);border:1px dashed rgba(239,68,68,.3);color:var(--red);opacity:.7;}
-.marr{font-size:13px;color:var(--muted);flex-shrink:0;}
-.mini-note{font-size:10px;color:var(--red);flex:1;}
-.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.pros,.cons{border-radius:6px;padding:10px 12px;}
-.pros{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);}
-.cons{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);}
-.pc-label{font-size:10px;font-weight:700;margin-bottom:4px;}
+.mbox{flex:1;border-radius:5px;padding:5px 9px;font-size:11px;font-weight:600;text-align:center;}
+.mbox.core{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.mbox.gwcs{background:#f5f3ff;border:1px solid #ddd6fe;color:#6d28d9;}
+.mbox.il{background:#ecfeff;border:1px solid #a5f3fc;color:#0e7490;}
+.mbox.dead{background:#fef2f2;border:1px dashed #fca5a5;color:var(--red);opacity:.8;}
+.marr{font-size:12px;color:var(--muted);flex-shrink:0;}
+.mini-note{font-size:10px;color:var(--red);flex:1;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;padding:3px 8px;}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.pros{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:9px 11px;}
+.cons{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:9px 11px;}
+.pc-label{font-size:10px;font-weight:700;margin-bottom:3px;}
 .pc-label.p{color:var(--green);} .pc-label.c{color:var(--red);}
 .pc-body{font-size:11px;color:var(--muted);line-height:1.9;}
+/* Table */
 .cmp-table{width:100%;border-collapse:collapse;font-size:13px;}
-.cmp-table th{background:var(--surface2);padding:11px 16px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:1px solid var(--border);}
-.cmp-table td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+.cmp-table th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
+.cmp-table td{padding:10px 13px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
 .cmp-table tr:last-child td{border-bottom:none;}
-.cmp-table td.asp{font-weight:500;color:var(--muted);font-size:12px;width:20%;}
-.cmp-table td.a{color:var(--green);}
-.cmp-table td.b{color:var(--purple);}
-.verdict{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:32px 36px;margin-bottom:24px;}
-.verdict-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
-.verdict-badge{background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;}
-.verdict-title{font-size:18px;font-weight:700;}
-.verdict-body{font-size:13px;color:var(--muted);line-height:1.9;}
+.cmp-table tr:hover td{background:var(--surface2);}
+.cmp-table td.asp{font-weight:600;color:var(--text);font-size:12px;width:18%;}
+.cmp-table td.a{color:#047857;}
+.cmp-table td.b{color:#6d28d9;}
+/* Verdict */
+.verdict{background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:20px 24px;margin-bottom:16px;}
+.verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.verdict-badge{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 12px;border-radius:20px;}
+.verdict-title{font-size:15px;font-weight:700;}
+.verdict-body{font-size:13px;color:#374151;line-height:1.9;}
 .verdict-body strong{color:var(--text);}
-.verdict-body p{margin-bottom:10px;}
+.verdict-body p{margin-bottom:8px;}
 .verdict-body p:last-child{margin-bottom:0;}
-.scope-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
-.scope-box{border-radius:8px;padding:16px;}
-.scope-box.core{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.22);}
-.scope-box.il{background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.22);}
-.scope-box.out{background:rgba(122,136,153,.06);border:1px solid var(--border);}
-.scope-label{font-size:11px;font-weight:700;margin-bottom:8px;}
+.scope-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.scope-box{border-radius:8px;padding:13px 15px;}
+.scope-box.core{background:#fffbeb;border:1px solid #fde68a;}
+.scope-box.il{background:#ecfeff;border:1px solid #a5f3fc;}
+.scope-box.out{background:var(--surface2);border:1px solid var(--border);}
+.scope-label{font-size:11px;font-weight:700;margin-bottom:7px;}
 .scope-label.a{color:var(--amber);} .scope-label.c{color:var(--cyan);} .scope-label.g{color:var(--muted);}
 .scope-items{font-size:11px;color:var(--muted);line-height:2;}
+/* Checklist */
 .checklist{list-style:none;}
-.checklist li{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;}
+.checklist li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;}
 .checklist li:last-child{border-bottom:none;}
-.chk-box{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px;}
+.chk-box{width:16px;height:16px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:3px;background:#fff;}
 .chk-owner{font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;white-space:nowrap;margin-top:2px;}
-.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;border-radius:3px;margin-right:4px;}
-.tag.iss{background:rgba(245,158,11,.14);color:var(--amber);border:1px solid rgba(245,158,11,.28);}
-.tag.lnk{background:rgba(139,92,246,.14);color:var(--purple);border:1px solid rgba(139,92,246,.28);}
-.note{background:rgba(245,158,11,.05);border-left:3px solid var(--amber);padding:12px 16px;border-radius:0 6px 6px 0;font-size:12px;color:var(--muted);margin-top:16px;}
-.note strong{color:var(--amber);}
+.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:3px;margin-right:4px;}
+.tag.iss{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.tag.lnk{background:#f5f3ff;color:var(--purple);border:1px solid #ddd6fe;}
+.note-bar{background:#fffbeb;border-left:3px solid var(--amber);padding:10px 13px;border-radius:0 6px 6px 0;font-size:12px;color:#92400e;margin-top:12px;}
+.note-bar strong{color:#78350f;}
+/* BLOCKER */
+.blocker-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.blocker-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.blocker-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:#fef2f2;flex-wrap:wrap;}
+.blocker-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#fff;background:var(--red);padding:2px 8px;border-radius:3px;}
+.blocker-title{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap;}
+.priority-badge.critical{background:#fee2e2;color:var(--red);border:1px solid #fca5a5;}
+.priority-badge.high{background:#fff7ed;color:var(--orange);border:1px solid #fed7aa;}
+.priority-badge.medium{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.blocker-body{padding:13px 15px;}
+.blocker-why{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:9px;}
+.blocker-impact{font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 11px;margin-bottom:9px;color:#7f1d1d;}
+.blocker-impact::before{content:'⚠ 放置リスク: ';font-weight:700;}
+.blocker-action{display:flex;align-items:flex-start;gap:7px;font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:7px 11px;color:#1e3a8a;}
+.blocker-action::before{content:'→';font-weight:700;flex-shrink:0;}
+.blocker-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:6px;}
+/* TOBE */
+.tobe-intro{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:18px;padding:13px 17px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;}
+.tobe-intro strong{color:var(--text);}
+.phase-list{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+.phase{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
+.phase-header{display:flex;align-items:center;gap:12px;padding:11px 17px;border-bottom:1px solid var(--border);}
+.phase-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#fff;padding:2px 10px;border-radius:3px;}
+.phase-num.p1{background:var(--red);} .phase-num.p2{background:var(--amber);} .phase-num.p3{background:var(--green);}
+.phase-title{font-size:14px;font-weight:700;}
+.phase-time{margin-left:auto;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 8px;}
+.phase-body{padding:12px 17px;}
+.action-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.action-item:last-child{border-bottom:none;}
+.action-resolve{font-size:10px;font-family:'IBM Plex Mono',monospace;background:#fee2e2;color:var(--red);border:1px solid #fca5a5;padding:2px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.action-desc{flex:1;font-size:12px;color:var(--text);line-height:1.7;}
+.action-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:3px;}
+.unlock-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:13px 17px;}
+.unlock-title{font-size:12px;font-weight:700;color:var(--green);margin-bottom:7px;}
+.unlock-items{font-size:12px;color:var(--muted);line-height:2;}
 </style>
 </head>
 <body>
@@ -122,7 +171,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 
 <div class="cover">
   <div class="cover-tag">EFSO アーキテクチャ判断資料</div>
-  <h1><em>#11</em> 仕入管理の<br>Core スコープ</h1>
+  <h1><em>#11</em> 仕入管理の Core スコープ</h1>
   <p class="cover-sub">仕入管理機能を EFSO Core に含めるか、GWCS に残すか</p>
   <div class="cover-meta">
     <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#11 / #23（finance 独立ドメイン化と連動）</span></div>
@@ -132,52 +181,39 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   </div>
 </div>
 
+<!-- 01 AS-IS -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">01</span><span class="sec-title amber">AS-IS — 現状のシステム構成</span></div>
+  <div class="sec-label"><span class="sec-num amber">01</span><span class="sec-title" style="color:var(--amber)">AS-IS — 現状のシステム構成</span></div>
   <div class="sys-grid">
     <div class="sys-box core">
       <div class="sys-name a">EFS（現行 Core）</div>
       <div class="sys-fn">
-        <span>発注情報管理（入荷予定 SoT）</span>
-        <span>仕入先（マーチャント）マスタ</span>
-        <span>仕入明細・調整明細登録</span>
-        <span>支払保留金額の設定</span>
-        <span>月次締め処理（売上仕入）</span>
-        <span>仕入報告書出力</span>
+        <span>発注情報管理（入荷予定 SoT）</span><span>仕入先（マーチャント）マスタ</span>
+        <span>仕入明細・調整明細登録</span><span>支払保留金額の設定</span>
+        <span>月次締め処理（売上仕入）</span><span>仕入報告書出力</span>
         <span class="hi">→ BO: payments / merchants</span>
       </div>
     </div>
-    <div class="arr-col">
-      <div style="font-size:11px;color:var(--blue)">⇄</div>
-      <div class="arr-label" style="color:var(--blue)">EFS販売<br>商品情報</div>
-    </div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--blue)">⇄</div><div class="arr-label" style="color:var(--blue)">EFS販売<br>商品情報</div></div>
     <div class="sys-box gwcs">
       <div class="sys-name p">GWCS（段階廃止予定）</div>
       <div class="sys-fn">
-        <span class="hi">外注入荷報告（仕入）</span>
-        <span>仕入先連携（販売商品情報）</span>
-        <span>売上入金明細連携</span>
-        <span>店舗在庫・実績管理</span>
-        <span>実績集計・管理会計</span>
-        <span class="hi">→ 段階的廃止フェーズ</span>
+        <span class="hi">外注入荷報告（仕入）</span><span>仕入先連携（販売商品情報）</span>
+        <span>売上入金明細連携</span><span>店舗在庫・実績管理</span>
+        <span>実績集計・管理会計</span><span class="hi">→ 段階的廃止フェーズ</span>
       </div>
     </div>
-    <div class="arr-col">
-      <div style="font-size:11px;color:var(--muted)">→</div>
-      <div class="arr-label">支払報告書<br>データ</div>
-    </div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--muted)">→</div><div class="arr-label">支払報告書</div></div>
     <div class="sys-box">
       <div class="sys-name g">外部システム</div>
       <div class="sys-fn">
-        <span>アットトバス（支払報告書 郵送）</span>
-        <span>管理会計システム</span>
-        <span>DWH（売上データ配信）</span>
-        <span>取引先 EDI（IL-19 計画）</span>
+        <span>アットトバス（支払報告書 郵送）</span><span>管理会計システム</span>
+        <span>DWH（売上データ配信）</span><span>取引先 EDI（IL-19 計画）</span>
         <span>WMS（仕入先入荷・返送）</span>
       </div>
     </div>
   </div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:500;">■ 現行の月次仕入フロー</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ 現行の月次仕入フロー</p>
   <div class="flow-row">
     <div class="fstep"><div class="fstep-lbl">月末</div><div class="fstep-name">仕入訂正<br>相殺登録</div></div>
     <div class="farr">→</div>
@@ -185,26 +221,28 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
     <div class="farr">→</div>
     <div class="fstep hi"><div class="fstep-lbl">確認</div><div class="fstep-name">調達・仕入先<br>支払予定確認</div></div>
     <div class="farr">→</div>
-    <div class="fstep"><div class="fstep-lbl">締め処理後</div><div class="fstep-name">月締め処理<br>（EFS）</div></div>
+    <div class="fstep"><div class="fstep-lbl">締め後</div><div class="fstep-name">月締め処理<br>（EFS）</div></div>
     <div class="farr">→</div>
     <div class="fstep"><div class="fstep-lbl">アットトバス</div><div class="fstep-name">支払報告書<br>郵送</div></div>
     <div class="farr">→</div>
     <div class="fstep"><div class="fstep-lbl">仕入先</div><div class="fstep-name">着荷・<br>支払確認</div></div>
   </div>
-  <div class="note"><strong>重要:</strong> EFS は「発注〜月次支払額確定」まで管理。出金管理（厳密な買掛管理）は EFS スコープ外で会計システムが担当。GWCS は「外注入荷報告（仕入）」をまだ保持しており、廃止時の Core 側への移行可否が未確認。</div>
+  <div class="note-bar"><strong>重要:</strong> EFS は「発注〜月次支払額確定」まで管理。出金管理（厳密な買掛管理）は EFS スコープ外で会計システムが担当。GWCS は「外注入荷報告（仕入）」をまだ保持しており、廃止時の Core 側への移行可否が未確認。</div>
 </div>
 
+<!-- 02 論点 -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">02</span><span class="sec-title">論点の整理</span></div>
+  <div class="sec-label"><span class="sec-num amber">02</span><span class="sec-title">論点の整理</span></div>
   <div class="issue-grid">
-    <div class="issue-box"><div class="issue-num">論点 A</div><div class="issue-title">機能の重複</div><div class="issue-body">EFS と GWCS の仕入関連機能が一部重複。GWCS 廃止時にどちらに集約するかを先に決めないと、GWCS の仕入機能が宙に浮く。</div></div>
-    <div class="issue-box"><div class="issue-num">論点 B</div><div class="issue-title">EDI 連携（IL-19）</div><div class="issue-body">Option A（Core 化）の場合、取引先 EDI（IL-19）が必要。Core が発注ワークフローを持つなら統合レイヤー経由で EDI 接続を設計する必要がある。</div></div>
-    <div class="issue-box"><div class="issue-num">論点 C</div><div class="issue-title">#23 ドメイン分離</div><div class="issue-body">#23（売上/仕入の独立ドメイン化）と連動。finance を独立ドメインにするか、受注ドメインに統合したまま保持するかの方針と整合が必要。</div></div>
+    <div class="issue-box"><div class="issue-num">論点 A</div><div class="issue-title">機能の重複</div><div class="issue-body">EFS と GWCS の仕入関連機能が一部重複。GWCS 廃止時にどちらに集約するかを先に決めないと仕入機能が宙に浮く。</div></div>
+    <div class="issue-box"><div class="issue-num">論点 B</div><div class="issue-title">EDI 連携（IL-19）</div><div class="issue-body">Option A（Core 化）の場合、取引先 EDI（IL-19）が必要。Core が発注ワークフローを持つなら IL 経由で EDI 接続を設計する必要がある。</div></div>
+    <div class="issue-box"><div class="issue-num">論点 C</div><div class="issue-title">#23 ドメイン分離</div><div class="issue-body">#23（売上/仕入の独立ドメイン化）と連動。finance を独立ドメインにするかどうかの方針と整合が必要。</div></div>
   </div>
 </div>
 
+<!-- 03 Options -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">03</span><span class="sec-title">選択肢の比較</span></div>
+  <div class="sec-label"><span class="sec-num amber">03</span><span class="sec-title">選択肢の比較</span></div>
   <div class="options-grid">
     <div class="opt-card a recommended">
       <div class="opt-label a">OPTION A</div>
@@ -214,10 +252,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
         <div class="mini-row"><div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">支払/請求管理</span></div><div class="marr">→</div><div class="mbox il">IL（統合レイヤー）<br><span style="font-size:9px;font-weight:400">IL-19 取引先 EDI</span></div></div>
         <div class="mini-row"><div class="mbox dead">GWCS 廃止</div><div class="marr" style="font-size:10px">→</div><div class="mini-note">仕入機能を Core へ移行</div></div>
       </div>
-      <div class="pc-grid">
-        <div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">仕入〜売上のデータが Core 内で完結<br>GWCS 廃止後も業務継続可能<br>EDI 連携を IL で統一管理<br>GWCS 廃止のブロッカーを解消</div></div>
-        <div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">発注ワークフロー実装のスコープ追加<br>IL-19（EDI）設計が必要<br>GWCS 仕入機能の調査・移行コスト</div></div>
-      </div>
+      <div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">仕入〜売上のデータが Core 内で完結<br>GWCS 廃止後も業務継続可能<br>GWCS 廃止のブロッカーを解消</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">発注ワークフロー実装のスコープ追加<br>IL-19（EDI）設計が必要<br>GWCS 仕入機能の調査・移行コスト</div></div></div>
     </div>
     <div class="opt-card b">
       <div class="opt-label b">OPTION B</div>
@@ -225,42 +260,40 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       <div class="mini-arch">
         <div class="mini-row"><div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">売上・在庫のみ</span></div></div>
         <div class="mini-row"><div class="mbox gwcs">GWCS（継続）<br><span style="font-size:9px;font-weight:400">仕入管理を保持</span></div></div>
-        <div class="mini-row"><div style="font-size:10px;color:var(--red);flex:1">⚠ GWCS「段階廃止」方針と矛盾</div></div>
+        <div class="mini-row"><div class="mini-note">⚠ GWCS「段階廃止」方針と矛盾</div></div>
       </div>
-      <div class="pc-grid">
-        <div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">Core のスコープを絞れる<br>GWCS 既存機能をそのまま活用<br>短期の開発コスト低</div></div>
-        <div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">GWCS 廃止方針と矛盾<br>仕入データが Core 外になり整合性リスク<br>中長期で技術負債が増大</div></div>
-      </div>
+      <div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">Core のスコープを絞れる<br>GWCS 既存機能をそのまま活用<br>短期の開発コスト低</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">GWCS 廃止方針と矛盾<br>仕入データが Core 外になり整合性リスク<br>中長期で技術負債が増大</div></div></div>
     </div>
   </div>
 </div>
 
+<!-- 04 Table -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">04</span><span class="sec-title">比較表</span></div>
+  <div class="sec-label"><span class="sec-num amber">04</span><span class="sec-title">比較表</span></div>
   <table class="cmp-table">
-    <thead><tr><th style="width:20%">観点</th><th>Option A — Core に含める</th><th>Option B — GWCS に残す</th></tr></thead>
+    <thead><tr><th style="width:18%">観点</th><th>Option A — Core に含める</th><th>Option B — GWCS に残す</th></tr></thead>
     <tbody>
       <tr><td class="asp">アーキテクチャ整合性</td><td class="a">◎ 仕入〜売上を Core 内で一元管理。GWCS 廃止後も一貫性を保てる</td><td class="b">✕ GWCS 廃止方針に逆行。Core 外に仕入データが残りデータ整合リスク</td></tr>
       <tr><td class="asp">短期開発コスト</td><td class="a">△ 発注ワークフロー・IL-19 の追加実装が必要</td><td class="b">◎ 既存 GWCS 機能を継続利用するだけで追加実装は最小</td></tr>
       <tr><td class="asp">中長期保守性</td><td class="a">◎ GWCS 廃止後も Core が自己完結。保守コスト低</td><td class="b">✕ GWCS を維持し続ける保守コスト・技術負債が蓄積</td></tr>
-      <tr><td class="asp">EDI 連携（取引先）</td><td class="a">IL-19 として IL 経由で統一設計。標準化できる</td><td class="b">GWCS が現行の EDI 接続を継続。IL 未統合のまま残る</td></tr>
-      <tr><td class="asp">#23 との整合</td><td class="a">◎ finance 独立ドメイン化と親和性高い</td><td class="b">△ finance を独立ドメイン化しても仕入は GWCS に分散</td></tr>
       <tr><td class="asp">GWCS 廃止リスク</td><td class="a">◎ GWCS 廃止のブロッカーを除去できる</td><td class="b">✕ 仕入機能を理由に GWCS 廃止が遅延するリスク</td></tr>
+      <tr><td class="asp">#23 との整合</td><td class="a">◎ finance 独立ドメイン化と親和性高い</td><td class="b">△ finance を独立ドメイン化しても仕入は GWCS に分散</td></tr>
     </tbody>
   </table>
 </div>
 
+<!-- 05 Verdict -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">05</span><span class="sec-title green">推奨方針</span></div>
+  <div class="sec-label"><span class="sec-num green">05</span><span class="sec-title" style="color:var(--green)">推奨方針</span></div>
   <div class="verdict">
     <div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A — EFSO Core に仕入管理を含める</span></div>
     <div class="verdict-body">
-      <p><strong>根拠①（GWCS 廃止との整合）:</strong> GWCS は段階的廃止フェーズにあります。仕入管理を GWCS に残すと廃止のブロッカーになり、中長期で技術負債が増大します。Core 化することで GWCS 廃止を加速できます。</p>
-      <p><strong>根拠②（現行設計の自然な延長）:</strong> EFS は既に発注管理・月次締め・支払管理の主要機能を保持しており、Core 化は現行設計の自然な延長です。新規設計より移行リスクが低い。</p>
-      <p><strong>根拠③（#23 との連動）:</strong> finance を独立ドメインとして分離する方向で #23 の方針 Fix と同時に判断することで、finance ドメインとして整合した設計が可能になります。</p>
+      <p><strong>根拠①（GWCS 廃止との整合）:</strong> GWCS は段階的廃止フェーズにあります。仕入管理を GWCS に残すと廃止のブロッカーになり、中長期で技術負債が増大します。</p>
+      <p><strong>根拠②（現行設計の自然な延長）:</strong> EFS は既に発注管理・月次締め・支払管理の主要機能を保持しており、Core 化は現行設計の自然な延長です。</p>
+      <p><strong>根拠③（#23 との連動）:</strong> finance を独立ドメインとして分離する方向で #23 の方針 Fix と同時に判断することで、整合した設計が可能になります。</p>
     </div>
   </div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:500;">■ TO-BE スコープ境界（Option A 採用時）</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ TO-BE スコープ境界（Option A 採用時）</p>
   <div class="scope-grid">
     <div class="scope-box core"><div class="scope-label a">EFSO Core（finance ドメイン）</div><div class="scope-items">発注ワークフロー管理<br>仕入先（マーチャント）マスタ<br>仕入明細・調整明細<br>支払保留・月次締め処理<br>仕入報告書出力</div></div>
     <div class="scope-box il"><div class="scope-label c">IL（統合レイヤー）</div><div class="scope-items">IL-19: 取引先 EDI<br>アットトバス連携<br>管理会計システム連携<br>DWH 売上データ配信</div></div>
@@ -268,8 +301,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   </div>
 </div>
 
+<!-- 06 Checklist -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">06</span><span class="sec-title">確認事項リスト</span></div>
+  <div class="sec-label"><span class="sec-num amber">06</span><span class="sec-title">確認事項リスト</span></div>
   <ul class="checklist">
     <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">CTO + 開発</span><div>GWCS が現在保持する仕入関連機能（外注入荷報告 等）の全量調査を実施し、EFSO Core への移行可否と移行コストを見積もる</div></div></li>
     <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">CTO + 開発</span><div>IL-19（取引先 EDI）の接続先・プロトコル・実装工数を確認。Option A 採用時の必須要件として先行設計に組み込む</div></div></li>
@@ -277,6 +311,185 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
     <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">ビジネス・調達</span><div>アットトバス連携（支払報告書郵送）の継続可否と、IL 経由への移行要否を確認</div></div></li>
     <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">CTO + 開発</span><div>消化仕入商品（発注なし）の仕入フローが EFSO Core 移行後も正しく動作するよう、売上と仕入の同時計上ロジックの設計確認</div></div></li>
   </ul>
+</div>
+
+<!-- 07 BLOCKERS ★NEW★ -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の5項目が未解決のまま残ると、Option A を採用しても詳細設計・移行計画の策定に着手できません。優先度順に解消してください。</p>
+  <div class="blocker-grid">
+
+    <div class="blocker-card">
+      <div class="blocker-header">
+        <span class="blocker-id">B-1</span>
+        <span class="blocker-title">GWCS 保持の仕入機能の全量が未調査</span>
+        <span class="priority-badge critical">CRITICAL</span>
+      </div>
+      <div class="blocker-body">
+        <div class="blocker-why">「外注入荷報告（仕入）」以外にも GWCS 側に残っている仕入機能があるかが未確認。EFS 側との重複範囲が特定できていないため、Core へ移行すべき機能の全量が不明。</div>
+        <div class="blocker-impact">移行スコープが確定できず、工数見積もりができない。機能の取りこぼしが発生するリスクがある。</div>
+        <div class="blocker-action">GWCS の仕入関連機能を棚卸しするための調査を2週間以内に実施。EFS との重複・非重複を一覧化する。</div>
+        <div class="blocker-owner">Owner: CTO + 開発チーム / 期間: 2週間以内</div>
+      </div>
+    </div>
+
+    <div class="blocker-card">
+      <div class="blocker-header">
+        <span class="blocker-id">B-2</span>
+        <span class="blocker-title">IL-19（取引先 EDI）の実現性が未確認</span>
+        <span class="priority-badge critical">CRITICAL</span>
+      </div>
+      <div class="blocker-body">
+        <div class="blocker-why">Option A 採用時に必須となる IL-19 の接続先・プロトコル・実装工数が未確認。EDI 接続が技術的・コスト的に実現可能かが不明。</div>
+        <div class="blocker-impact">IL-19 が重い場合、Option A のコスト試算が大きく変わり、選択肢の再評価が必要になる可能性がある。</div>
+        <div class="blocker-action">EDI 接続先（取引先側）の要件を確認し、IL-19 の技術的実現性を POC レベルで評価する。</div>
+        <div class="blocker-owner">Owner: CTO + 開発チーム</div>
+      </div>
+    </div>
+
+    <div class="blocker-card">
+      <div class="blocker-header">
+        <span class="blocker-id">B-3</span>
+        <span class="blocker-title">#23（financeドメイン分離）の方針が未決定</span>
+        <span class="priority-badge high">HIGH</span>
+      </div>
+      <div class="blocker-body">
+        <div class="blocker-why">finance を独立ドメインとして分離するか、受注ドメインに統合したまま保持するかの方針が #23 で未決定。#11 と #23 を別々に判断するとアーキテクチャが不整合になるリスクがある。</div>
+        <div class="blocker-impact">#11 だけ先に決めても #23 と矛盾する設計になる可能性がある。</div>
+        <div class="blocker-action">#11 と #23 を同一の意思決定セッションで確定する。CTO がオーナーとなりアーキテクチャ判断会を設定。</div>
+        <div class="blocker-owner">Owner: CTO + dev</div>
+      </div>
+    </div>
+
+    <div class="blocker-card">
+      <div class="blocker-header">
+        <span class="blocker-id">B-4</span>
+        <span class="blocker-title">消化仕入商品のフロー設計が未確認</span>
+        <span class="priority-badge high">HIGH</span>
+      </div>
+      <div class="blocker-body">
+        <div class="blocker-why">消化仕入商品は「発注なし・出荷時に売上と仕入が同時計上」という特殊フロー。Core に移行した場合にこのロジックが正しく再現できるか設計上未確認。</div>
+        <div class="blocker-impact">消化仕入比率が高い場合、移行コストが跳ね上がる。フロー設計漏れにより本番障害に直結するリスクがある。</div>
+        <div class="blocker-action">消化仕入の同時計上ロジックを EFSO Core に移植可能か、開発チームが設計レビューを実施する。</div>
+        <div class="blocker-owner">Owner: CTO + 開発チーム</div>
+      </div>
+    </div>
+
+    <div class="blocker-card" style="grid-column:1/-1">
+      <div class="blocker-header">
+        <span class="blocker-id">B-5</span>
+        <span class="blocker-title">アットトバス連携の継続可否が未確認</span>
+        <span class="priority-badge medium">MEDIUM</span>
+      </div>
+      <div class="blocker-body">
+        <div class="blocker-why">支払報告書の郵送をアットトバスが担っているが、IL 経由への移行要否・継続可否がビジネス側と合意できていない。外部ベンダー依存の部分であり Core のスコープ設計に影響する。</div>
+        <div class="blocker-impact">TO-BE でアットトバス連携を IL に含める場合と含めない場合で IL 設計の規模が変わる。</div>
+        <div class="blocker-action">調達・ビジネスサイドでアットトバス連携の継続方針を確認。IL-19 の設計と合わせて判断。</div>
+        <div class="blocker-owner">Owner: ビジネス・調達 / 連携: CTO</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 08 TO-BE APPROACH ★NEW★ -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num orange">08</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
+  <div class="tobe-intro">
+    <strong>推奨方針は Option A（EFSO Core に仕入管理を含める）で確定済み。</strong><br>
+    ただし B-1〜B-5 のブロッカーを解消しないと移行スコープと IL 設計の確定ができません。以下のフェーズで順番に解消してください。
+  </div>
+  <div class="phase-list">
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-num p1">Phase 1</span>
+        <span class="phase-title">情報収集 — 判断に必要なインプットを揃える</span>
+        <span class="phase-time">目標: 2週間以内</span>
+      </div>
+      <div class="phase-body">
+        <div class="action-item">
+          <span class="action-resolve">B-1 解消</span>
+          <div>
+            <div class="action-desc"><b>GWCS 仕入機能の全量調査（棚卸し）</b><br>GWCS が保持する仕入関連機能をすべて洗い出し、EFS との重複・非重複を一覧化する。「外注入荷報告」以外の機能がある場合は移行コストに含める。</div>
+            <div class="action-owner">担当: CTO + 開発チーム / 成果物: GWCS 仕入機能一覧</div>
+          </div>
+        </div>
+        <div class="action-item">
+          <span class="action-resolve">B-2 解消</span>
+          <div>
+            <div class="action-desc"><b>IL-19（取引先 EDI）の技術的実現性を評価</b><br>取引先側の EDI 要件を確認し、接続プロトコル・実装工数を見積もる。実現困難な場合は Option A のコスト試算を見直す。</div>
+            <div class="action-owner">担当: CTO + 開発チーム / 期間: 並行実施</div>
+          </div>
+        </div>
+        <div class="action-item">
+          <span class="action-resolve">B-5 確認</span>
+          <div>
+            <div class="action-desc"><b>アットトバス連携の継続方針を確認</b><br>ビジネス・調達サイドに現行アットトバス連携の TO-BE における継続可否を確認。IL 設計に含めるかどうかの判断材料を揃える。</div>
+            <div class="action-owner">担当: ビジネス・調達</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-num p2">Phase 2</span>
+        <span class="phase-title">意思決定 — #11 と #23 を同時 Fix</span>
+        <span class="phase-time">Phase 1 完了後 1〜2週間</span>
+      </div>
+      <div class="phase-body">
+        <div class="action-item">
+          <span class="action-resolve">B-3 解消</span>
+          <div>
+            <div class="action-desc"><b>#11 と #23 を同一セッションで方針 Fix</b><br>Phase 1 の調査結果をインプットに、CTO がオーナーとなりアーキテクチャ判断会を開催。finance を独立ドメインとして分離するか否かと、#11 Option A 採用を同時に確定する。</div>
+            <div class="action-owner">担当: CTO + dev / 会議体: アーキテクチャ判断会</div>
+          </div>
+        </div>
+        <div class="action-item">
+          <span class="action-resolve">B-4 解消</span>
+          <div>
+            <div class="action-desc"><b>消化仕入ロジックの設計レビュー</b><br>消化仕入（発注なし・出荷時同時計上）のフローを EFSO Core に移植可能か技術的に評価。移植困難な場合は移行アーキテクチャを別途設計。</div>
+            <div class="action-owner">担当: 開発チーム / 並行実施</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-num p3">Phase 3</span>
+        <span class="phase-title">設計着手 — ブロッカー解消後</span>
+        <span class="phase-time">Phase 1 + 2 完了後</span>
+      </div>
+      <div class="phase-body">
+        <div class="action-item">
+          <span class="action-resolve">設計開始</span>
+          <div>
+            <div class="action-desc"><b>GWCS 仕入機能の EFSO Core 移行設計</b><br>調査結果をもとに、移行対象機能・移行シーケンス・並行稼働期間を定めた移行設計書を作成。IL-19・アットトバス連携の IF 仕様も同時に確定。</div>
+            <div class="action-owner">担当: 開発チーム / 成果物: 仕入機能移行設計書</div>
+          </div>
+        </div>
+        <div class="action-item">
+          <span class="action-resolve">Doc 更新</span>
+          <div>
+            <div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#11 を「決定済み: Option A」としてクローズ。to-be/ ディレクトリに finance ドメイン責務定義ドキュメントを作成。</div>
+            <div class="action-owner">担当: CTO + 開発</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="unlock-box">
+    <div class="unlock-title">✓ ブロッカー全解消後に動き出せること</div>
+    <div class="unlock-items">
+      GWCS 仕入機能の移行シーケンス確定（GWCS 廃止ロードマップ策定）<br>
+      IL-19（取引先 EDI）の接続仕様書・実装スケジュール確定<br>
+      finance ドメインのデータモデル設計（#23 と統合）<br>
+      efso-document の to-be/ ディレクトリへのドキュメント登録
+    </div>
+  </div>
 </div>
 
 </body>
