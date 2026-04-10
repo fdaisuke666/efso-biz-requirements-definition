@@ -7,154 +7,167 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 :root {
-  --bg:#f4f5f7; --surface:#ffffff; --surface2:#f8f9fb; --border:#e2e6ea;
+  --bg:#f4f5f7; --surface:#fff; --surface2:#f8f9fb; --border:#e2e6ea;
   --text:#1a202c; --muted:#64748b;
   --blue:#2563eb; --green:#059669; --amber:#d97706; --red:#dc2626;
-  --purple:#7c3aed; --teal:#0d9488;
+  --purple:#7c3aed; --teal:#0d9488; --orange:#ea580c;
   --pad:clamp(20px,5vw,72px);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.7;}
 .back-link{display:flex;align-items:center;gap:6px;padding:10px var(--pad);font-size:12px;color:var(--muted);text-decoration:none;background:var(--surface);border-bottom:1px solid var(--border);}
 .back-link:hover{color:var(--green);}
-.cover{background:var(--surface);border-bottom:1px solid var(--border);padding:clamp(32px,5vw,56px) var(--pad) clamp(28px,4vw,48px);position:relative;}
+.cover{background:var(--surface);border-bottom:1px solid var(--border);padding:clamp(32px,5vw,52px) var(--pad) clamp(24px,4vw,40px);position:relative;}
 .cover::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),#34d399);}
-.cover-tag{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:3px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--green);letter-spacing:.05em;margin-bottom:18px;}
+.cover-tag{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:3px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--green);letter-spacing:.05em;margin-bottom:16px;}
 .cover-tag::before{content:'◆';font-size:6px;}
-.cover h1{font-size:clamp(22px,4vw,32px);font-weight:700;line-height:1.22;letter-spacing:-.3px;margin-bottom:8px;}
+.cover h1{font-size:clamp(22px,4vw,30px);font-weight:700;line-height:1.22;margin-bottom:8px;}
 .cover h1 em{color:var(--green);font-style:normal;}
-.cover-sub{font-size:14px;color:var(--muted);margin-bottom:28px;}
-.cover-meta{display:flex;gap:24px;flex-wrap:wrap;}
+.cover-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.cover-meta{display:flex;gap:20px;flex-wrap:wrap;}
 .meta-item{display:flex;flex-direction:column;gap:2px;}
 .meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
 .meta-value{font-size:13px;color:var(--text);font-weight:500;}
-.section{padding:clamp(28px,4vw,44px) var(--pad);border-bottom:1px solid var(--border);background:var(--surface);}
+.section{padding:clamp(24px,4vw,40px) var(--pad);border-bottom:1px solid var(--border);background:var(--surface);}
 .section:nth-child(even){background:var(--surface2);}
 .section:last-child{border-bottom:none;}
-.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
-.sec-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#fff;background:var(--green);border-radius:3px;padding:2px 8px;font-weight:500;}
-.sec-title{font-size:18px;font-weight:700;letter-spacing:-.2px;}
-.blue-t{color:var(--blue);} .green-t{color:var(--green);}
-
-/* Move types */
-.move-types{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
-.move-type{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;}
-.mt-label{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-bottom:6px;}
-.mt-title{font-size:13px;font-weight:700;margin-bottom:8px;}
+.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.sec-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#fff;border-radius:3px;padding:2px 8px;font-weight:500;}
+.sec-num.green{background:var(--green);} .sec-num.blue{background:var(--blue);} .sec-num.red{background:var(--red);} .sec-num.orange{background:var(--orange);}
+.sec-title{font-size:17px;font-weight:700;}
+.move-types{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+.move-type{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.mt-label{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-bottom:5px;}
+.mt-title{font-size:13px;font-weight:700;margin-bottom:7px;}
 .mt-body{font-size:12px;color:var(--muted);line-height:1.8;}
 .mt-body b{color:var(--text);}
-.confirmed{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:3px;background:#f0fdf4;color:var(--green);border:1px solid #bbf7d0;margin-top:6px;}
-
-/* Flow diagram */
-.flow-diagram{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px;overflow-x:auto;margin-bottom:20px;}
-.flow-title{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:18px;}
-.flow-track{display:flex;align-items:flex-start;min-width:800px;}
-.fnode{display:flex;flex-direction:column;align-items:center;width:148px;min-width:148px;}
-.fbox{width:128px;border-radius:8px;padding:12px 10px;text-align:center;border:1.5px solid var(--border);background:var(--surface);}
+.confirmed{font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:3px;background:#f0fdf4;color:var(--green);border:1px solid #bbf7d0;display:inline-block;margin-top:5px;}
+.flow-diagram{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;overflow-x:auto;margin-bottom:18px;}
+.flow-title{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:16px;}
+.flow-track{display:flex;align-items:flex-start;min-width:780px;}
+.fnode{display:flex;flex-direction:column;align-items:center;width:140px;min-width:140px;}
+.fbox{width:122px;border-radius:8px;padding:11px 9px;text-align:center;border:1.5px solid var(--border);background:var(--surface);}
 .fbox.core{border-color:#bfdbfe;background:#eff6ff;}
 .fbox.wms{border-color:#bbf7d0;background:#f0fdf4;}
 .fbox.trs{border-color:#fde68a;background:#fffbeb;}
 .flabel{font-size:9px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;margin-bottom:4px;}
 .flabel.b{color:var(--blue);} .flabel.t{color:var(--teal);} .flabel.a{color:var(--amber);}
-.fname{font-size:12px;font-weight:700;line-height:1.4;color:var(--text);}
-.fdetail{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5;}
-.farrow{display:flex;flex-direction:column;align-items:center;justify-content:center;width:36px;min-width:36px;padding-top:30px;gap:2px;}
+.fname{font-size:12px;font-weight:700;line-height:1.3;color:var(--text);}
+.fdetail{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.farrow{display:flex;flex-direction:column;align-items:center;justify-content:center;width:34px;min-width:34px;padding-top:28px;gap:2px;}
 .farrow-line{width:100%;height:1px;background:var(--border);}
-.farrow-head{font-size:14px;color:var(--muted);}
+.farrow-head{font-size:13px;color:var(--muted);}
 .farrow-label{font-size:9px;color:var(--muted);text-align:center;line-height:1.4;white-space:nowrap;}
-
-/* Inv bar */
-.inv-state{display:flex;gap:14px;margin-top:18px;align-items:center;}
+.inv-state{display:flex;gap:12px;margin-top:16px;align-items:center;}
 .inv-phase{flex:1;}
-.inv-phase-label{font-size:10px;color:var(--muted);margin-bottom:5px;}
-.inv-bar{display:flex;height:24px;border-radius:4px;overflow:hidden;gap:1px;}
+.inv-phase-label{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.inv-bar{display:flex;height:22px;border-radius:4px;overflow:hidden;gap:1px;}
 .bar-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
 .bar-seg.lt2-from{background:#dbeafe;color:#1d4ed8;flex:3;}
 .bar-seg.trs{background:#fef3c7;color:#92400e;flex:1;}
 .bar-seg.lt2-to{background:#d1fae5;color:#065f46;flex:3;}
 .bar-seg.lt2-settled{background:#a7f3d0;color:#064e3b;flex:4;}
-.phase-arrow{font-size:18px;color:var(--muted);}
-
-/* Method table */
+.phase-arrow{font-size:16px;color:var(--muted);}
 .method-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}
-.method-table th{background:var(--surface2);padding:8px 14px;text-align:left;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border);}
-.method-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;color:var(--muted);}
+.method-table th{background:var(--surface2);padding:8px 12px;text-align:left;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border);}
+.method-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;color:var(--muted);}
 .method-table tr:last-child td{border-bottom:none;}
-.method-table td:first-child{font-weight:600;color:var(--text);width:160px;}
-
-/* Options */
-.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.opt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.opt-card.a{border-top:3px solid var(--green);}
-.opt-card.b{border-top:3px solid var(--purple);}
-.opt-card.recommended::after{content:'推奨';position:absolute;top:14px;right:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;}
-.opt-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:6px;}
+.method-table td:first-child{font-weight:600;color:var(--text);width:148px;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.opt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;position:relative;}
+.opt-card.a{border-top:3px solid var(--green);} .opt-card.b{border-top:3px solid var(--purple);}
+.opt-card.recommended::after{content:'推奨';position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;}
+.opt-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:5px;}
 .opt-label.a{color:var(--green);} .opt-label.b{color:var(--purple);}
-.opt-title{font-size:14px;font-weight:700;margin-bottom:12px;line-height:1.4;}
-.resp-map{background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;}
+.opt-title{font-size:13px;font-weight:700;margin-bottom:10px;line-height:1.4;}
+.resp-map{background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px;}
 .resp-row{display:flex;border-bottom:1px solid var(--border);}
 .resp-row:last-child{border-bottom:none;}
-.resp-actor{width:90px;min-width:90px;padding:8px 10px;font-size:10px;font-weight:700;border-right:1px solid var(--border);display:flex;align-items:center;}
+.resp-actor{width:80px;min-width:80px;padding:7px 10px;font-size:10px;font-weight:700;border-right:1px solid var(--border);display:flex;align-items:center;}
 .resp-actor.core{background:#eff6ff;color:var(--blue);}
 .resp-actor.wms{background:#f0fdf4;color:var(--teal);}
 .resp-actor.inv{background:#f5f3ff;color:var(--purple);}
-.resp-tasks{flex:1;padding:8px 12px;font-size:11px;color:var(--muted);line-height:1.8;}
-.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.pros,.cons{border-radius:6px;padding:10px 12px;}
-.pros{background:#f0fdf4;border:1px solid #bbf7d0;}
-.cons{background:#fef2f2;border:1px solid #fecaca;}
-.pc-label{font-size:10px;font-weight:700;margin-bottom:4px;}
+.resp-tasks{flex:1;padding:7px 10px;font-size:11px;color:var(--muted);line-height:1.8;}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.pros{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:9px 11px;}
+.cons{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:9px 11px;}
+.pc-label{font-size:10px;font-weight:700;margin-bottom:3px;}
 .pc-label.p{color:var(--green);} .pc-label.c{color:var(--red);}
 .pc-body{font-size:11px;color:var(--muted);line-height:1.9;}
-
-/* Compare */
 .cmp-table{width:100%;border-collapse:collapse;font-size:13px;}
-.cmp-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
-.cmp-table td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+.cmp-table th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
+.cmp-table td{padding:10px 13px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
 .cmp-table tr:last-child td{border-bottom:none;}
 .cmp-table tr:hover td{background:var(--surface2);}
-.cmp-table td.asp{font-weight:600;color:var(--text);font-size:12px;width:20%;}
-.cmp-table td.a{color:#047857;}
-.cmp-table td.b{color:#6d28d9;}
-
-/* Verdict */
-.verdict{background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:24px 28px;margin-bottom:20px;}
-.verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.verdict-badge{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 12px;border-radius:20px;}
-.verdict-title{font-size:16px;font-weight:700;}
+.cmp-table td.asp{font-weight:600;color:var(--text);font-size:12px;width:18%;}
+.cmp-table td.a{color:#047857;} .cmp-table td.b{color:#6d28d9;}
+.verdict{background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:20px 24px;margin-bottom:16px;}
+.verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.verdict-badge{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 12px;border-radius:20px;}
+.verdict-title{font-size:15px;font-weight:700;}
 .verdict-body{font-size:13px;color:#374151;line-height:1.9;}
 .verdict-body strong{color:var(--text);}
 .verdict-body p{margin-bottom:8px;}
 .verdict-body p:last-child{margin-bottom:0;}
-
-.scope-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
-.scope-box{border-radius:8px;padding:14px 16px;}
+.scope-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.scope-box{border-radius:8px;padding:13px 15px;}
 .scope-box.core{background:#eff6ff;border:1px solid #bfdbfe;}
 .scope-box.wms{background:#f0fdf4;border:1px solid #bbf7d0;}
 .scope-box.inv{background:#f5f3ff;border:1px solid #ddd6fe;}
-.scope-label{font-size:11px;font-weight:700;margin-bottom:8px;}
+.scope-label{font-size:11px;font-weight:700;margin-bottom:7px;}
 .scope-label.b{color:var(--blue);} .scope-label.t{color:var(--teal);} .scope-label.p{color:var(--purple);}
 .scope-items{font-size:11px;color:var(--muted);line-height:2;}
-
 .checklist{list-style:none;}
 .checklist li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;}
 .checklist li:last-child{border-bottom:none;}
 .chk-box{width:16px;height:16px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:3px;background:#fff;}
 .chk-owner{font-size:11px;color:var(--green);font-family:'IBM Plex Mono',monospace;white-space:nowrap;margin-top:2px;}
-.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;border-radius:3px;margin-right:4px;}
+.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:3px;margin-right:4px;}
 .tag.iss{background:#f0fdf4;color:var(--green);border:1px solid #bbf7d0;}
 .tag.lnk{background:#eff6ff;color:var(--blue);border:1px solid #bfdbfe;}
-.note-bar{background:#fffbeb;border-left:3px solid var(--amber);padding:10px 14px;border-radius:0 6px 6px 0;font-size:12px;color:#92400e;margin-top:14px;}
+.note-bar{background:#fffbeb;border-left:3px solid var(--amber);padding:10px 13px;border-radius:0 6px 6px 0;font-size:12px;color:#92400e;margin-top:12px;}
 .note-bar strong{color:#78350f;}
+.blocker-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.blocker-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.blocker-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:#fef2f2;flex-wrap:wrap;}
+.blocker-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#fff;background:var(--red);padding:2px 8px;border-radius:3px;}
+.blocker-title{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap;}
+.priority-badge.critical{background:#fee2e2;color:var(--red);border:1px solid #fca5a5;}
+.priority-badge.high{background:#fff7ed;color:var(--orange);border:1px solid #fed7aa;}
+.priority-badge.medium{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.blocker-body{padding:13px 15px;}
+.blocker-why{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:9px;}
+.blocker-impact{font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 11px;margin-bottom:9px;color:#7f1d1d;}
+.blocker-impact::before{content:'⚠ 放置リスク: ';font-weight:700;}
+.blocker-action{display:flex;align-items:flex-start;gap:7px;font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:7px 11px;color:#1e3a8a;}
+.blocker-action::before{content:'→';font-weight:700;flex-shrink:0;}
+.blocker-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:6px;}
+.tobe-intro{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:18px;padding:13px 17px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;}
+.tobe-intro strong{color:var(--text);}
+.phase-list{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+.phase{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
+.phase-header{display:flex;align-items:center;gap:12px;padding:11px 17px;border-bottom:1px solid var(--border);}
+.phase-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#fff;padding:2px 10px;border-radius:3px;}
+.phase-num.p1{background:var(--red);} .phase-num.p2{background:var(--amber);} .phase-num.p3{background:var(--green);}
+.phase-title{font-size:14px;font-weight:700;}
+.phase-time{margin-left:auto;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 8px;}
+.phase-body{padding:12px 17px;}
+.action-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.action-item:last-child{border-bottom:none;}
+.action-resolve{font-size:10px;font-family:'IBM Plex Mono',monospace;background:#fee2e2;color:var(--red);border:1px solid #fca5a5;padding:2px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.action-desc{flex:1;font-size:12px;color:var(--text);line-height:1.7;}
+.action-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:3px;}
+.unlock-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:13px 17px;}
+.unlock-title{font-size:12px;font-weight:700;color:var(--green);margin-bottom:7px;}
+.unlock-items{font-size:12px;color:var(--muted);line-height:2;}
 </style>
 </head>
 <body>
-
 <a class="back-link" href="index.html">← ドキュメント一覧に戻る</a>
-
 <div class="cover">
   <div class="cover-tag">EFSO アーキテクチャ判断資料</div>
-  <h1><em>#15</em> 移動出荷/入荷の<br>Core 管理範囲</h1>
+  <h1><em>#15</em> 移動出荷/入荷の Core 管理範囲</h1>
   <p class="cover-sub">在庫移動指示を Core が発行するか、WMS/FVL に委ねるか</p>
   <div class="cover-meta">
     <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#15 / #9（在庫責務境界と密接に連動）</span></div>
@@ -163,19 +176,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
     <div class="meta-item"><span class="meta-label">影響ドメイン</span><span class="meta-value">移動出荷/入荷、在庫管理</span></div>
   </div>
 </div>
-
-<!-- 01 AS-IS -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">01</span><span class="sec-title blue-t">AS-IS — 現状の移動フローと責務</span></div>
-
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600;">■ 移動の種別と現行の責務主体（3パターン）</p>
+  <div class="sec-label"><span class="sec-num blue">01</span><span class="sec-title" style="color:var(--blue)">AS-IS — 現状の移動フローと責務</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ 移動の種別と現行の責務主体（3パターン）</p>
   <div class="move-types">
     <div class="move-type"><div class="mt-label">パターン 1</div><div class="mt-title">倉庫間移動（WMS 連携）</div><div class="mt-body"><b>Core/EFS BO が移動出荷指示を登録</b>し、WMS へ定時送信。WMS が物理移動を実行し、実績を EFS へ報告。EFS が TRS（積送在庫）経由で論理在庫を更新。<br><span class="confirmed">✓ BO 画面から指示登録を確認済み</span></div></div>
     <div class="move-type"><div class="mt-label">パターン 2</div><div class="mt-title">店間移動（在庫Ctrl 起点）</div><div class="mt-body"><b>在庫Ctrl が移動指示を生成</b>（DB-dbt-0127 カート登録）し、店舗 BO・外部調達へ配信。EFS/BO は移動実績の参照のみ。</div></div>
     <div class="move-type"><div class="mt-label">パターン 3</div><div class="mt-title">店舗内ロケ変（GWCS 起点）</div><div class="mt-body">GWCS/POS からのロケ変操作（在庫異動 No.③）。EFS は LT3 内ロケ変更を受信して反映。EC 販売可否に影響なし。</div></div>
   </div>
-
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600;">■ 倉庫間移動フロー詳細（在庫異動 No.②）</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ 倉庫間移動フロー詳細</p>
   <div class="flow-diagram">
     <div class="flow-title">FLOW: 倉庫間在庫移動 — 現行稼働フロー（AS-IS 確認済み）</div>
     <div class="flow-track">
@@ -193,93 +202,87 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       <div class="inv-phase"><div class="inv-phase-label">移動入荷完了後</div><div class="inv-bar"><div class="bar-seg lt2-to">LT2 移動元（確定）</div><div class="bar-seg lt2-settled">LT2 移動先（増加確定）</div></div></div>
     </div>
   </div>
-
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600;">■ 拠点間移動の 3 方式（EFS が定義する実装レベル）</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ 拠点間移動の 3 方式</p>
   <table class="method-table">
     <thead><tr><th>方式</th><th>概要</th><th>制約</th></tr></thead>
     <tbody>
-      <tr><td>① 通常の移動出入荷</td><td>移動出荷 → TRS（積送）発生 → 移動先で入荷処理。出荷側・入荷側の両方で処理が必要</td><td>標準フロー。物流ロケ間の移動に対応</td></tr>
+      <tr><td>① 通常の移動出入荷</td><td>移動出荷 → TRS（積送）発生 → 移動先で入荷処理。</td><td>標準フロー。物流ロケ間の移動に対応</td></tr>
       <tr><td>② 自動入荷設定ロケへの移動</td><td>移動出荷されると即座に移動入荷が自動作成。TRS を経由せず在庫が移動</td><td>移動先が<b style="color:var(--text)">非物流ロケに限定</b>（物流ロケは NG）</td></tr>
       <tr><td>③ 伝無入荷（伝票なし入荷）</td><td>出荷伝票なしで入荷処理のみを行い在庫を強制移動させる特殊方式</td><td>移動元が<b style="color:var(--text)">物流ロケの場合は NG</b></td></tr>
     </tbody>
   </table>
-  <div class="note-bar"><strong>重要:</strong> EFS は移動時の数量・明細差異を認めていない設計制約があります（EFS-WMS 整合性保証のため）。差異発生時は WMS 側で調整実績を同時計上するか、移動出荷を取消し・やり直しで対応します（管理者権限）。この制約が DB 制約かアプリロジックかは未確認（TBD-31）。</div>
+  <div class="note-bar"><strong>重要:</strong> EFS は移動時の数量・明細差異を認めていない設計制約があります（EFS-WMS 整合性保証のため）。この制約が DB 制約かアプリロジックかは未確認（TBD-31）。</div>
 </div>
-
-<!-- 02 Options -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">02</span><span class="sec-title">選択肢の比較</span></div>
+  <div class="sec-label"><span class="sec-num blue">02</span><span class="sec-title">選択肢の比較</span></div>
   <div class="options-grid">
-    <div class="opt-card a recommended">
-      <div class="opt-label a">OPTION A</div>
-      <div class="opt-title">Core = 移動指示の発行 + 論理在庫の更新<br>WMS = 物理移動の実行</div>
-      <div class="resp-map">
-        <div class="resp-row"><div class="resp-actor core">Core</div><div class="resp-tasks">倉庫間移動指示を BO 画面から発行 → WMS へ連携<br>TRS（積送在庫）の論理管理<br>instructionsAllocatedStock による二重引当防止<br>移動実績受信 → LT2 論理在庫を SoT として確定</div></div>
-        <div class="resp-row"><div class="resp-actor wms">WMS</div><div class="resp-tasks">物理移動の実行（作業起点）<br>移動出荷実績・移動入荷実績を Core へ報告</div></div>
-        <div class="resp-row"><div class="resp-actor inv">在庫Ctrl</div><div class="resp-tasks">店間移動指示の生成・店舗 BO への配信<br>※倉庫間移動の指示は Core が担当</div></div>
-      </div>
-      <div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">AS-IS と一致（倉庫間移動でBO指示登録確認済み）<br>instructionsAllocatedStock の仕組みが活きる<br>#9 と同一の「Core=論理/WMS=物理」原則で整合<br>移行リスク最小</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">Core が移動指示 SoT のため WMS との指示-実績の整合管理が必要<br>店間移動は在庫Ctrl が別管理（責務が分散）</div></div></div>
-    </div>
-    <div class="opt-card b">
-      <div class="opt-label b">OPTION B</div>
-      <div class="opt-title">Core = 論理在庫の結果反映のみ<br>WMS/FVL = 移動指示も含めて管理</div>
-      <div class="resp-map">
-        <div class="resp-row"><div class="resp-actor core">Core</div><div class="resp-tasks">移動実績の受信と論理在庫への反映のみ<br>移動指示の発行は行わない</div></div>
-        <div class="resp-row"><div class="resp-actor wms">WMS/FVL</div><div class="resp-tasks">移動指示の生成・管理も WMS が担当<br>指示発行〜実績報告まで WMS 内で完結</div></div>
-      </div>
-      <div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">WMS が移動を完全に自律管理<br>Core への連携が実績のみでシンプル</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">AS-IS の「EFS/BO から移動出荷指示を登録」業務フローを廃止する必要<br>業務側への影響・調整コストが大きい<br>WMS/FVL が移動指示管理機能を持つことの確認が必要</div></div></div>
-    </div>
+    <div class="opt-card a recommended"><div class="opt-label a">OPTION A</div><div class="opt-title">Core = 移動指示の発行 + 論理在庫の更新<br>WMS = 物理移動の実行</div><div class="resp-map"><div class="resp-row"><div class="resp-actor core">Core</div><div class="resp-tasks">倉庫間移動指示を BO から発行 → WMS へ連携<br>TRS（積送在庫）の論理管理<br>instructionsAllocatedStock による二重引当防止<br>移動実績受信 → LT2 論理在庫を SoT として確定</div></div><div class="resp-row"><div class="resp-actor wms">WMS</div><div class="resp-tasks">物理移動の実行。移動出荷・入荷実績を Core へ報告</div></div><div class="resp-row"><div class="resp-actor inv">在庫Ctrl</div><div class="resp-tasks">店間移動指示の生成・店舗 BO への配信</div></div></div><div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">AS-IS と一致（BO指示登録確認済み）<br>instructionsAllocatedStock が活きる<br>#9 と同一の責務原則で整合<br>移行リスク最小</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">WMS との指示-実績の整合管理が必要<br>店間移動は在庫Ctrl が別管理（責務分散）</div></div></div></div>
+    <div class="opt-card b"><div class="opt-label b">OPTION B</div><div class="opt-title">Core = 論理在庫の結果反映のみ<br>WMS/FVL = 移動指示も含めて管理</div><div class="resp-map"><div class="resp-row"><div class="resp-actor core">Core</div><div class="resp-tasks">移動実績の受信と論理在庫への反映のみ</div></div><div class="resp-row"><div class="resp-actor wms">WMS/FVL</div><div class="resp-tasks">移動指示の生成・管理も WMS が担当。指示発行〜実績報告まで WMS 内で完結</div></div></div><div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">WMS が移動を完全に自律管理<br>Core への連携が実績のみでシンプル</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">EFS/BO 移動指示登録フローを廃止必要<br>業務側への影響・調整コストが大きい<br>WMS/FVL が指示管理機能を持つか確認必要</div></div></div></div>
   </div>
 </div>
-
-<!-- 03 Table -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">03</span><span class="sec-title">比較表</span></div>
+  <div class="sec-label"><span class="sec-num blue">03</span><span class="sec-title">比較表</span></div>
   <table class="cmp-table">
     <thead><tr><th>観点</th><th>Option A — Core = 指示発行 + 論理在庫更新</th><th>Option B — Core = 論理在庫反映のみ</th></tr></thead>
     <tbody>
-      <tr><td class="asp">AS-IS との整合</td><td class="a">◎ 倉庫間移動でBO画面から指示登録する業務フローが既に稼働。完全一致</td><td class="b">✕ 現行の EFS/BO 移動指示登録フローを廃止する必要。業務変更コスト大</td></tr>
-      <tr><td class="asp">業務要件の確認</td><td class="a">◎ Core が移動指示を発行する業務要件は AS-IS で確認済み（ドキュメント明記）</td><td class="b">△ WMS/FVL が移動指示管理機能を持つかの追加確認が必要</td></tr>
-      <tr><td class="asp">二重引当防止</td><td class="a">◎ instructionsAllocatedStock（移動引当済数）の仕組みをそのまま活用</td><td class="b">△ WMS が指示を持つ場合、Core 側の移動引当済数の仕組みを再設計が必要</td></tr>
+      <tr><td class="asp">AS-IS との整合</td><td class="a">◎ 倉庫間移動で BO 画面から指示登録する業務フローが既に稼働。完全一致</td><td class="b">✕ 現行の EFS/BO 移動指示登録フローを廃止する必要。業務変更コスト大</td></tr>
+      <tr><td class="asp">業務要件の確認</td><td class="a">◎ Core が移動指示を発行する業務要件は AS-IS で確認済み</td><td class="b">△ WMS/FVL が移動指示管理機能を持つかの追加確認が必要</td></tr>
+      <tr><td class="asp">二重引当防止</td><td class="a">◎ instructionsAllocatedStock（移動引当済数）の仕組みをそのまま活用</td><td class="b">△ WMS が指示を持つ場合、移動引当済数の仕組みを再設計が必要</td></tr>
       <tr><td class="asp">#9 との整合</td><td class="a">◎ 「Core = 論理在庫 / WMS = 物理実行」の統一責務原則と整合</td><td class="b">△ #9 との責務境界の整合を再検討が必要</td></tr>
-      <tr><td class="asp">店間移動との整合</td><td class="a">△ 倉庫間は Core 起点、店間は在庫Ctrl 起点で役割が分散（許容範囲内）</td><td class="b">◎ すべての移動指示が WMS/外部起点で統一</td></tr>
-      <tr><td class="asp">EFSO 開発コスト</td><td class="a">◎ 既存フローの継続のため実装追加は最小</td><td class="b">△ WMS/FVL 側の指示管理機能の確認・連携 IF 再設計が必要</td></tr>
+      <tr><td class="asp">EFSO 開発コスト</td><td class="a">◎ 既存フローの継続のため実装追加は最小</td><td class="b">△ WMS/FVL 側の指示管理機能確認・連携 IF 再設計が必要</td></tr>
     </tbody>
   </table>
 </div>
-
-<!-- 04 Verdict -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">04</span><span class="sec-title green-t">推奨方針</span></div>
-  <div class="verdict">
-    <div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A — Core = 移動指示の発行 + 論理在庫の更新</span></div>
-    <div class="verdict-body">
-      <p><strong>根拠①（業務要件が確認済み）:</strong> AS-IS ドキュメントで「物流場所からの出荷（移動出荷を含む）は BO 画面から指示を行う」と明記されており、EFS/BO から移動出荷指示を登録する業務フローが現在も稼働中です。</p>
-      <p><strong>根拠②（二重引当防止の仕組みが確立）:</strong> <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--blue)">instructionsAllocatedStock</code>（移動引当済数）により、移動指示中の在庫を受注引当から除外する仕組みが設計上確立されています。</p>
-      <p><strong>根拠③（#9 との一貫性）:</strong> #9 で確定する「Core = 論理在庫 / WMS = 物理実行」の責務原則と完全に整合します。</p>
-      <p><strong>店間移動との整合:</strong> 店間移動は現行どおり在庫Ctrl（後継システム）が担当します。Core は倉庫間移動の指示に集中し、店間移動の実績を受信して論理在庫を反映する役割を維持します。</p>
-    </div>
-  </div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600;">■ TO-BE スコープ境界（Option A 採用時）</p>
+  <div class="sec-label"><span class="sec-num green">04</span><span class="sec-title" style="color:var(--green)">推奨方針</span></div>
+  <div class="verdict"><div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A — Core = 移動指示の発行 + 論理在庫の更新</span></div><div class="verdict-body"><p><strong>根拠①（業務要件が確認済み）:</strong> AS-IS ドキュメントで「物流場所からの出荷（移動出荷を含む）は BO 画面から指示を行う」と明記。現在も稼働中。</p><p><strong>根拠②（二重引当防止の仕組みが確立）:</strong> <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--blue)">instructionsAllocatedStock</code>（移動引当済数）により、移動指示中の在庫を受注引当から除外する仕組みが確立されています。</p><p><strong>根拠③（#9 との一貫性）:</strong> #9 で確定する「Core = 論理在庫 / WMS = 物理実行」の責務原則と完全に整合します。</p></div></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ TO-BE スコープ境界（Option A 採用時）</p>
   <div class="scope-grid">
     <div class="scope-box core"><div class="scope-label b">EFSO Core（在庫ドメイン）</div><div class="scope-items">倉庫間移動指示の発行（BO / 自動処理）<br>TRS（積送在庫）の論理管理<br>instructionsAllocatedStock による二重引当防止<br>移動実績受信 → LT2 論理在庫を SoT として確定<br>店間移動実績の受信・論理在庫反映</div></div>
     <div class="scope-box wms"><div class="scope-label t">WMS（物理在庫層）</div><div class="scope-items">Core からの移動指示を受けて物理移動を実行<br>移動出荷実績・移動入荷実績を Core へ報告<br>自動入荷設定ロケへの即時移動（方式②）<br>伝無入荷の受け付け（方式③）</div></div>
     <div class="scope-box inv"><div class="scope-label p">在庫Ctrl（後継システム）</div><div class="scope-items">店間移動指示の生成・配信（Core のスコープ外）<br>店舗 BO / 外部調達への移動指示送信<br>移動結果を Core へ通知（実績のみ）</div></div>
   </div>
 </div>
-
-<!-- 05 Checklist -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num">05</span><span class="sec-title">確認事項リスト</span></div>
+  <div class="sec-label"><span class="sec-num blue">05</span><span class="sec-title">確認事項リスト</span></div>
   <ul class="checklist">
     <li><div class="chk-box"></div><div><span class="tag iss">#15</span><span class="chk-owner">ビジネス・運用チーム</span><div>倉庫間移動指示を現行どおり BO 画面から発行する業務を継続するか確認。自動化・システム連携への代替可能性も含めて検討</div></div></li>
     <li><div class="chk-box"></div><div><span class="tag iss">#15</span><span class="chk-owner">CTO + 開発</span><div>在庫Ctrl（後継システム）の店間移動機能が EFSO プロジェクトのスコープ外として扱われるか確認。在庫Ctrl TO-BE との役割分担を明記</div></div></li>
     <li><div class="chk-box"></div><div><span class="tag iss">#15</span><span class="chk-owner">開発チーム</span><div>移動時の数量・明細差異を「認めない」設計制約（TBD-31）が DB 制約かアプリロジックかを確認し、TO-BE での扱いを決定</div></div></li>
-    <li><div class="chk-box"></div><div><span class="tag iss">#15</span><span class="chk-owner">開発チーム</span><div>AUTO_ARRIVAL_PLACE（自動入荷設定ロケ、非物流ロケ向け）の TO-BE での継続可否を確認。EFSO のロケーション設計に組み込むか判断</div></div></li>
-    <li><div class="chk-box"></div><div><span class="tag lnk">#9 連動</span><span class="chk-owner">CTO + 開発</span><div>#9 の「Core = 論理在庫 / WMS = 物理実行」責務原則を同一セッションで確定し、#15 の方針と整合させる（同一テーマとして同時判断推奨）</div></div></li>
-    <li><div class="chk-box"></div><div><span class="tag iss">#15</span><span class="chk-owner">CTO + 開発</span><div>Core → WMS の移動出荷指示連携（現行: STELCD03 定時送信）を TO-BE の IL（統合レイヤー）に移行する場合の設計方針を確認</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#15</span><span class="chk-owner">開発チーム</span><div>AUTO_ARRIVAL_PLACE（自動入荷設定ロケ）の TO-BE での継続可否を確認。EFSO のロケーション設計に組み込むか判断</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag lnk">#9 連動</span><span class="chk-owner">CTO + 開発</span><div>#9 の「Core = 論理在庫 / WMS = 物理実行」責務原則を同一セッションで確定し、#15 の方針と整合させる（同時判断推奨）</div></div></li>
   </ul>
 </div>
-
+<div class="section">
+  <div class="sec-label"><span class="sec-num red">06</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の5項目が未解決のまま残ると、Option A を採用しても TO-BE の詳細設計に着手できません。特に B-1（#9 との連鎖）が最優先です。</p>
+  <div class="blocker-grid">
+    <div class="blocker-card" style="grid-column:1/-1"><div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">#9 との責務境界が連鎖している（同時判断が必要）</span><span class="priority-badge critical">CRITICAL</span></div><div class="blocker-body"><div class="blocker-why">#15 の「Core が移動指示を発行する」という結論は、#9 の「Core = 論理在庫 / WMS = 物理実行」という責務原則に基づいている。#9 が確定しないと #15 の根拠が固まらない。</div><div class="blocker-impact">#9 と #15 を別々のタイミングで判断すると、整合性が崩れた設計になるリスクがある。</div><div class="blocker-action">#9 と #15 を必ず同一のアーキテクチャ判断セッションで方針 Fix する。CTO + 開発がオーナーとなり日程を設定。</div><div class="blocker-owner">Owner: CTO + 開発 / 対応: #9 の B-1 解消後に同一セッションで判断</div></div></div>
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">BO 画面からの移動指示発行業務の継続可否が未確認</span><span class="priority-badge high">HIGH</span></div><div class="blocker-body"><div class="blocker-why">現行は BO 画面から移動出荷指示を手動登録する業務フローが稼働中だが、EFSO 移行後も同じ業務フローを維持するかが未確認。自動化・別システム経由への変更可能性がある。</div><div class="blocker-impact">業務フローが変わる場合は Option B も選択肢として残り、判断が変わる可能性がある。</div><div class="blocker-action">ビジネス・運用チームに移動指示発行業務の TO-BE における継続可否を確認。自動化要件がある場合はスコープに追加。</div><div class="blocker-owner">Owner: ビジネス・運用チーム</div></div></div>
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">在庫Ctrl の TO-BE における存続・役割が未決定</span><span class="priority-badge high">HIGH</span></div><div class="blocker-body"><div class="blocker-why">店間移動は現行で在庫Ctrl が担当しているが、在庫Ctrl の TO-BE における役割・存続が未決定。在庫Ctrl が EFSO プロジェクトのスコープ外なのかどうかが明確になっていない。</div><div class="blocker-impact">Core の移動管理範囲が「倉庫間のみ」か「全移動」かが変わる可能性がある。</div><div class="blocker-action">CTO が在庫Ctrl の TO-BE 方針を #15 と同時に確定。EFSO スコープ外と明確に宣言するか、統合方針を決める。</div><div class="blocker-owner">Owner: CTO + 開発</div></div></div>
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">移動数量差異の設計制約（TBD-31）が DB 制約かアプリロジックか未確認</span><span class="priority-badge medium">MEDIUM</span></div><div class="blocker-body"><div class="blocker-why">「移動時の数量・明細差異を認めない」設計制約が DDL（DB 制約）で実現されているか、アプリロジックのみかが未確認（TBD-31）。</div><div class="blocker-impact">DB 制約の場合、TO-BE での設計変更コストが大きくなる。アプリロジックのみであれば EFSO Core 側で柔軟に再設計できる。</div><div class="blocker-action">開発チームが DDL を確認し、TBD-31 を解決する（短時間で確認可能）。結果を open-decisions に記録。</div><div class="blocker-owner">Owner: 開発チーム / 難易度: 低（即時確認可能）</div></div></div>
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-5</span><span class="blocker-title">AUTO_ARRIVAL_PLACE の TO-BE 継続可否が未確認</span><span class="priority-badge medium">MEDIUM</span></div><div class="blocker-body"><div class="blocker-why">自動入荷設定ロケ（非物流ロケ向けに TRS を経由せず即時移動する仕組み）が TO-BE のロケーションモデルに引き継がれるかどうか未確認。</div><div class="blocker-impact">このロケーションの設計方針が変わると移動方式②が使えなくなり、関連業務フローの再設計が必要になる。</div><div class="blocker-action">AUTO_ARRIVAL_PLACE を使用している業務・SKU を特定し、TO-BE でも同様の機能が必要かどうか業務側に確認。</div><div class="blocker-owner">Owner: 開発チーム + 倉庫運用チーム</div></div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num orange">07</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
+  <div class="tobe-intro"><strong>推奨方針は Option A（Core = 移動指示の発行 + 論理在庫の更新）で確定済み。</strong><br>ただし B-1（#9 との同時判断）が最優先ブロッカーです。#9 の方針 Fix と必ず同一セッションで確定してください。</div>
+  <div class="phase-list">
+    <div class="phase"><div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">即時対応 — 低コストで解消できるブロッカーを先に潰す</span><span class="phase-time">目標: 1週間以内</span></div><div class="phase-body">
+      <div class="action-item"><span class="action-resolve">B-4 解消</span><div><div class="action-desc"><b>TBD-31 を即時確認（DDL チェック）</b><br>「移動時の数量・明細差異を認めない」制約が DB 制約（NOT NULL / CHECK 制約 等）かアプリロジックのみかを DDL を確認して解決。</div><div class="action-owner">担当: 開発チーム</div></div></div>
+      <div class="action-item"><span class="action-resolve">B-2 確認</span><div><div class="action-desc"><b>BO 移動指示発行業務の継続可否をビジネス側に確認</b><br>倉庫間移動指示を手動で BO 入力する業務が TO-BE でも継続するか、自動化・システム連携への変更予定があるかを確認。</div><div class="action-owner">担当: ビジネス・運用チーム</div></div></div>
+      <div class="action-item"><span class="action-resolve">B-5 確認</span><div><div class="action-desc"><b>AUTO_ARRIVAL_PLACE の使用実態を調査</b><br>非物流ロケへの即時移動（方式②）を使用している業務・SKU を洗い出し、TO-BE での継続必要性を確認。</div><div class="action-owner">担当: 開発チーム + 倉庫運用チーム</div></div></div>
+    </div></div>
+    <div class="phase"><div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">#9 と連動 — アーキテクチャ判断セッションで同時 Fix</span><span class="phase-time">#9 の Phase 1 完了後に同一セッション</span></div><div class="phase-body">
+      <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>#9（倉庫ロケーション）と同一セッションで責務境界を確定</b><br>「Core = 論理在庫 / WMS = 物理実行」の原則を #9 と #15 の両方に適用する形で CTO + 開発が方針 Fix する。この判断が終わると #15 の TO-BE 設計が動き出せる。</div><div class="action-owner">担当: CTO + 開発 / 会議体: アーキテクチャ判断会（#9 と同一）</div></div></div>
+      <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>在庫Ctrl の TO-BE 方針を同時確定</b><br>在庫Ctrl（店間移動担当）を EFSO プロジェクトのスコープ外として明確に宣言するか、統合方針を決める。これにより Core の移動管理範囲が確定する。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+    </div></div>
+    <div class="phase"><div class="phase-header"><span class="phase-num p3">Phase 3</span><span class="phase-title">設計着手 — ブロッカー解消後</span><span class="phase-time">Phase 1 + 2 完了後</span></div><div class="phase-body">
+      <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>移動出荷/入荷 TO-BE 連携仕様書の作成</b><br>Core → WMS の移動指示連携（現行 STELCD03）を TO-BE の IL（統合レイヤー）に移行する場合の設計仕様書を作成。instructionsAllocatedStock の TO-BE データモデルも確定。</div><div class="action-owner">担当: 開発チーム / 成果物: 移動出荷/入荷 IL 連携仕様書</div></div></div>
+      <div class="action-item"><span class="action-resolve">Doc 更新</span><div><div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#15 を「決定済み: Option A」としてクローズ。to-be/ ディレクトリに移動出荷/入荷ドメイン責務定義ドキュメントを作成（#9 と同一ドキュメントに統合推奨）。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+    </div></div>
+  </div>
+  <div class="unlock-box"><div class="unlock-title">✓ ブロッカー全解消後に動き出せること</div><div class="unlock-items">Core → WMS の移動指示連携を IL に移行する接続仕様書の確定<br>instructionsAllocatedStock の TO-BE データモデル設計<br>在庫Ctrl（店間移動）とのインターフェース仕様確定<br>efso-document の to-be/ ディレクトリへのドキュメント登録（#9 と同時）</div></div>
+</div>
 </body>
 </html>
