@@ -20,7 +20,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:clamp(32px,5vw,52px) var(--pad) clamp(28px,4vw,44px);position:relative;overflow:hidden;}
 .header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue) 0%,var(--green) 50%,var(--amber) 100%);}
 .header-tag{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;padding:3px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--blue);letter-spacing:.05em;margin-bottom:18px;}
-.header-tag::before{content:'◆';font-size:6px;}
+.header-tag::before{content:'\25C6';font-size:6px;}
 .header h1{font-size:clamp(22px,4vw,32px);font-weight:700;line-height:1.25;letter-spacing:-.3px;color:var(--text);margin-bottom:8px;}
 .header-sub{font-size:clamp(13px,2vw,14px);color:var(--muted);font-weight:400;}
 
@@ -64,11 +64,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <div class="header">
   <div class="header-tag">EFSO アーキテクチャ判断資料</div>
   <h1>未解決横断課題<br>AS-IS / TO-BE 整理</h1>
-  <p class="header-sub">World の EC フルスタック再構築（EFSO）プロジェクト — クライアント折衝用ドキュメント</p>
+  <p class="header-sub">World の EC フルスタック再構築（EFSO）プロジェクト &#x2014; クライアント折衝用ドキュメント</p>
 </div>
 
 <div class="main">
-  <p class="section-label">ドキュメント一覧 — 優先度：高</p>
+  <p class="section-label">ドキュメント一覧 &#x2014; 優先度：高</p>
   <div class="cards">
 
     <a class="card blue" href="issue09_warehouse-location.html">
@@ -81,7 +81,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
         <span class="badge status">要方針 Fix</span>
         <span class="badge domain">在庫管理</span>
       </div>
-      <div class="card-arrow">→</div>
+      <div class="card-arrow">&rarr;</div>
     </a>
 
     <a class="card green" href="issue15_inventory-transfer.html">
@@ -94,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
         <span class="badge status">要方針 Fix</span>
         <span class="badge domain">移動出荷/入荷</span>
       </div>
-      <div class="card-arrow">→</div>
+      <div class="card-arrow">&rarr;</div>
     </a>
 
     <a class="card amber" href="issue11_purchase-management.html">
@@ -107,19 +107,32 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
         <span class="badge status">要方針 Fix</span>
         <span class="badge domain">仕入先入荷/返送</span>
       </div>
-      <div class="card-arrow">→</div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+
+    <a class="card amber" href="issue12_wholesale-boundary.html">
+      <div class="card-accent"></div>
+      <div class="card-num">#12</div>
+      <div class="card-title">EC 卸売と GWCS 卸売の<br>責務境界</div>
+      <div class="card-desc">GWCS 存続確定を前提に、EC 経由の卸出荷/返品と GWCS 卸売の責務をどう線引きするか。取引量調査が先行タスク。条件付き Option A 推奨。</div>
+      <div class="card-meta">
+        <span class="badge owner">CTO + 開発</span>
+        <span class="badge status">ToDo</span>
+        <span class="badge domain">卸出荷/返品</span>
+      </div>
+      <div class="card-arrow">&rarr;</div>
     </a>
 
   </div>
 
   <div class="note">
-    <span class="note-icon">ℹ</span>
-    <span>#9 と #15 は「Core = 論理在庫 / WMS = 物理実行」という同一テーマ。同一セッションでまとめて方針 Fix することを推奨。#11 は #23（finance 独立ドメイン化）と同時判断を推奨。</span>
+    <span class="note-icon">&#8505;</span>
+    <span>#9 と #15 は「Core = 論理在庫 / WMS = 物理実行」という同一テーマ。同一セッションでまとめて方針 Fix することを推奨。#11 は #23（finance 独立ドメイン化）と同時判断を推奨。#12 は #11 と連動（消化仕入の同時計上フロー）するため、#11 と #12 も同一セッションで判断を推奨。</span>
   </div>
 </div>
 
 <div class="footer">
-  <span>EFSO Project — Architecture Decision Docs</span>
+  <span>EFSO Project &#x2014; Architecture Decision Docs</span>
   <span>omnisinc / efso-document 参照</span>
 </div>
 
