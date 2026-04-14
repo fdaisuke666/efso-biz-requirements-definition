@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#12 EC卸売とGWCS卸売の責務境界 — EFSO</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#f4f5f7; --surface:#fff; --surface2:#f8f9fb; --border:#e2e6ea;
+  --text:#1a202c; --muted:#64748b;
+  --blue:#2563eb; --green:#059669; --amber:#d97706; --red:#dc2626;
+  --purple:#7c3aed; --teal:#0d9488; --orange:#ea580c; --cyan:#0891b2;
+  --pad:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.7;}
+.back-link{display:flex;align-items:center;gap:6px;padding:10px var(--pad);font-size:12px;color:var(--muted);text-decoration:none;background:var(--surface);border-bottom:1px solid var(--border);}
+.back-link:hover{color:var(--amber);}
+.cover{background:var(--surface);border-bottom:1px solid var(--border);padding:clamp(32px,5vw,52px) var(--pad) clamp(24px,4vw,40px);position:relative;}
+.cover::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),#fbbf24);}
+.cover-tag{display:inline-flex;align-items:center;gap:6px;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:3px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--amber);letter-spacing:.05em;margin-bottom:16px;}
+.cover-tag::before{content:'\25C6';font-size:6px;}
+.cover h1{font-size:clamp(22px,4vw,30px);font-weight:700;line-height:1.22;margin-bottom:8px;}
+.cover h1 em{color:var(--amber);font-style:normal;}
+.cover-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.cover-meta{display:flex;gap:20px;flex-wrap:wrap;}
+.meta-item{display:flex;flex-direction:column;gap:2px;}
+.meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.meta-value{font-size:13px;color:var(--text);font-weight:500;}
+.section{padding:clamp(24px,4vw,40px) var(--pad);border-bottom:1px solid var(--border);background:var(--surface);}
+.section:nth-child(even){background:var(--surface2);}
+.section:last-child{border-bottom:none;}
+.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.sec-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#fff;border-radius:3px;padding:2px 8px;font-weight:500;}
+.sec-num.amber{background:var(--amber);} .sec-num.green{background:var(--green);} .sec-num.red{background:var(--red);} .sec-num.orange{background:var(--orange);}
+.sec-title{font-size:17px;font-weight:700;}
+.sys-grid{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;gap:0;align-items:center;margin-bottom:18px;}
+.sys-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.sys-box.core{border-top:3px solid var(--amber);background:#fffbeb;}
+.sys-box.gwcs{border-top:3px solid var(--purple);background:#f5f3ff;}
+.sys-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;}
+.sys-name.a{color:var(--amber);} .sys-name.p{color:var(--purple);} .sys-name.g{color:var(--muted);}
+.sys-fn{font-size:12px;color:var(--muted);line-height:1.9;}
+.sys-fn span{display:block;padding:2px 0;border-bottom:1px solid var(--border);}
+.sys-fn span:last-child{border-bottom:none;}
+.sys-fn span.hi{color:var(--amber);font-weight:500;}
+.arr-col{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 2px;}
+.arr-label{font-size:9px;color:var(--muted);text-align:center;line-height:1.4;}
+.flow-row{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.fstep{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;min-width:108px;flex-shrink:0;}
+.fstep.hi{border-color:#fde68a;background:#fffbeb;}
+.fstep.purple{border-color:#ddd6fe;background:#f5f3ff;}
+.fstep-lbl{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.fstep-name{font-size:12px;font-weight:600;line-height:1.3;color:var(--text);}
+.farr{color:var(--muted);font-size:16px;padding:0 4px;flex-shrink:0;}
+.issue-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+.issue-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.issue-num{font-size:10px;color:var(--amber);font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:5px;}
+.issue-title{font-size:13px;font-weight:700;margin-bottom:7px;}
+.issue-body{font-size:12px;color:var(--muted);line-height:1.8;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.opt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;position:relative;}
+.opt-card.a{border-top:3px solid var(--green);} .opt-card.b{border-top:3px solid var(--purple);}
+.opt-card.recommended::after{content:'\63A8\5968';position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;}
+.opt-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:5px;}
+.opt-label.a{color:var(--green);} .opt-label.b{color:var(--purple);}
+.opt-title{font-size:13px;font-weight:700;margin-bottom:10px;line-height:1.4;}
+.mini-arch{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px;margin-bottom:10px;}
+.mini-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.mini-row:last-child{margin-bottom:0;}
+.mbox{flex:1;border-radius:5px;padding:5px 9px;font-size:11px;font-weight:600;text-align:center;}
+.mbox.core{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.mbox.gwcs{background:#f5f3ff;border:1px solid #ddd6fe;color:#6d28d9;}
+.mbox.il{background:#ecfeff;border:1px solid #a5f3fc;color:#0e7490;}
+.mbox.shopify{background:#f0fdf4;border:1px solid #bbf7d0;color:#047857;}
+.mbox.dead{background:#fef2f2;border:1px dashed #fca5a5;color:var(--red);opacity:.8;}
+.marr{font-size:12px;color:var(--muted);flex-shrink:0;}
+.mini-note{font-size:10px;color:var(--red);flex:1;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;padding:3px 8px;}
+.mini-ok{font-size:10px;color:var(--green);flex:1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:3px 8px;}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.pros{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:9px 11px;}
+.cons{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:9px 11px;}
+.pc-label{font-size:10px;font-weight:700;margin-bottom:3px;}
+.pc-label.p{color:var(--green);} .pc-label.c{color:var(--red);}
+.pc-body{font-size:11px;color:var(--muted);line-height:1.9;}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px;}
+.cmp-table th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
+.cmp-table td{padding:10px 13px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:hover td{background:var(--surface2);}
+.cmp-table td.asp{font-weight:600;color:var(--text);font-size:12px;width:18%;}
+.cmp-table td.a{color:#047857;} .cmp-table td.b{color:#6d28d9;}
+.verdict{background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:20px 24px;margin-bottom:16px;}
+.verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.verdict-badge{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 12px;border-radius:20px;}
+.verdict-title{font-size:15px;font-weight:700;}
+.verdict-body{font-size:13px;color:#374151;line-height:1.9;}
+.verdict-body strong{color:var(--text);}
+.verdict-body p{margin-bottom:8px;}
+.verdict-body p:last-child{margin-bottom:0;}
+.scope-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.scope-box{border-radius:8px;padding:13px 15px;}
+.scope-box.core{background:#fffbeb;border:1px solid #fde68a;}
+.scope-box.il{background:#ecfeff;border:1px solid #a5f3fc;}
+.scope-box.out{background:var(--surface2);border:1px solid var(--border);}
+.scope-box.gwcs{background:#f5f3ff;border:1px solid #ddd6fe;}
+.scope-label{font-size:11px;font-weight:700;margin-bottom:7px;}
+.scope-label.a{color:var(--amber);} .scope-label.c{color:var(--cyan);} .scope-label.g{color:var(--muted);} .scope-label.p{color:var(--purple);}
+.scope-items{font-size:11px;color:var(--muted);line-height:2;}
+.checklist{list-style:none;}
+.checklist li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;}
+.checklist li:last-child{border-bottom:none;}
+.chk-box{width:16px;height:16px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:3px;background:#fff;}
+.chk-owner{font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;white-space:nowrap;margin-top:2px;}
+.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:3px;margin-right:4px;}
+.tag.iss{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.tag.lnk{background:#f5f3ff;color:var(--purple);border:1px solid #ddd6fe;}
+.note-bar{background:#fffbeb;border-left:3px solid var(--amber);padding:10px 13px;border-radius:0 6px 6px 0;font-size:12px;color:#92400e;margin-top:12px;}
+.note-bar strong{color:#78350f;}
+.blocker-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.blocker-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.blocker-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:#fef2f2;flex-wrap:wrap;}
+.blocker-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#fff;background:var(--red);padding:2px 8px;border-radius:3px;}
+.blocker-title{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap;}
+.priority-badge.critical{background:#fee2e2;color:var(--red);border:1px solid #fca5a5;}
+.priority-badge.high{background:#fff7ed;color:var(--orange);border:1px solid #fed7aa;}
+.priority-badge.medium{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.blocker-body{padding:13px 15px;}
+.blocker-why{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:9px;}
+.blocker-impact{font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 11px;margin-bottom:9px;color:#7f1d1d;}
+.blocker-impact::before{content:'\26A0 \653E\7F6E\30EA\30B9\30AF: ';font-weight:700;}
+.blocker-action{display:flex;align-items:flex-start;gap:7px;font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:7px 11px;color:#1e3a8a;}
+.blocker-action::before{content:'\2192';font-weight:700;flex-shrink:0;}
+.blocker-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:6px;}
+.tobe-intro{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:18px;padding:13px 17px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;}
+.tobe-intro strong{color:var(--text);}
+.phase-list{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+.phase{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
+.phase-header{display:flex;align-items:center;gap:12px;padding:11px 17px;border-bottom:1px solid var(--border);}
+.phase-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#fff;padding:2px 10px;border-radius:3px;}
+.phase-num.p1{background:var(--red);} .phase-num.p2{background:var(--amber);} .phase-num.p3{background:var(--green);}
+.phase-title{font-size:14px;font-weight:700;}
+.phase-time{margin-left:auto;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 8px;}
+.phase-body{padding:12px 17px;}
+.action-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.action-item:last-child{border-bottom:none;}
+.action-resolve{font-size:10px;font-family:'IBM Plex Mono',monospace;background:#fee2e2;color:var(--red);border:1px solid #fca5a5;padding:2px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.action-desc{flex:1;font-size:12px;color:var(--text);line-height:1.7;}
+.action-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:3px;}
+.unlock-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:13px 17px;}
+.unlock-title{font-size:12px;font-weight:700;color:var(--green);margin-bottom:7px;}
+.unlock-items{font-size:12px;color:var(--muted);line-height:2;}
+.resp-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px;}
+.resp-table th{background:var(--surface2);padding:8px 12px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
+.resp-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+.resp-table tr:hover td{background:var(--surface2);}
+.badge-ec{display:inline-block;font-size:10px;font-weight:700;background:#fffbeb;color:var(--amber);border:1px solid #fde68a;padding:1px 6px;border-radius:3px;}
+.badge-gwcs{display:inline-block;font-size:10px;font-weight:700;background:#f5f3ff;color:var(--purple);border:1px solid #ddd6fe;padding:1px 6px;border-radius:3px;}
+.badge-wms{display:inline-block;font-size:10px;font-weight:700;background:#ecfeff;color:var(--cyan);border:1px solid #a5f3fc;padding:1px 6px;border-radius:3px;}
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; ドキュメント一覧に戻る</a>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <div class="cover-tag">EFSO アーキテクチャ判断資料</div>
+  <h1><em>#12</em> EC 卸売と GWCS 卸売の責務境界</h1>
+  <p class="cover-sub">GWCS 存続確定を前提に、EC 経由の卸出荷/返品と GWCS 卸売の責務をどう線引きするか</p>
+  <div class="cover-meta">
+    <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#12 / #11（仕入管理） / #13（店舗基幹売上・解決済）</span></div>
+    <div class="meta-item"><span class="meta-label">Owner</span><span class="meta-value">CTO + 開発</span></div>
+    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">ToDo &rarr; 取引量調査が先行タスク</span></div>
+    <div class="meta-item"><span class="meta-label">影響ドメイン</span><span class="meta-value">卸出荷/返品、売上/仕入、フルフィルメント</span></div>
+    <div class="meta-item"><span class="meta-label">優先度</span><span class="meta-value" style="color:var(--red);font-weight:700;">高</span></div>
+  </div>
+</div>
+
+<!-- ===== 01 AS-IS ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">01</span><span class="sec-title" style="color:var(--amber)">AS-IS &mdash; 現行の卸売システム構成</span></div>
+
+  <div class="sys-grid">
+    <div class="sys-box core">
+      <div class="sys-name a">EFS（現行 EC 基盤）</div>
+      <div class="sys-fn">
+        <span class="hi">卸注文登録（BO 画面）</span>
+        <span>卸出荷指示（出荷指示バッチ）</span>
+        <span>卸出荷/返品実績管理</span>
+        <span class="hi">卸売上計上（出荷完了時）</span>
+        <span>卸売上訂正（赤伝黒伝）</span>
+        <span>月次請求管理・請求報告書</span>
+        <span>請求調整明細（相殺取引等）</span>
+      </div>
+    </div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--blue)">&hArr;</div><div class="arr-label" style="color:var(--blue)">在庫<br>異動</div></div>
+    <div class="sys-box gwcs">
+      <div class="sys-name p">GWCS（存続確定）</div>
+      <div class="sys-fn">
+        <span class="hi">店舗売上/返品の集約</span>
+        <span>店舗棚卸実績の集約</span>
+        <span>配分指示・自動補充</span>
+        <span>在庫予算管理</span>
+        <span>管理会計データ</span>
+        <span class="hi">&rarr; 卸売の直接管理は限定的</span>
+      </div>
+    </div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--muted)">&rarr;</div><div class="arr-label">WMS<br>直接</div></div>
+    <div class="sys-box">
+      <div class="sys-name g">WMS / 外部</div>
+      <div class="sys-fn">
+        <span>倉庫入荷（仕入）&rarr; EFS 直接</span>
+        <span>倉庫出荷（移動）&rarr; EFS 直接</span>
+        <span>顧客出荷/返品 &rarr; EFS 直接</span>
+        <span class="hi">卸出荷/返品 &rarr; POS 系経由</span>
+        <span>FVL（ファイブラック）</span>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9612; 現行の在庫異動区分と GWCS 経由判定</p>
+  <table class="resp-table">
+    <thead><tr><th>異動区分</th><th>内容</th><th>経路</th><th>SoT</th></tr></thead>
+    <tbody>
+      <tr><td>&#8756; 倉庫入荷（仕入）</td><td>仕入先からの入荷</td><td><span class="badge-wms">WMS &rarr; EFS 直接</span></td><td>EFS</td></tr>
+      <tr><td>&#8756; 顧客出荷/返品</td><td>EC 注文の出荷・返品</td><td><span class="badge-wms">WMS &rarr; EFS 直接</span></td><td>EFS</td></tr>
+      <tr><td style="font-weight:700;color:var(--amber)">&#9318; 卸出荷/返品（BtoB）</td><td>卸先への出荷・返品</td><td><span class="badge-ec">EFS BO</span> + <span class="badge-gwcs">POS 系 &rarr; GWCS 経由</span></td><td>EFS</td></tr>
+      <tr><td>&#8756; 店舗売上/返品</td><td>店舗 POS の売上</td><td><span class="badge-gwcs">POS &rarr; GWCS 経由</span></td><td>EFS</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9612; 現行の EC 卸売フロー</p>
+  <div class="flow-row">
+    <div class="fstep hi"><div class="fstep-lbl">BO</div><div class="fstep-name">卸注文<br>登録</div></div><div class="farr">&rarr;</div>
+    <div class="fstep"><div class="fstep-lbl">EFS</div><div class="fstep-name">卸出荷指示<br>生成</div></div><div class="farr">&rarr;</div>
+    <div class="fstep"><div class="fstep-lbl">IL</div><div class="fstep-name">WMS<br>出荷連携</div></div><div class="farr">&rarr;</div>
+    <div class="fstep"><div class="fstep-lbl">WMS</div><div class="fstep-name">卸出荷<br>実行</div></div><div class="farr">&rarr;</div>
+    <div class="fstep hi"><div class="fstep-lbl">EFS</div><div class="fstep-name">卸売上<br>計上</div></div><div class="farr">&rarr;</div>
+    <div class="fstep"><div class="fstep-lbl">月末</div><div class="fstep-name">請求締め<br>報告書出力</div></div>
+  </div>
+
+  <div class="note-bar"><strong>重要:</strong> 卸出荷/返品は POS 系経由（GWCS 集約）のルートと、EFS BO 画面からの直接登録ルートの 2 経路が存在する。EC 経由の卸売取引量が不明なため、Core 側にどの程度の卸売機能を持たせるべきかの判断が保留されている。</div>
+</div>
+
+<!-- ===== 02 論点整理 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">02</span><span class="sec-title">論点の整理</span></div>
+  <div class="issue-grid">
+    <div class="issue-box">
+      <div class="issue-num">論点 A</div>
+      <div class="issue-title">EC 卸売の取引量</div>
+      <div class="issue-body">EC（EFS BO）経由の卸出荷/返品がどの程度存在するかが未調査。取引量がゼロまたは極小なら Core 側の卸売機能は不要で、GWCS に一本化できる。</div>
+    </div>
+    <div class="issue-box">
+      <div class="issue-num">論点 B</div>
+      <div class="issue-title">売上データの突合方式</div>
+      <div class="issue-body">Core（EC 売上 SoT）と GWCS（店舗売上・卸売管理）の売上データをどう突合・整合するか。月次の請求金額確定フローに影響する。</div>
+    </div>
+    <div class="issue-box">
+      <div class="issue-num">論点 C</div>
+      <div class="issue-title">#11 / #13 との連動</div>
+      <div class="issue-body">#11（仕入管理スコープ）の方針により卸売の仕入側処理が変わる。#13（店舗基幹売上 = GWCS 側で解決済）との整合性も必要。</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9612; 大方針（GWCS 存続確定による前提条件）</p>
+  <table class="resp-table">
+    <thead><tr><th>領域</th><th>責務主体</th><th>根拠</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">GWCS 卸売（店舗 POS 系）</td><td><span class="badge-gwcs">GWCS</span></td><td>v0.6 で GWCS 存続確定。店舗系実績の集約は GWCS の責務</td></tr>
+      <tr><td style="font-weight:600">EC 卸売（BO 画面登録）</td><td><span class="badge-ec">Core</span></td><td>EC 起点の BtoB 取引は Core/注文ドメインまたはフルフィルメントの責務</td></tr>
+      <tr><td style="font-weight:600">卸売上の SoT</td><td><span class="badge-ec">EFS（Core）</span></td><td>現行も EFS が SoT。GWCS は集約&middot;通知の役割のみ</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== 03 選択肢 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">03</span><span class="sec-title">選択肢の比較</span></div>
+  <div class="options-grid">
+    <div class="opt-card a recommended">
+      <div class="opt-label a">OPTION A</div>
+      <div class="opt-title">Core に EC 卸売を残す<br><small style="font-weight:400;font-size:11px;color:var(--muted)">（EC 卸売が一定量存在する場合）</small></div>
+      <div class="mini-arch">
+        <div class="mini-row">
+          <div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">卸注文/出荷/売上/請求</span></div>
+          <div class="marr">&harr;</div>
+          <div class="mbox il">IL<br><span style="font-size:9px;font-weight:400">物流/GWCS コネクタ</span></div>
+        </div>
+        <div class="mini-row">
+          <div class="mbox gwcs">GWCS<br><span style="font-size:9px;font-weight:400">店舗 POS 系卸売</span></div>
+          <div class="marr">&rarr;</div>
+          <div class="mbox core">Core<br><span style="font-size:9px;font-weight:400">売上 SoT 統合</span></div>
+        </div>
+        <div class="mini-row"><div class="mini-ok">Core が EC 卸売の完全なライフサイクルを管理</div></div>
+      </div>
+      <div class="pc-grid">
+        <div class="pros"><div class="pc-label p">&#10003; メリット</div><div class="pc-body">EC 卸売の完全管理が Core 内で完結<br>売上 SoT の一元性を維持<br>外販化時に卸売機能を提供可能<br>#11 の finance ドメインと整合</div></div>
+        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">卸出荷/返品の実装コスト発生<br>GWCS との売上突合ロジックが必要<br>取引量が少ない場合 ROI が低い</div></div>
+      </div>
+    </div>
+    <div class="opt-card b">
+      <div class="opt-label b">OPTION B</div>
+      <div class="opt-title">卸売を GWCS に一本化<br><small style="font-weight:400;font-size:11px;color:var(--muted)">（EC 卸売がゼロ/極小の場合）</small></div>
+      <div class="mini-arch">
+        <div class="mini-row">
+          <div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">EC 売上のみ（BtoC）</span></div>
+        </div>
+        <div class="mini-row">
+          <div class="mbox gwcs">GWCS<br><span style="font-size:9px;font-weight:400">全卸売管理を担当</span></div>
+          <div class="marr">&rarr;</div>
+          <div class="mbox il">IL<br><span style="font-size:9px;font-weight:400">売上データ連携</span></div>
+        </div>
+        <div class="mini-row"><div class="mini-note">Core の卸売機能を廃止。卸売は全て GWCS 側で完結</div></div>
+      </div>
+      <div class="pc-grid">
+        <div class="pros"><div class="pc-label p">&#10003; メリット</div><div class="pc-body">Core のスコープを大幅に削減<br>卸売は GWCS に集約しシンプル化<br>開発コスト・保守コストが最小</div></div>
+        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">EC 卸売が将来増えた場合に再設計<br>外販化時に卸売機能が欠落<br>売上 SoT が分散するリスク</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 04 比較表 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">04</span><span class="sec-title">比較表</span></div>
+  <table class="cmp-table">
+    <thead><tr><th style="width:18%">観点</th><th>Option A &mdash; Core に EC 卸売を残す</th><th>Option B &mdash; GWCS に一本化</th></tr></thead>
+    <tbody>
+      <tr><td class="asp">取引量が多い場合</td><td class="a">&#9678; Core で完結。BtoB の受注〜請求が自己完結</td><td class="b">&times; GWCS 経由の迂回が発生。BO 登録機能の移行コスト</td></tr>
+      <tr><td class="asp">取引量が極小の場合</td><td class="a">&triangle; 過剰投資。使われない機能を保守し続ける</td><td class="b">&#9678; 合理的。Core のスコープ削減効果が大きい</td></tr>
+      <tr><td class="asp">売上 SoT の一元性</td><td class="a">&#9678; EC 卸売上も Core が SoT。統合レポーティングが容易</td><td class="b">&triangle; 卸売上の SoT が GWCS 側に移動。突合が必要</td></tr>
+      <tr><td class="asp">外販 / SaaS 展開</td><td class="a">&#9678; BtoB 機能を他テナントにも提供可能</td><td class="b">&times; 卸売機能が Core にないため外販時に再実装</td></tr>
+      <tr><td class="asp">#11（仕入管理）との整合</td><td class="a">&#9678; 仕入〜卸売上〜請求が finance ドメインで一貫</td><td class="b">&triangle; 仕入は Core、卸売は GWCS と分断</td></tr>
+      <tr><td class="asp">消化仕入フローへの影響</td><td class="a">&#9678; 出荷時の「売上+仕入同時計上」を Core 内で処理</td><td class="b">&triangle; 同時計上ロジックの分散（Core 仕入 + GWCS 卸売上）</td></tr>
+      <tr><td class="asp">開発コスト</td><td class="a">&triangle; 卸出荷/返品 + 請求管理の実装が必要</td><td class="b">&#9678; 卸売機能の新規開発が不要</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== 05 推奨方針 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num green">05</span><span class="sec-title" style="color:var(--green)">推奨方針</span></div>
+  <div class="verdict">
+    <div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A &mdash; Core に EC 卸売を残す（条件付き）</span></div>
+    <div class="verdict-body">
+      <p><strong>前提条件:</strong> EC 経由の卸売取引量が「ゼロではない」ことが確認された場合。取引量調査の結果、完全にゼロであれば Option B を採用する。</p>
+      <p><strong>根拠&dagger;（SoT 一元性）:</strong> 現行 EFS が卸売上の SoT であり、この一元性を崩すと月次の売上突合フローが複雑化します。Core に卸売機能を残すことで、EC 売上（BtoC）と EC 卸売上（BtoB）を同一ドメインで管理できます。</p>
+      <p><strong>根拠&Dagger;（#11 との整合）:</strong> #11 で仕入管理を Core に含める方針と連動し、仕入&rarr;卸売上&rarr;月次請求の一連のフローを finance ドメイン内で完結させることで、アーキテクチャの整合性が保たれます。</p>
+      <p><strong>根拠&sect;（外販展開）:</strong> next-EFS は外販を前提とした EC システム。BtoB 卸売機能は外販先テナントにも求められる可能性が高く、Core に持たせる合理性があります。</p>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9612; TO-BE 責務分担マップ（Option A 採用時）</p>
+  <div class="scope-grid">
+    <div class="scope-box core">
+      <div class="scope-label a">EFSO Core（フルフィルメント + 売上ドメイン）</div>
+      <div class="scope-items">
+        EC 卸注文登録（BO / API）<br>
+        卸出荷指示 &rarr; IL 経由で WMS<br>
+        卸出荷/返品実績管理<br>
+        卸売上計上（出荷完了イベント駆動）<br>
+        卸売上訂正（赤伝黒伝自動生成）<br>
+        月次請求管理・請求調整・報告書
+      </div>
+    </div>
+    <div class="scope-box gwcs">
+      <div class="scope-label p">GWCS（存続確定）</div>
+      <div class="scope-items">
+        店舗 POS 系卸売実績の集約<br>
+        店舗売上/返品の GWCS &rarr; Core 通知<br>
+        配分指示・在庫予算管理<br>
+        管理会計データ供給<br>
+        <strong>&rarr; 卸売の注文/請求管理は担わない</strong>
+      </div>
+    </div>
+    <div class="scope-box il">
+      <div class="scope-label c">IL（統合レイヤー）</div>
+      <div class="scope-items">
+        Core &harr; WMS 卸出荷指示/実績<br>
+        GWCS &rarr; Core 卸実績通知<br>
+        Core &rarr; DWH 売上データ配信<br>
+        Core &rarr; 管理会計連携<br>
+        売上突合バッチ（Core &harr; GWCS）
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 06 確認事項 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">06</span><span class="sec-title">確認事項リスト</span></div>
+  <ul class="checklist">
+    <li><div class="chk-box"></div><div><span class="tag iss">#12</span><span class="chk-owner">CTO + 開発</span><div>EC 経由の卸出荷/返品の取引量を調査。過去 12 か月の件数・金額を Biprogy に確認し、「ゼロ/極小」か「一定量存在」かを判定する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#12</span><span class="chk-owner">CTO + 開発</span><div>在庫異動区分コード(071-082)の逆転可能性を efs-db/efs-bo の実装値で確認。卸(&#9318;)と外部EC(&#9319;)のコード割り当てを正確に特定する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#12</span><span class="chk-owner">CTO + 開発</span><div>Core &harr; GWCS 間の売上データ突合方式を設計。月次の卸売上整合チェックの自動化方式を IL 設計に含める</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag lnk">#11</span><span class="chk-owner">CTO + 開発</span><div>#11（仕入管理スコープ）の方針 Fix と #12 を同一セッションで判断。消化仕入の「売上+仕入同時計上」フローが卸売上にも影響するため整合確認</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#12</span><span class="chk-owner">ビジネス</span><div>外販/SaaS 展開時に BtoB 卸売機能が求められるかを確認。築地さん（WOS と外販の責任者）に方針を確認する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#12</span><span class="chk-owner">CTO + 開発</span><div>卸売上の適格請求書（インボイス）発行要件を確認。Core で発行する場合のデータモデル設計を評価</div></div></li>
+  </ul>
+</div>
+
+<!-- ===== 07 ブロッカー ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 4 項目が未解決のまま残ると、Option A/B いずれを選択するかの最終判断ができません。</p>
+  <div class="blocker-grid">
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">EC 卸売の取引量が未調査</span><span class="priority-badge critical">CRITICAL</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">EC（EFS BO）経由の卸出荷/返品件数が不明。この数値が Option A/B の選択を直接決定する最重要ファクター。</div>
+        <div class="blocker-impact">取引量なしに方針を決めると、過剰実装（量ゼロなのに卸売機能を作る）または機能欠落（量があるのに GWCS 一本化）のリスク。</div>
+        <div class="blocker-action">Biprogy に過去 12 か月の EC 卸出荷/返品の件数・金額データを依頼。2 週間以内にデータを取得する。</div>
+        <div class="blocker-owner">Owner: CTO + 開発 / 確認先: Biprogy（此松さん、長嶋 春奈さん）</div>
+      </div>
+    </div>
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">売上データ突合方式が未設計</span><span class="priority-badge high">HIGH</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">Core（EC 売上 SoT）と GWCS（店舗/卸売実績）の売上データ突合方式が未設計。月次締め時の整合チェックをどのレイヤーで実行するかが不明。</div>
+        <div class="blocker-impact">突合方式が決まらないと、Core &harr; GWCS 間の IL 設計が確定できず、FS-6（GWCS 売上連携）の要件定義が遅延する。</div>
+        <div class="blocker-action">売上突合の要件（頻度・粒度・不一致時のエスカレーション）を定義し、IL 設計に反映。</div>
+        <div class="blocker-owner">Owner: CTO + 開発</div>
+      </div>
+    </div>
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">在庫異動区分コードの逆転可能性</span><span class="priority-badge high">HIGH</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">ドキュメント上は区分&#9318;=卸、&#9319;=外部EC だが、CodeConsts では 071-072=外部EC、081-082=卸 と逆転の可能性がある。データ移行時に売上区分を誤ると財務データが破損する。</div>
+        <div class="blocker-impact">コード体系の取り違えにより、卸売上と外部 EC 売上のデータが混在し、月次決算の正確性に影響。</div>
+        <div class="blocker-action">efs-db/efs-bo の実装コードを確認し、正しいコード体系を特定。ドキュメントとの乖離があれば修正する。</div>
+        <div class="blocker-owner">Owner: 開発チーム / 確認先: Biprogy</div>
+      </div>
+    </div>
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">#11 仕入管理スコープとの連動判断</span><span class="priority-badge medium">MEDIUM</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">#11 で仕入管理を Core に含めるか GWCS に残すかの方針が卸売の処理フローに影響。消化仕入商品の場合、卸出荷時に「売上+仕入の同時計上」が発生するため、仕入側の SoT と卸売上側の SoT を同一システムに置く必要がある。</div>
+        <div class="blocker-impact">#11 と #12 を別々に判断すると、消化仕入フローが Core と GWCS に分断され、同時計上ロジックの整合性が崩れるリスク。</div>
+        <div class="blocker-action">#11 と #12 を同一の意思決定セッションで方針 Fix する。CTO がオーナーとなり判断会を設定。</div>
+        <div class="blocker-owner">Owner: CTO + 開発 / 連携: 長谷川さん、築地さん</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 08 TO-BE & NEXT ACTION ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num orange">08</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
+  <div class="tobe-intro">
+    <strong>推奨方針は「取引量調査の結果に基づき Option A（Core に EC 卸売を残す）を基本路線とする」。</strong><br>
+    ただし B-1（取引量調査）の結果が「完全ゼロ」であれば Option B に切り替える。まず取引量データの取得が最優先タスク。
+  </div>
+
+  <div class="phase-list">
+    <div class="phase">
+      <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">データ収集 &mdash; 判断に必要なファクトを揃える</span><span class="phase-time">目標: 2 週間以内</span></div>
+      <div class="phase-body">
+        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>EC 卸売取引量の調査</b><br>Biprogy（此松さん・長嶋 春奈さん）に過去 12 か月の EC 経由卸出荷/返品の件数・金額データを依頼。「月間 0 件」「月間 10 件未満」「月間 10 件以上」の 3 段階で判定する。</div><div class="action-owner">担当: CTO + 開発 / 期間: 2 週間以内</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>在庫異動区分コードの正確な特定</b><br>efs-db の CodeConsts と efs-bo の実装を突合し、卸(&#9318;)=071-072 か 081-082 かを確定。ドキュメント修正が必要であれば open-issues に登録。</div><div class="action-owner">担当: 開発チーム / 並行実施</div></div></div>
+        <div class="action-item"><span class="action-resolve">参考情報</span><div><div class="action-desc"><b>EC チームへのヒアリング</b><br>卸売注文の業務フロー（誰が BO で卸注文を登録しているか、頻度、卸先の数）を EC 運営チームに確認。取引量データの裏取りとする。</div><div class="action-owner">担当: 尻江さん / 期間: 並行実施</div></div></div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">意思決定 &mdash; #11 と #12 を同時 Fix</span><span class="phase-time">Phase 1 完了後 1 週間</span></div>
+      <div class="phase-body">
+        <div class="action-item"><span class="action-resolve">B-4 解消</span><div><div class="action-desc"><b>#11 と #12 の同時方針 Fix</b><br>Phase 1 の取引量データをインプットに、CTO がオーナーとなりアーキテクチャ判断会を開催。仕入管理（#11）と卸売責務（#12）を同一セッションで確定。<br>&bull; 取引量が「月間 10 件以上」&rarr; Option A 確定<br>&bull; 取引量が「月間 10 件未満だがゼロではない」&rarr; Option A を推奨（外販展開を考慮）<br>&bull; 取引量が「完全ゼロ」&rarr; Option B を採用</div><div class="action-owner">担当: CTO + 長谷川さん + 築地さん / 会議体: アーキテクチャ判断会</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>売上データ突合方式の設計</b><br>Option A/B いずれの場合も Core &harr; GWCS 間の売上突合は必要。突合の頻度（日次 or 月次）、粒度（明細 or 集計）、不一致時の対応フローを設計し IL 要件に組み込む。</div><div class="action-owner">担当: 開発チーム / FS-6（GWCS 売上連携）と同時設計</div></div></div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header"><span class="phase-num p3">Phase 3</span><span class="phase-title">設計着手 &mdash; 方針確定後</span><span class="phase-time">Phase 2 完了後</span></div>
+      <div class="phase-body">
+        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>卸売責務境界のドメインモデル確定</b><br>Option A の場合: Core/フルフィルメントドメインに卸出荷/返品を、Core/売上ドメインに卸売上/請求管理を配置。イベント駆動で卸出荷完了 &rarr; 卸売上計上を自動連携。<br>Option B の場合: Core の卸売関連機能を設計対象外とし、GWCS &rarr; Core への卸売上データ連携の IL 仕様のみ設計。</div><div class="action-owner">担当: 開発チーム / 成果物: 卸売ドメインモデル設計書</div></div></div>
+        <div class="action-item"><span class="action-resolve">Doc 更新</span><div><div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#12 を「決定済み」としてクローズ。to-be/ に卸売責務定義ドキュメントを作成。efs-business/mapping/ の卸出荷/返品セクションを確定ステータスに更新。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="unlock-box">
+    <div class="unlock-title">&#10003; ブロッカー全解消後に動き出せること</div>
+    <div class="unlock-items">
+      Core &harr; GWCS 売上突合バッチの IL 設計確定（FS-6 連動）<br>
+      卸売上のインボイス発行要件確定（適格請求書対応）<br>
+      消化仕入在庫の同時計上ロジック設計（#11 と統合）<br>
+      卸出荷/返品の WMS 連携 IF 仕様確定（IL/物流コネクタ）<br>
+      efso-document の to-be/ ディレクトリへのドキュメント登録
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
