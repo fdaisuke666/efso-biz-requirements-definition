@@ -6,21 +6,25 @@ World の EC フルスタック再構築（EFSO）プロジェクトにおける
 
 | # | タイトル | Owner | 推奨案 |
 |---|---------|-------|-------|
-| [#9](issue09_warehouse-location.html) | 倉庫ロケーション管理の責務境界 | CTO + 開発 | Option A |
-| [#15](issue15_inventory-transfer.html) | 移動出荷/入荷のCore管理範囲 | CTO + 開発 | Option A |
-| [#11](issue11_purchase-management.html) | 仕入管理のCoreスコープ | CTO + 開発 | Option A |
-| [#12](issue12_wholesale-boundary.html) | EC卸売とGWCS卸売の責務境界 | CTO + 開発 | Option A（条件付き） |
+| [#9](inventory/issue09_warehouse-location.html) | 倉庫ロケーション管理の責務境界 | CTO + 開発 | Option A |
+| [#15](inventory/issue15_inventory-transfer.html) | 移動出荷/入荷のCore管理範囲 | CTO + 開発 | Option A |
+| [#11](purchasing/issue11_purchase-management.html) | 仕入管理のCoreスコープ | CTO + 開発 | Option A |
+| [#12](inventory/issue12_wholesale-boundary.html) | EC卸売とGWCS卸売の責務境界 | CTO + 開発 | Option A（条件付き） |
 
 ## 公開URL（GitHub Pages）
 
 https://fdaisuke666.github.io/efso-biz-requirements-definition/
 
-## ファイル構成
+## ディレクトリ構成
 
-| ファイル | 内容 |
-|---------|------|
-| `index.html` | トップページ（ドキュメント一覧） |
-| `issue09_warehouse-location.html` | #9 倉庫ロケーション管理の責務境界 |
-| `issue15_inventory-transfer.html` | #15 移動出荷/入荷のCore管理範囲 |
-| `issue11_purchase-management.html` | #11 仕入管理のCoreスコープ |
-| `issue12_wholesale-boundary.html` | #12 EC卸売とGWCS卸売の責務境界 |
+```
+efso-biz-requirements-definition/
+├── README.md                          # 本ファイル
+├── index.html                         # トップページ（ドキュメント一覧）
+├── inventory/                         # 在庫系 Epic
+│   ├── issue09_warehouse-location.html   # #9 倉庫ロケーション管理の責務境界
+│   ├── issue12_wholesale-boundary.html   # #12 EC卸売とGWCS卸売の責務境界
+│   └── issue15_inventory-transfer.html   # #15 移動出荷/入荷のCore管理範囲
+└── purchasing/                        # 仕入れ系 Epic
+    └── issue11_purchase-management.html   # #11 仕入管理のCoreスコープ
+```
