@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#9 倉庫ロケーション管理の責務境界 — EFSO</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#f4f5f7; --surface:#fff; --surface2:#f8f9fb; --border:#e2e6ea;
+  --text:#1a202c; --muted:#64748b;
+  --blue:#2563eb; --green:#059669; --amber:#d97706; --red:#dc2626;
+  --purple:#7c3aed; --teal:#0d9488; --orange:#ea580c; --cyan:#0891b2;
+  --pad:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.7;}
+.back-link{display:flex;align-items:center;gap:6px;padding:10px var(--pad);font-size:12px;color:var(--muted);text-decoration:none;background:var(--surface);border-bottom:1px solid var(--border);}
+.back-link:hover{color:var(--amber);}
+.cover{background:var(--surface);border-bottom:1px solid var(--border);padding:clamp(32px,5vw,52px) var(--pad) clamp(24px,4vw,40px);position:relative;}
+.cover::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),#fbbf24);}
+.cover-tag{display:inline-flex;align-items:center;gap:6px;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:3px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--amber);letter-spacing:.05em;margin-bottom:16px;}
+.cover-tag::before{content:'\25C6';font-size:6px;}
+.cover h1{font-size:clamp(22px,4vw,30px);font-weight:700;line-height:1.22;margin-bottom:8px;}
+.cover h1 em{color:var(--amber);font-style:normal;}
+.cover-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.cover-meta{display:flex;gap:20px;flex-wrap:wrap;}
+.meta-item{display:flex;flex-direction:column;gap:2px;}
+.meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.meta-value{font-size:13px;color:var(--text);font-weight:500;}
+.section{padding:clamp(24px,4vw,40px) var(--pad);border-bottom:1px solid var(--border);background:var(--surface);}
+.section:nth-child(even){background:var(--surface2);}
+.section:last-child{border-bottom:none;}
+.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.sec-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#fff;border-radius:3px;padding:2px 8px;font-weight:500;}
+.sec-num.amber{background:var(--amber);} .sec-num.green{background:var(--green);} .sec-num.red{background:var(--red);} .sec-num.orange{background:var(--orange);} .sec-num.blue{background:var(--blue);}
+.sec-title{font-size:17px;font-weight:700;}
+.glossary-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.glossary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;position:relative;}
+.glossary-card.a{border-top:3px solid var(--amber);}
+.glossary-card.b{border-top:3px solid var(--blue);}
+.glossary-card.c{border-top:3px solid var(--cyan);}
+.glossary-card.d{border-top:3px solid var(--purple);}
+.glossary-term{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;margin-bottom:4px;}
+.glossary-term.a{color:var(--amber);} .glossary-term.b{color:var(--blue);} .glossary-term.c{color:var(--cyan);} .glossary-term.d{color:var(--purple);}
+.glossary-def{font-size:13px;color:var(--text);line-height:1.8;margin-bottom:6px;}
+.glossary-example{font-size:11px;color:var(--muted);background:var(--surface2);border-radius:5px;padding:6px 10px;line-height:1.7;}
+.glossary-example strong{color:var(--text);}
+.sys-grid{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;gap:0;align-items:center;margin-bottom:18px;}
+.sys-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.sys-box.core{border-top:3px solid var(--amber);background:#fffbeb;}
+.sys-box.wms{border-top:3px solid var(--cyan);background:#ecfeff;}
+.sys-box.gwcs{border-top:3px solid var(--purple);background:#f5f3ff;}
+.sys-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;}
+.sys-name.a{color:var(--amber);} .sys-name.c{color:var(--cyan);} .sys-name.g{color:var(--muted);}
+.sys-fn{font-size:12px;color:var(--muted);line-height:1.9;}
+.sys-fn span{display:block;padding:2px 0;border-bottom:1px solid var(--border);}
+.sys-fn span:last-child{border-bottom:none;}
+.sys-fn span.hi{color:var(--amber);font-weight:500;}
+.arr-col{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 2px;}
+.arr-label{font-size:9px;color:var(--muted);text-align:center;line-height:1.4;}
+.issue-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+.issue-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.issue-num{font-size:10px;color:var(--amber);font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:5px;}
+.issue-title{font-size:13px;font-weight:700;margin-bottom:7px;}
+.issue-body{font-size:12px;color:var(--muted);line-height:1.8;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.opt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;position:relative;}
+.opt-card.a{border-top:3px solid var(--green);} .opt-card.b{border-top:3px solid var(--purple);}
+.opt-card.recommended::after{content:'\63A8\5968';position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;}
+.opt-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:5px;}
+.opt-label.a{color:var(--green);} .opt-label.b{color:var(--purple);}
+.opt-title{font-size:13px;font-weight:700;margin-bottom:10px;line-height:1.4;}
+.mini-arch{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px;margin-bottom:10px;}
+.mini-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.mini-row:last-child{margin-bottom:0;}
+.mbox{flex:1;border-radius:5px;padding:5px 9px;font-size:11px;font-weight:600;text-align:center;}
+.mbox.core{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.mbox.wms{background:#ecfeff;border:1px solid #a5f3fc;color:#0e7490;}
+.mbox.il{background:#ecfeff;border:1px solid #a5f3fc;color:#0e7490;}
+.mbox.gwcs{background:#f5f3ff;border:1px solid #ddd6fe;color:#6d28d9;}
+.marr{font-size:12px;color:var(--muted);flex-shrink:0;}
+.mini-note{font-size:10px;color:var(--red);flex:1;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;padding:3px 8px;}
+.mini-ok{font-size:10px;color:var(--green);flex:1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:3px 8px;}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.pros{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:9px 11px;}
+.cons{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:9px 11px;}
+.pc-label{font-size:10px;font-weight:700;margin-bottom:3px;}
+.pc-label.p{color:var(--green);} .pc-label.c{color:var(--red);}
+.pc-body{font-size:11px;color:var(--muted);line-height:1.9;}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px;}
+.cmp-table th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
+.cmp-table td{padding:10px 13px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:hover td{background:var(--surface2);}
+.cmp-table td.asp{font-weight:600;color:var(--text);font-size:12px;width:18%;}
+.cmp-table td.a{color:#047857;} .cmp-table td.b{color:#6d28d9;}
+.verdict{background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:20px 24px;margin-bottom:16px;}
+.verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.verdict-badge{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 12px;border-radius:20px;}
+.verdict-title{font-size:15px;font-weight:700;}
+.verdict-body{font-size:13px;color:#374151;line-height:1.9;}
+.verdict-body strong{color:var(--text);}
+.verdict-body p{margin-bottom:8px;}
+.verdict-body p:last-child{margin-bottom:0;}
+.scope-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.scope-box{border-radius:8px;padding:13px 15px;}
+.scope-box.core{background:#fffbeb;border:1px solid #fde68a;}
+.scope-box.il{background:#ecfeff;border:1px solid #a5f3fc;}
+.scope-box.wms{background:#ecfeff;border:1px solid #a5f3fc;}
+.scope-box.gwcs{background:#f5f3ff;border:1px solid #ddd6fe;}
+.scope-label{font-size:11px;font-weight:700;margin-bottom:7px;}
+.scope-label.a{color:var(--amber);} .scope-label.c{color:var(--cyan);} .scope-label.g{color:var(--muted);} .scope-label.p{color:var(--purple);}
+.checklist{list-style:none;}
+.checklist li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;}
+.checklist li:last-child{border-bottom:none;}
+.chk-box{width:16px;height:16px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:3px;background:#fff;}
+.chk-owner{font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;white-space:nowrap;margin-top:2px;}
+.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:3px;margin-right:4px;}
+.tag.iss{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.tag.lnk{background:#f5f3ff;color:var(--purple);border:1px solid #ddd6fe;}
+.note-bar{background:#fffbeb;border-left:3px solid var(--amber);padding:10px 13px;border-radius:0 6px 6px 0;font-size:12px;color:#92400e;margin-top:12px;}
+.note-bar strong{color:#78350f;}
+.blocker-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.blocker-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.blocker-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:#fef2f2;flex-wrap:wrap;}
+.blocker-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#fff;background:var(--red);padding:2px 8px;border-radius:3px;}
+.blocker-title{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap;}
+.priority-badge.critical{background:#fee2e2;color:var(--red);border:1px solid #fca5a5;}
+.priority-badge.high{background:#fff7ed;color:var(--orange);border:1px solid #fed7aa;}
+.priority-badge.medium{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.blocker-body{padding:13px 15px;}
+.blocker-why{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:9px;}
+.blocker-impact{font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 11px;margin-bottom:9px;color:#7f1d1d;}
+.blocker-impact::before{content:'\26A0 \653E\7F6E\30EA\30B9\30AF: ';font-weight:700;}
+.blocker-action{display:flex;align-items:flex-start;gap:7px;font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:7px 11px;color:#1e3a8a;}
+.blocker-action::before{content:'\2192';font-weight:700;flex-shrink:0;}
+.blocker-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:6px;}
+.tobe-intro{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:18px;padding:13px 17px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;}
+.tobe-intro strong{color:var(--text);}
+.phase-list{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+.phase{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
+.phase-header{display:flex;align-items:center;gap:12px;padding:11px 17px;border-bottom:1px solid var(--border);}
+.phase-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#fff;padding:2px 10px;border-radius:3px;}
+.phase-num.p1{background:var(--red);} .phase-num.p2{background:var(--amber);} .phase-num.p3{background:var(--green);}
+.phase-title{font-size:14px;font-weight:700;}
+.phase-time{margin-left:auto;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 8px;}
+.phase-body{padding:12px 17px;}
+.action-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.action-item:last-child{border-bottom:none;}
+.action-resolve{font-size:10px;font-family:'IBM Plex Mono',monospace;background:#fee2e2;color:var(--red);border:1px solid #fca5a5;padding:2px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.action-desc{flex:1;font-size:12px;color:var(--text);line-height:1.7;}
+.action-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:3px;}
+.unlock-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:13px 17px;}
+.unlock-title{font-size:12px;font-weight:700;color:var(--green);margin-bottom:7px;}
+.unlock-items{font-size:12px;color:var(--muted);line-height:2;}
+.resp-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px;}
+.resp-table th{background:var(--surface2);padding:8px 12px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
+.resp-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+.resp-table tr:hover td{background:var(--surface2);}
+.badge-efs{display:inline-block;font-size:10px;font-weight:700;background:#fffbeb;color:var(--amber);border:1px solid #fde68a;padding:1px 6px;border-radius:3px;}
+.badge-wms{display:inline-block;font-size:10px;font-weight:700;background:#ecfeff;color:var(--cyan);border:1px solid #a5f3fc;padding:1px 6px;border-radius:3px;}
+.badge-il{display:inline-block;font-size:10px;font-weight:700;background:#dbeafe;color:var(--blue);border:1px solid #93c5fd;padding:1px 6px;border-radius:3px;}
+.dual-table{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:18px;}
+.dual-table-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.api-scatter{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px;}
+.api-chip{font-size:10px;font-family:'IBM Plex Mono',monospace;padding:5px 8px;border-radius:5px;text-align:center;line-height:1.4;}
+.api-chip.gw{background:#ecfeff;border:1px solid #a5f3fc;color:var(--cyan);}
+.api-chip.v{background:#f5f3ff;border:1px solid #ddd6fe;color:var(--purple);}
+@media(max-width:768px){
+  .glossary-grid,.issue-grid,.options-grid,.blocker-grid,.scope-grid,.sys-grid{grid-template-columns:1fr;}
+  .api-scatter{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<a class="back-link" href="../index.html">&larr; ドキュメント一覧に戻る</a>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <div class="cover-tag">EFSO アーキテクチャ判断資料</div>
+  <h1><em>#9</em> 倉庫ロケーション管理の責務境界</h1>
+  <p class="cover-sub">新システム（EFSO）で倉庫の在庫管理を「どこまで Core が持つか、どこから WMS に任せるか」を決める必要がある</p>
+  <div class="cover-meta">
+    <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#9 / #15（移動出荷/入荷）</span></div>
+    <div class="meta-item"><span class="meta-label">Owner</span><span class="meta-value">CTO + 開発</span></div>
+    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">未着手 &rarr; WMS 棚卸機能を確認</span></div>
+    <div class="meta-item"><span class="meta-label">影響ドメイン</span><span class="meta-value">共通マスタ管理、在庫管理</span></div>
+    <div class="meta-item"><span class="meta-label">優先度</span><span class="meta-value" style="color:var(--red);font-weight:700;">高</span></div>
+  </div>
+</div>
+
+<!-- ===== 01 AS-IS ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">01</span><span class="sec-title" style="color:var(--amber)">AS-IS &mdash; 現行の在庫管理構成</span></div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:14px;font-weight:600;">&#9632; 3 つのシステムの役割分担</p>
+  <div class="sys-grid">
+    <div class="sys-box core">
+      <div class="sys-name a">EFS（現行 EC 基盤）</div>
+      <div class="sys-fn">
+        <span class="hi">全社の論理在庫を一元管理（SoT）</span>
+        <span>SKU &times; ロケーション &times; 属性で在庫保持</span>
+        <span>引当（注文に対して在庫を確保）</span>
+        <span>在庫 Ctrl（EC 向け配分管理）</span>
+        <span class="hi">3 インスタンス（DS / WOS / FCL）で分散</span>
+      </div>
+    </div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--cyan)">&hArr;</div><div class="arr-label" style="color:var(--cyan)">GW 経由<br>10 API</div></div>
+    <div class="sys-box wms">
+      <div class="sys-name c">WMS（倉庫管理）</div>
+      <div class="sys-fn">
+        <span class="hi">倉庫内の物理在庫を管理</span>
+        <span>入荷・出荷・棚卸の実行</span>
+        <span>ロケーション（棚番号）単位の在庫追跡</span>
+        <span>入出荷実績を EFS に報告</span>
+        <span>差異（ズレ）を検知して EFS に報告</span>
+      </div>
+    </div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--muted)">&hArr;</div><div class="arr-label">GWCS<br>経由</div></div>
+    <div class="sys-box gwcs">
+      <div class="sys-name" style="color:var(--purple)">GWCS / 店舗</div>
+      <div class="sys-fn">
+        <span>店舗在庫の管理</span>
+        <span>店舗棚卸の実行</span>
+        <span>POS 売上 &rarr; 在庫反映</span>
+        <span>店舗間移動指示</span>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 在庫テーブルの二重管理（現行の技術的な問題）</p>
+  <div class="dual-table">
+    <div class="dual-table-title">なぜ同じ「在庫」なのに 2 つのテーブルがあるのか？</div>
+    <table class="resp-table" style="margin-bottom:10px;">
+      <thead><tr><th>場所区分</th><th>種類</th><th>管理テーブル</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td>物流（倉庫）</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>標準の在庫テーブル</td></tr>
+        <tr><td>02</td><td>本部</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>同上</td></tr>
+        <tr><td>03</td><td>店舗</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>同上</td></tr>
+        <tr><td>04</td><td>外部 EC</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>同上</td></tr>
+        <tr style="background:#ecfeff"><td style="font-weight:700;color:var(--cyan)">05</td><td style="font-weight:700;color:var(--cyan)">GW 管理</td><td><span class="badge-wms">GW_LOCATION_STOCK</span></td><td style="color:var(--cyan);font-weight:500">WMS Gateway 専用の別テーブル</td></tr>
+      </tbody>
+    </table>
+    <div class="note-bar"><strong>問題:</strong> 場所区分 05（GW 管理）だけが別テーブルで管理されている。テーブル構造はほぼ同じだが、GW 版は WMS 連携エラー追跡用のカラムが追加されている。TO-BE でこの二重構造を引き継ぐか一本化するかの判断が必要。</div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 差異報告 API の乱立（計 10 エンドポイント）</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">WMS が「倉庫の現物と EFS の帳簿が合っていない」と検知した場合に使う通信口（API）が <strong>10 個も並存</strong>している。</p>
+  <div class="api-scatter">
+    <div class="api-chip gw">GW v1</div>
+    <div class="api-chip gw">GW v1-2</div>
+    <div class="api-chip gw">GW v2</div>
+    <div class="api-chip gw">GW v2-2</div>
+    <div class="api-chip gw">GW v3</div>
+    <div class="api-chip gw">GW v3-2</div>
+    <div class="api-chip gw">GW v123</div>
+    <div class="api-chip v">差異報告</div>
+    <div class="api-chip v">差異報告-2</div>
+    <div class="api-chip v">差異報告-3</div>
+  </div>
+  <table class="resp-table">
+    <thead><tr><th>系統</th><th>エンドポイント数</th><th>特徴</th><th>なぜ分かれているか</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600"><span class="badge-wms">GW 系</span></td><td>7 個</td><td>WMS Gateway を経由。GW 専用テーブルを使用</td><td>Gateway オプション導入時に追加された別系統</td></tr>
+      <tr><td style="font-weight:600"><span class="badge-efs">非 GW 系</span></td><td>3 個</td><td>WMS から直接 EFS に報告</td><td>商品の識別方法が異なるバリエーション（SKU / 別キー）</td></tr>
+    </tbody>
+  </table>
+  <div class="note-bar"><strong>注意:</strong> v1/v2/v3 は倉庫の番号（茜浜/流山/舞浜）の違いでは<strong>ない</strong>。商品を特定するキーの違い（SKU vs 別の識別キー）によるバリエーション。TO-BE の IL でどの API を標準とするかが未決定（OI-E02）。</div>
+</div>
+
+<!-- ===== 02 論点整理 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">02</span><span class="sec-title">論点の整理</span></div>
+  <div class="issue-grid">
+    <div class="issue-box">
+      <div class="issue-num">論点 A</div>
+      <div class="issue-title">倉庫在庫の管理レベル</div>
+      <div class="issue-body">新システム（Core）が「場所レベル」の在庫だけ管理するか、「棚番号（ロケーション）レベル」まで管理するか。前者なら WMS に棚卸を任せ、後者なら Core 側でも棚卸結果を保持する。</div>
+    </div>
+    <div class="issue-box">
+      <div class="issue-num">論点 B</div>
+      <div class="issue-title">在庫テーブルの統合</div>
+      <div class="issue-body">現行の 2 テーブル構造（LOCATION_STOCK + GW_LOCATION_STOCK）を TO-BE で 1 テーブルに統合するか、GW 連携の特殊性を残して分離を維持するか。</div>
+    </div>
+    <div class="issue-box">
+      <div class="issue-num">論点 C</div>
+      <div class="issue-title">差異報告の標準化</div>
+      <div class="issue-body">10 個の差異報告 API を IL で何本に標準化するか。GW 系と非 GW 系を統合するか、商品識別キーの違い（v1/v2/v3）をどう吸収するか。</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 3 インスタンス問題の影響</p>
+  <table class="resp-table">
+    <thead><tr><th>インスタンス</th><th>環境</th><th>役割</th><th>TO-BE での扱い</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">DS</td><td>Data Source</td><td>データ配信元</td><td rowspan="3" style="color:var(--amber);font-weight:500">シングルインスタンスに統合する方向で検討中。ただし統合方針が未決定のため、3 インスタンスのどれが在庫の SoT を持つかが曖昧なまま。</td></tr>
+      <tr><td style="font-weight:600">EFS-WOS</td><td>World Online Store</td><td>自社 EC の在庫管理</td></tr>
+      <tr><td style="font-weight:600">EFS-FCL</td><td>Fashion Co-Lab</td><td>モール出店の在庫管理</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== 03 選択肢 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">03</span><span class="sec-title">選択肢の比較</span></div>
+  <div class="options-grid">
+    <div class="opt-card a recommended">
+      <div class="opt-label a">OPTION A</div>
+      <div class="opt-title">Core = 論理在庫（場所レベル）<br>WMS = 物理在庫（ロケーションレベル）<br><small style="font-weight:400;font-size:11px;color:var(--muted)">責務を明確に分離</small></div>
+      <div class="mini-arch">
+        <div class="mini-row">
+          <div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">論理在庫 SoT<br>場所レベル管理<br>引当・在庫 Ctrl</span></div>
+          <div class="marr">&harr;</div>
+          <div class="mbox il">IL<br><span style="font-size:9px;font-weight:400">標準化 API<br>差異報告統合</span></div>
+          <div class="marr">&harr;</div>
+          <div class="mbox wms">WMS<br><span style="font-size:9px;font-weight:400">物理在庫管理<br>棚卸・入出荷実行</span></div>
+        </div>
+        <div class="mini-row"><div class="mini-ok">棚卸は WMS 側の責務。Core は結果（差異）を受け取るだけ</div></div>
+      </div>
+      <div class="pc-grid">
+        <div class="pros"><div class="pc-label p">&#10003; メリット</div><div class="pc-body">責務が明確（Core は帳簿、WMS は現場）<br>Core の複雑度を抑制<br>WMS 側の棚卸機能をフル活用<br>GW テーブルの二重構造を解消可能</div></div>
+        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">物理在庫の詳細を Core で即座に参照不可<br>WMS 棚卸機能の完成度に依存<br>差異報告 API の標準化設計が必要</div></div>
+      </div>
+    </div>
+    <div class="opt-card b">
+      <div class="opt-label b">OPTION B</div>
+      <div class="opt-title">Core = 論理 + 物理の両方を管理<br>WMS = 出荷実行のみ<br><small style="font-weight:400;font-size:11px;color:var(--muted)">Core に集約</small></div>
+      <div class="mini-arch">
+        <div class="mini-row">
+          <div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">論理在庫 + 物理在庫<br>ロケーション管理<br>棚卸管理</span></div>
+          <div class="marr">&rarr;</div>
+          <div class="mbox wms">WMS<br><span style="font-size:9px;font-weight:400">出荷実行のみ</span></div>
+        </div>
+        <div class="mini-row"><div class="mini-note">Core が棚卸も含め全在庫を管理。WMS の役割が限定的に</div></div>
+      </div>
+      <div class="pc-grid">
+        <div class="pros"><div class="pc-label p">&#10003; メリット</div><div class="pc-body">在庫データが Core に完全集約<br>リアルタイムで物理在庫も参照可能<br>WMS への依存度が低下</div></div>
+        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">Core の複雑度が大幅に増加<br>棚卸ロジックを Core に新規実装<br>WMS の既存棚卸機能が無駄に<br>現行 GW テーブルの二重管理を引き継ぐリスク</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 04 比較表 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">04</span><span class="sec-title">比較表</span></div>
+  <table class="cmp-table">
+    <thead><tr><th style="width:18%">観点</th><th>Option A &mdash; 責務分離</th><th>Option B &mdash; Core 集約</th></tr></thead>
+    <tbody>
+      <tr><td class="asp">Core の複雑度</td><td class="a">&compfn; 論理在庫に集中。場所レベルで管理</td><td class="b">&times; 物理在庫+ロケーション+棚卸を全て抱える</td></tr>
+      <tr><td class="asp">棚卸の実行主体</td><td class="a">&compfn; WMS の既存機能を活用</td><td class="b">&triangle; Core に棚卸ロジックを新規実装</td></tr>
+      <tr><td class="asp">在庫の可視性</td><td class="a">&triangle; 物理在庫の詳細は WMS に問い合わせ</td><td class="b">&compfn; Core でリアルタイム参照可能</td></tr>
+      <tr><td class="asp">テーブル二重管理</td><td class="a">&compfn; GW テーブルを廃止し IL 経由に統一</td><td class="b">&times; 二重管理が残る可能性</td></tr>
+      <tr><td class="asp">差異報告 API</td><td class="a">&compfn; IL で標準化し 10 → 1〜2 本に削減</td><td class="b">&triangle; Core が全 API を直接処理する複雑さ</td></tr>
+      <tr><td class="asp">WMS 変更時の影響</td><td class="a">&compfn; IL が吸収。Core への影響なし</td><td class="b">&times; Core の物理在庫ロジックに直接影響</td></tr>
+      <tr><td class="asp">開発コスト</td><td class="a">&compfn; IL の差異報告標準化のみ</td><td class="b">&times; 棚卸 + ロケーション管理の新規開発</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== 05 推奨方針 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num green">05</span><span class="sec-title" style="color:var(--green)">推奨方針</span></div>
+  <div class="verdict">
+    <div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A &mdash; 責務分離（Core = 論理在庫、WMS = 物理在庫）</span></div>
+    <div class="verdict-body">
+      <p><strong>前提条件:</strong> WMS 側に棚卸機能が十分に備わっていること。棚卸結果を IL 経由で Core に連携できることが確認された場合。</p>
+      <p><strong>根拠&dagger;（責務の明確化）:</strong> 「帳簿は Core、現場は WMS」と明確に分けることで、Core のスコープを抑制し保守性を確保します。現行 EFS でも論理在庫の SoT は EFS 側であり、この原則を踏襲します。</p>
+      <p><strong>根拠&Dagger;（二重管理の解消）:</strong> GW テーブル（GW_LOCATION_STOCK）を廃止し、WMS との連携を IL 経由に一本化することで、現行の 2 テーブル構造を解消できます。</p>
+      <p><strong>根拠&sect;（差異報告の標準化）:</strong> 10 個の差異報告 API を IL の物流コネクタ（IL-5）で 1〜2 本に標準化します。商品識別キーの違いは IL 側のデータ変換で吸収します。</p>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; TO-BE 責務分担マップ（Option A 採用時）</p>
+  <div class="scope-grid">
+    <div class="scope-box core">
+      <div class="scope-label a">EFSO Core（シングルインスタンス）</div>
+      <div class="scope-items">
+        全社の論理在庫 SoT（場所レベル）<br>
+        引当管理（注文 &rarr; 在庫確保）<br>
+        在庫 Ctrl（EC 向け配分）<br>
+        棚卸差異の受領 &amp; 帳簿反映<br>
+        <strong>&rarr; ロケーション単位の管理は持たない</strong>
+      </div>
+    </div>
+    <div class="scope-box il">
+      <div class="scope-label c">IL（統合レイヤー）</div>
+      <div class="scope-items">
+        IL-5: 物流コネクタ<br>
+        差異報告 API の標準化（10 &rarr; 1〜2 本）<br>
+        入出荷実績の変換・ルーティング<br>
+        商品識別キーの統一変換<br>
+        Core &harr; WMS 間のメッセージ監視
+      </div>
+    </div>
+    <div class="scope-box wms">
+      <div class="scope-label c">WMS（倉庫管理）</div>
+      <div class="scope-items">
+        物理在庫管理（ロケーション単位）<br>
+        入荷・出荷の実行<br>
+        棚卸の実行 &amp; 差異検知<br>
+        IL 経由で Core に報告<br>
+        <strong>&rarr; 棚卸の主体は WMS</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 06 確認事項 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">06</span><span class="sec-title">確認事項リスト</span></div>
+  <ul class="checklist">
+    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">CTO + 開発</span><div>WMS 側の棚卸機能の完成度を確認。棚卸結果を API で取得できるか、手動集計が必要かを Biprogy に確認する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">CTO + 開発</span><div>3 インスタンス（DS / WOS / FCL）の統合方針を確定。シングルインスタンスに移行するタイムラインとデータ移行計画を策定する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">開発</span><div>差異報告 API 10 本の業務ロジック差分を調査。GW 系 7 本と非 GW 系 3 本で処理が異なる部分を特定し、IL での標準化設計に必要な要件を整理する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">開発</span><div>GW_LOCATION_STOCK テーブルの利用実態を調査。場所区分 05 に紐づく在庫レコード数と GW 専用カラムの使用頻度を確認し、テーブル統合の影響を見積もる</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag lnk">#15</span><span class="chk-owner">CTO + 開発</span><div>#15（移動出荷/入荷の Core 管理範囲）との整合確認。移動指示を Core が発行するか WMS に任せるかは #9 の責務境界に依存する</div></div></li>
+  </ul>
+</div>
+
+<!-- ===== 07 ブロッカー ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 4 項目が未解決のまま残ると、Option A/B いずれを選択するかの最終判断ができません。</p>
+  <div class="blocker-grid">
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">WMS 棚卸機能の完成度が不明</span><span class="priority-badge critical">CRITICAL</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">Option A は WMS の棚卸機能に依存する。WMS が棚卸結果を API で提供できるか、手動集計が前提かが不明。機能が不足していれば Option A は採用できない。</div>
+        <div class="blocker-impact">WMS 棚卸機能の実態を確認せずに Option A を採用すると、棚卸ができない状態が発生する。期末在庫の正確性に直結する財務リスク。</div>
+        <div class="blocker-action">Biprogy に WMS の棚卸機能仕様（対応範囲・API 有無・制約）を確認依頼。2 週間以内にデータを取得する。</div>
+        <div class="blocker-owner">Owner: CTO + 開発 / 確認先: Biprogy</div>
+      </div>
+    </div>
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">3 インスタンスの統合方針が未決定</span><span class="priority-badge critical">CRITICAL</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">DS / WOS / FCL の 3 インスタンスのうち、どれが在庫の SoT（正本）を持つかが曖昧。統合するのか、併存するのか、移行順序はどうするかが未決定。</div>
+        <div class="blocker-impact">SoT が曖昧なまま設計を進めると、在庫データの不整合が発生し、EC での在庫表示やモール連携に影響。「どの数字が正しいのか」が誰にもわからない状態になる。</div>
+        <div class="blocker-action">CTO 判断でシングルインスタンス移行の方針と移行タイムラインを確定。#18（データモデル移行計画）と連動して決定する。</div>
+        <div class="blocker-owner">Owner: CTO / 関連: #18（データモデル移行）</div>
+      </div>
+    </div>
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">差異報告 API の業務ロジックが未解明</span><span class="priority-badge high">HIGH</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">10 個の差異報告 API のうち、業務ロジック（何がトリガーか、しきい値はいくつか、自動調整か手動か）がドキュメント化されていない。IL で標準化するにも「何を標準にするか」の根拠がない。</div>
+        <div class="blocker-impact">業務ロジック不明のまま IL 設計を進めると、標準化 API が既存業務をカバーしきれず、移行後に差異検知漏れが発生するリスク。</div>
+        <div class="blocker-action">Biprogy に 10 API の業務ロジック差分（トリガー条件・しきい値・調整方法）を確認依頼。並行で efs-api swagger 定義の突合調査を実施。</div>
+        <div class="blocker-owner">Owner: 開発 / 確認先: Biprogy（OI-E02）</div>
+      </div>
+    </div>
+    <div class="blocker-card">
+      <div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">GW テーブル統合の影響範囲が未調査</span><span class="priority-badge medium">MEDIUM</span></div>
+      <div class="blocker-body">
+        <div class="blocker-why">GW_LOCATION_STOCK を LOCATION_STOCK に統合する場合の影響範囲（参照しているバッチ・API・画面の数）が未調査。統合コストが見積もれない。</div>
+        <div class="blocker-impact">影響範囲を把握せずに統合を進めると、移行時に想定外のバッチ障害や在庫不整合が発生するリスク。</div>
+        <div class="blocker-action">efs-db / efs-bo / efs-batch-web で GW_LOCATION_STOCK を参照している箇所を網羅的に洗い出し、統合コストを見積もる。</div>
+        <div class="blocker-owner">Owner: 開発</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 08 TO-BE & NEXT ACTION ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num orange">08</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
+  <div class="tobe-intro">
+    <strong>推奨方針は「Option A（責務分離: Core = 論理在庫、WMS = 物理在庫）を基本路線とする」。</strong><br>
+    ただし B-1（WMS 棚卸機能の確認）の結果、WMS の棚卸機能が不十分であれば Option B を再検討する。まず WMS 棚卸機能の確認が最優先タスク。
+  </div>
+
+  <div class="phase-list">
+    <div class="phase">
+      <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">調査 &mdash; 判断に必要なファクトを揃える</span><span class="phase-time">目標: 2 週間以内</span></div>
+      <div class="phase-body">
+        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>WMS 棚卸機能の仕様確認</b><br>Biprogy に WMS の棚卸機能仕様（対応範囲・API 有無・制約）を確認。「API で棚卸結果を取得可能か」「手動集計が前提か」を判定する。</div><div class="action-owner">担当: CTO + 開発 / 期間: 2 週間以内</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>差異報告 API 10 本の業務ロジック調査</b><br>Biprogy に GW 系 7 本 + 非 GW 系 3 本の差分（トリガー条件・しきい値・自動調整 vs 手動調整）を確認。並行で efs-api swagger 定義を突合する。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-4 解消</span><div><div class="action-desc"><b>GW テーブルの利用実態調査</b><br>GW_LOCATION_STOCK を参照しているバッチ・API・画面を efs-db/efs-bo/efs-batch-web で洗い出し。統合コストの概算を算出する。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">意思決定 &mdash; #9 と #15 を同時 Fix</span><span class="phase-time">Phase 1 完了後 1 週間</span></div>
+      <div class="phase-body">
+        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>インスタンス統合方針の確定</b><br>Phase 1 の調査結果をインプットに、CTO がオーナーとなり方針を確定。3 インスタンス &rarr; シングルインスタンスへの移行タイムラインを策定。#18（データモデル移行計画）と連動。</div><div class="action-owner">担当: CTO / 会議体: アーキテクチャ判断会</div></div></div>
+        <div class="action-item"><span class="action-resolve">連動判断</span><div><div class="action-desc"><b>#9 と #15 の同時方針 Fix</b><br>#9（倉庫ロケーション管理）と #15（移動出荷/入荷の Core 管理範囲）は相互依存。同一セッションで確定する。<br>&bull; WMS 棚卸が「API 取得可能」&rarr; Option A 確定<br>&bull; WMS 棚卸が「手動集計のみ」&rarr; Option A を基本としつつ棚卸差異の取込方式を別途設計<br>&bull; WMS 棚卸が「機能なし」&rarr; Option B を再検討</div><div class="action-owner">担当: CTO + 開発 / 会議体: アーキテクチャ判断会</div></div></div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header"><span class="phase-num p3">Phase 3</span><span class="phase-title">設計着手 &mdash; 方針確定後</span><span class="phase-time">Phase 2 完了後</span></div>
+      <div class="phase-body">
+        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>IL 物流コネクタ（IL-5）の差異報告標準化設計</b><br>10 API &rarr; 1〜2 本に標準化。商品識別キーの変換ルール、GW 系と非 GW 系の統合方式を IL 設計に反映。</div><div class="action-owner">担当: 開発 / 成果物: IL-5 差異報告 IF 仕様書</div></div></div>
+        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>在庫データモデルの TO-BE 設計</b><br>GW テーブル統合の可否を反映し、EFSO Core の在庫テーブル構造を確定。シングルインスタンス前提の在庫階層を設計する。</div><div class="action-owner">担当: 開発 / 成果物: 在庫ドメインモデル設計書</div></div></div>
+        <div class="action-item"><span class="action-resolve">Doc 更新</span><div><div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#9 を「決定済み」としてクローズ。to-be/ に在庫責務定義ドキュメントを作成。efs-business/mapping/ の在庫管理セクションを確定ステータスに更新。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="unlock-box">
+    <div class="unlock-title">&#10003; ブロッカー全解消後に動き出せること</div>
+    <div class="unlock-items">
+      IL-5（物流コネクタ）の差異報告 API 標準化設計<br>
+      EFSO Core の在庫テーブル TO-BE 設計（GW 統合 or 分離の確定）<br>
+      シングルインスタンス移行のデータ移行計画策定<br>
+      WMS &harr; Core 間の棚卸連携 IF 仕様確定<br>
+      #15（移動出荷/入荷）の Core 管理範囲確定<br>
+      efso-document の to-be/ ディレクトリへのドキュメント登録
+    </div>
+  </div>
+</div>
+
+<!-- ===== 09 用語解説 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num blue">09</span><span class="sec-title" style="color:var(--blue)">補足 &mdash; 用語解説</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">本資料に登場する専門用語を「たとえ」付きで解説します。</p>
+
+  <div class="glossary-grid">
+    <div class="glossary-card a">
+      <div class="glossary-term a">EFS インスタンス</div>
+      <div class="glossary-def">同じ EFS システムの<strong>別々のコピー（別環境）</strong>のこと。現行 EFS は 3 つの独立環境に分かれている。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 同じ設計図で建てた 3 棟の別々のビル。見た目は同じだが、入居者（データ）は別々。<br><strong>3 つのインスタンス:</strong> DS（データ配信元）/ EFS-WOS（自社 EC 用）/ EFS-FCL（モール出店用）</div>
+    </div>
+    <div class="glossary-card a">
+      <div class="glossary-term a">シングルインスタンス</div>
+      <div class="glossary-def">3 つに分かれた EFS を<strong>1 つに統合する</strong>こと。TO-BE（新システム）で検討中の方針。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 3 棟のビルを解体して、1 棟の大きなビルに建て直すこと。統合すれば管理は楽になるが、引っ越し（データ移行）計画が必要。</div>
+    </div>
+    <div class="glossary-card b">
+      <div class="glossary-term b">論理在庫 / 物理在庫</div>
+      <div class="glossary-def"><strong>論理在庫</strong> = システム上の帳簿在庫（EFS が管理）。<strong>物理在庫</strong> = 倉庫や店舗に実際にある現物の数。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 銀行口座の<strong>残高表示</strong>（論理在庫）と、実際に<strong>金庫にある現金</strong>（物理在庫）。通常は一致するが、ズレることがある。</div>
+    </div>
+    <div class="glossary-card b">
+      <div class="glossary-term b">SoT（Source of Truth）</div>
+      <div class="glossary-def">「在庫の数が食い違ったとき、<strong>どのシステムの数字を正とするか</strong>」の取り決め。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 戸籍が本籍地の役所にしかないのと同じ。コピーが複数あっても「正本」は 1 か所。現行 EFS では論理在庫の SoT は EFS 側が持つ。</div>
+    </div>
+    <div class="glossary-card c">
+      <div class="glossary-term c">WMS（倉庫管理システム）</div>
+      <div class="glossary-def">倉庫内の<strong>入荷・保管・出荷を管理するシステム</strong>。棚の場所（ロケーション）単位で現物を追跡する。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 巨大な図書館の蔵書管理システム。「どの棚の何段目に何冊あるか」を追跡する。EFS とは別システム。</div>
+    </div>
+    <div class="glossary-card c">
+      <div class="glossary-term c">GW（WMS Gateway）</div>
+      <div class="glossary-def">EFS と WMS の間を繋ぐ<strong>中継システム</strong>。EFS 内部に GW 専用のテーブル（データの入れ物）が存在する。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 2 つのビル（EFS と WMS）の間にある<strong>連絡通路</strong>。荷物（データ）はこの通路を通ってやり取りされる。</div>
+    </div>
+    <div class="glossary-card d">
+      <div class="glossary-term d">IL（統合レイヤー / Integration Layer）</div>
+      <div class="glossary-def">TO-BE（新システム）で導入予定の<strong>システム間通信を一元管理する基盤</strong>。現行のスパゲッティ状の接続を整理する。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 各部署が直接電話し合う状態から、<strong>交換台</strong>（IL）を置いてすべての連絡をそこ経由にする。監視・変換・再送が一元管理できる。</div>
+    </div>
+    <div class="glossary-card d">
+      <div class="glossary-term d">差異報告 API</div>
+      <div class="glossary-def">WMS の物理在庫と EFS の論理在庫に<strong>ズレがないか検知する</strong>ための通信口。現行は 10 個も乱立している。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 銀行と家計簿の残高が合っているか確認する「残高照合」を、<strong>10 種類の異なるフォーマット</strong>でやっている状態。TO-BE では IL で標準化する。</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
