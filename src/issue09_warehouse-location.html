@@ -426,38 +426,38 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 4 項目が未解決のまま残ると、Option A/B いずれを選択するかの最終判断ができません。</p>
   <div class="blocker-grid">
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">WMS 棚卸機能の完成度が不明</span><span class="priority-badge critical">CRITICAL</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">倉庫システム（WMS）で棚卸ができるか不明</span><span class="priority-badge critical">CRITICAL</span></div>
       <div class="blocker-body">
-        <div class="blocker-why">Option A は WMS の棚卸機能に依存する。WMS が棚卸結果を API で提供できるか、手動集計が前提かが不明。機能が不足していれば Option A は採用できない。</div>
-        <div class="blocker-impact">WMS 棚卸機能の実態を確認せずに Option A を採用すると、棚卸ができない状態が発生する。期末在庫の正確性に直結する財務リスク。</div>
-        <div class="blocker-action">Biprogy に WMS の棚卸機能仕様（対応範囲・API 有無・制約）を確認依頼。2 週間以内にデータを取得する。</div>
+        <div class="blocker-why"><strong>棚卸とは:</strong> 倉庫で<strong>実際に商品を数えて帳簿と合っているか確認する作業</strong>。期末や定期的に実施し、ズレがあれば在庫を補正する。<br><br><strong>何が問題か:</strong> 推奨案（Option A）では棚卸を WMS に任せる前提になっているが、WMS 側で棚卸が本当にできるのか、棚卸結果を Core に自動で送れるのか（手作業で Excel から転記する必要があるのか）が誰にも分からない。</div>
+        <div class="blocker-impact">WMS で棚卸ができない場合、期末決算時に<strong>在庫金額が確定できず、財務諸表が作れない</strong>。手作業転記になれば毎月の棚卸が運用負担となり、人件費が想定より膨らむ。</div>
+        <div class="blocker-action">Biprogy に WMS の棚卸機能の仕様（棚卸できる範囲・結果取得 API の有無・制約）を 2 週間以内に確認依頼する。</div>
         <div class="blocker-owner">Owner: CTO + 開発 / 確認先: Biprogy</div>
       </div>
     </div>
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">3 インスタンスの統合方針が未決定</span><span class="priority-badge critical">CRITICAL</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">3 つの EFS 環境を 1 つにまとめるかが未決定</span><span class="priority-badge critical">CRITICAL</span></div>
       <div class="blocker-body">
-        <div class="blocker-why">DS / WOS / FCL の 3 インスタンスのうち、どれが在庫の SoT（正本）を持つかが曖昧。統合するのか、併存するのか、移行順序はどうするかが未決定。</div>
-        <div class="blocker-impact">SoT が曖昧なまま設計を進めると、在庫データの不整合が発生し、EC での在庫表示やモール連携に影響。「どの数字が正しいのか」が誰にもわからない状態になる。</div>
-        <div class="blocker-action">CTO 判断でシングルインスタンス移行の方針と移行タイムラインを確定。#18（データモデル移行計画）と連動して決定する。</div>
-        <div class="blocker-owner">Owner: CTO / 関連: #18（データモデル移行）</div>
+        <div class="blocker-why"><strong>何が問題か:</strong> 現行 EFS は <strong>DS（データ配信元）／ WOS（自社 EC）／ FCL（モール出店）</strong>の 3 つの別々の環境に分かれて動いている。新システムで 1 つに統合するのか、3 つのまま残すのか、残す場合はどれが「在庫数の正本」を持つのかが決まっていない。<br><br><strong>具体例:</strong> 自社 EC で「在庫 10 個」と表示されているのに、モール側では「在庫 8 個」と表示される、というズレが発生し得る。どちらの数字を信じるかが決まっていない状態。</div>
+        <div class="blocker-impact"><strong>在庫表示の矛盾</strong>により顧客からの「在庫はある？」の問い合わせが増え、EC 運営チームの対応コストが跳ね上がる。最悪、売れたのに在庫がない「引当不能」が発生し、<strong>キャンセル・クレーム</strong>に直結する。</div>
+        <div class="blocker-action">CTO 主導で「統合する／しない」「どの環境を正本にする」「いつまでに移行する」を決定。#18（データ移行計画）と同時に判断する。</div>
+        <div class="blocker-owner">Owner: CTO / 関連: #18（データモデル移行計画）</div>
       </div>
     </div>
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">差異報告 API の業務ロジックが未解明</span><span class="priority-badge high">HIGH</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">在庫数のズレを検知する 10 個の API の業務ルールが不明</span><span class="priority-badge high">HIGH</span></div>
       <div class="blocker-body">
-        <div class="blocker-why">10 個の差異報告 API のうち、業務ロジック（何がトリガーか、しきい値はいくつか、自動調整か手動か）がドキュメント化されていない。IL で標準化するにも「何を標準にするか」の根拠がない。</div>
-        <div class="blocker-impact">業務ロジック不明のまま IL 設計を進めると、標準化 API が既存業務をカバーしきれず、移行後に差異検知漏れが発生するリスク。</div>
-        <div class="blocker-action">Biprogy に 10 API の業務ロジック差分（トリガー条件・しきい値・調整方法）を確認依頼。並行で efs-api swagger 定義の突合調査を実施。</div>
+        <div class="blocker-why"><strong>差異報告 API とは:</strong> 倉庫の実際の在庫数と EFS の帳簿在庫数に<strong>ズレが出たときに通知する仕組み</strong>。現在はなぜか 10 種類もの API が並存している。<br><br><strong>何が問題か:</strong> 10 個の API それぞれについて、「何個ズレたら通知するのか（しきい値）」「自動で補正するのか、担当者が承認するのか」「どの倉庫からの通知か」などの業務ルールが文書化されていない。新システムに統合する際、どのルールを残すべきかが判断できない。</div>
+        <div class="blocker-impact">業務ルールが分からないまま統合すると、<strong>ズレ検知の漏れ</strong>が発生。実在庫と帳簿在庫のズレが放置され、「売れる在庫がない」「ない在庫が売れる」状態になり、返金・謝罪対応が増える。</div>
+        <div class="blocker-action">Biprogy に 10 個の API それぞれの業務ロジック（トリガー条件・しきい値・調整方法）を確認依頼。並行して EFS 側の API 定義（swagger）を突合調査する。</div>
         <div class="blocker-owner">Owner: 開発 / 確認先: Biprogy（OI-E02）</div>
       </div>
     </div>
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">GW テーブル統合の影響範囲が未調査</span><span class="priority-badge medium">MEDIUM</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">在庫管理用の 2 つのテーブルを 1 つに統合する影響が未調査</span><span class="priority-badge medium">MEDIUM</span></div>
       <div class="blocker-body">
-        <div class="blocker-why">GW_LOCATION_STOCK を LOCATION_STOCK に統合する場合の影響範囲（参照しているバッチ・API・画面の数）が未調査。統合コストが見積もれない。</div>
-        <div class="blocker-impact">影響範囲を把握せずに統合を進めると、移行時に想定外のバッチ障害や在庫不整合が発生するリスク。</div>
-        <div class="blocker-action">efs-db / efs-bo / efs-batch-web で GW_LOCATION_STOCK を参照している箇所を網羅的に洗い出し、統合コストを見積もる。</div>
+        <div class="blocker-why"><strong>何が問題か:</strong> 現行は「通常の在庫」と「GW（WMS 連携）用の在庫」で<strong>在庫データを別々のテーブル（データの入れ物）で管理</strong>している。新システムでこの 2 つを 1 つに統合したいが、<strong>この在庫データを参照している既存のバッチ処理・管理画面・API</strong> が社内のどこに何個あるか誰も把握していない。<br><br><strong>具体例:</strong> 夜間バッチで在庫を参照する処理、BO 画面で在庫を表示する箇所、外部モール連携で在庫数を送信する API など、すべてが影響を受ける可能性がある。</div>
+        <div class="blocker-impact">影響範囲を調べずに統合を進めると、<strong>夜間バッチが止まる・管理画面にエラーが出る・モール連携で古い在庫数が送られる</strong>などの本番障害が発生し、EC 運営に直接的な影響を与える。</div>
+        <div class="blocker-action">開発チームが社内の EFS 関連ソースコード（efs-db / efs-bo / efs-batch-web）を横断検索し、GW 在庫テーブルを参照している全箇所をリストアップする。</div>
         <div class="blocker-owner">Owner: 開発</div>
       </div>
     </div>
