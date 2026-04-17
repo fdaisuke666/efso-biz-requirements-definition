@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#11 仕入管理のCoreスコープ — EFSO</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#f4f5f7; --surface:#fff; --surface2:#f8f9fb; --border:#e2e6ea;
+  --text:#1a202c; --muted:#64748b;
+  --blue:#2563eb; --green:#059669; --amber:#d97706; --red:#dc2626;
+  --purple:#7c3aed; --teal:#0d9488; --orange:#ea580c; --cyan:#0891b2;
+  --pad:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.7;}
+.back-link{display:flex;align-items:center;gap:6px;padding:10px var(--pad);font-size:12px;color:var(--muted);text-decoration:none;background:var(--surface);border-bottom:1px solid var(--border);}
+.back-link:hover{color:var(--amber);}
+.cover{background:var(--surface);border-bottom:1px solid var(--border);padding:clamp(32px,5vw,52px) var(--pad) clamp(24px,4vw,40px);position:relative;}
+.cover::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),#fbbf24);}
+.cover-tag{display:inline-flex;align-items:center;gap:6px;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:3px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--amber);letter-spacing:.05em;margin-bottom:16px;}
+.cover-tag::before{content:'◆';font-size:6px;}
+.cover h1{font-size:clamp(22px,4vw,30px);font-weight:700;line-height:1.22;margin-bottom:8px;}
+.cover h1 em{color:var(--amber);font-style:normal;}
+.cover-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.cover-meta{display:flex;gap:20px;flex-wrap:wrap;}
+.meta-item{display:flex;flex-direction:column;gap:2px;}
+.meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.meta-value{font-size:13px;color:var(--text);font-weight:500;}
+.section{padding:clamp(24px,4vw,40px) var(--pad);border-bottom:1px solid var(--border);background:var(--surface);}
+.section:nth-child(even){background:var(--surface2);}
+.section:last-child{border-bottom:none;}
+.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.sec-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#fff;border-radius:3px;padding:2px 8px;font-weight:500;}
+.sec-num.amber{background:var(--amber);} .sec-num.green{background:var(--green);} .sec-num.red{background:var(--red);} .sec-num.orange{background:var(--orange);}
+.sec-title{font-size:17px;font-weight:700;}
+.sys-grid{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;gap:0;align-items:center;margin-bottom:18px;}
+.sys-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.sys-box.core{border-top:3px solid var(--amber);background:#fffbeb;}
+.sys-box.gwcs{border-top:3px solid var(--purple);background:#f5f3ff;}
+.sys-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;}
+.sys-name.a{color:var(--amber);} .sys-name.p{color:var(--purple);} .sys-name.g{color:var(--muted);}
+.sys-fn{font-size:12px;color:var(--muted);line-height:1.9;}
+.sys-fn span{display:block;padding:2px 0;border-bottom:1px solid var(--border);}
+.sys-fn span:last-child{border-bottom:none;}
+.sys-fn span.hi{color:var(--amber);font-weight:500;}
+.arr-col{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 2px;}
+.arr-label{font-size:9px;color:var(--muted);text-align:center;line-height:1.4;}
+.flow-row{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.fstep{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;min-width:108px;flex-shrink:0;}
+.fstep.hi{border-color:#fde68a;background:#fffbeb;}
+.fstep-lbl{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.fstep-name{font-size:12px;font-weight:600;line-height:1.3;color:var(--text);}
+.farr{color:var(--muted);font-size:16px;padding:0 4px;flex-shrink:0;}
+.issue-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+.issue-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.issue-num{font-size:10px;color:var(--amber);font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:5px;}
+.issue-title{font-size:13px;font-weight:700;margin-bottom:7px;}
+.issue-body{font-size:12px;color:var(--muted);line-height:1.8;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.opt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;position:relative;}
+.opt-card.a{border-top:3px solid var(--green);} .opt-card.b{border-top:3px solid var(--purple);}
+.opt-card.recommended::after{content:'推奨';position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;}
+.opt-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;margin-bottom:5px;}
+.opt-label.a{color:var(--green);} .opt-label.b{color:var(--purple);}
+.opt-title{font-size:13px;font-weight:700;margin-bottom:10px;line-height:1.4;}
+.mini-arch{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px;margin-bottom:10px;}
+.mini-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.mini-row:last-child{margin-bottom:0;}
+.mbox{flex:1;border-radius:5px;padding:5px 9px;font-size:11px;font-weight:600;text-align:center;}
+.mbox.core{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.mbox.gwcs{background:#f5f3ff;border:1px solid #ddd6fe;color:#6d28d9;}
+.mbox.il{background:#ecfeff;border:1px solid #a5f3fc;color:#0e7490;}
+.mbox.dead{background:#fef2f2;border:1px dashed #fca5a5;color:var(--red);opacity:.8;}
+.marr{font-size:12px;color:var(--muted);flex-shrink:0;}
+.mini-note{font-size:10px;color:var(--red);flex:1;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;padding:3px 8px;}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.pros{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:9px 11px;}
+.cons{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:9px 11px;}
+.pc-label{font-size:10px;font-weight:700;margin-bottom:3px;}
+.pc-label.p{color:var(--green);} .pc-label.c{color:var(--red);}
+.pc-body{font-size:11px;color:var(--muted);line-height:1.9;}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px;}
+.cmp-table th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--border);}
+.cmp-table td{padding:10px 13px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:hover td{background:var(--surface2);}
+.cmp-table td.asp{font-weight:600;color:var(--text);font-size:12px;width:18%;}
+.cmp-table td.a{color:#047857;} .cmp-table td.b{color:#6d28d9;}
+.verdict{background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:20px 24px;margin-bottom:16px;}
+.verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.verdict-badge{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 12px;border-radius:20px;}
+.verdict-title{font-size:15px;font-weight:700;}
+.verdict-body{font-size:13px;color:#374151;line-height:1.9;}
+.verdict-body strong{color:var(--text);}
+.verdict-body p{margin-bottom:8px;}
+.verdict-body p:last-child{margin-bottom:0;}
+.scope-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.scope-box{border-radius:8px;padding:13px 15px;}
+.scope-box.core{background:#fffbeb;border:1px solid #fde68a;}
+.scope-box.il{background:#ecfeff;border:1px solid #a5f3fc;}
+.scope-box.out{background:var(--surface2);border:1px solid var(--border);}
+.scope-label{font-size:11px;font-weight:700;margin-bottom:7px;}
+.scope-label.a{color:var(--amber);} .scope-label.c{color:var(--cyan);} .scope-label.g{color:var(--muted);}
+.scope-items{font-size:11px;color:var(--muted);line-height:2;}
+.checklist{list-style:none;}
+.checklist li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;}
+.checklist li:last-child{border-bottom:none;}
+.chk-box{width:16px;height:16px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:3px;background:#fff;}
+.chk-owner{font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;white-space:nowrap;margin-top:2px;}
+.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:3px;margin-right:4px;}
+.tag.iss{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.tag.lnk{background:#f5f3ff;color:var(--purple);border:1px solid #ddd6fe;}
+.note-bar{background:#fffbeb;border-left:3px solid var(--amber);padding:10px 13px;border-radius:0 6px 6px 0;font-size:12px;color:#92400e;margin-top:12px;}
+.note-bar strong{color:#78350f;}
+.blocker-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.blocker-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.blocker-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:#fef2f2;flex-wrap:wrap;}
+.blocker-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#fff;background:var(--red);padding:2px 8px;border-radius:3px;}
+.blocker-title{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap;}
+.priority-badge.critical{background:#fee2e2;color:var(--red);border:1px solid #fca5a5;}
+.priority-badge.high{background:#fff7ed;color:var(--orange);border:1px solid #fed7aa;}
+.priority-badge.medium{background:#fffbeb;color:var(--amber);border:1px solid #fde68a;}
+.blocker-body{padding:13px 15px;}
+.blocker-why{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:9px;}
+.blocker-impact{font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 11px;margin-bottom:9px;color:#7f1d1d;}
+.blocker-impact::before{content:'⚠ 放置リスク: ';font-weight:700;}
+.blocker-action{display:flex;align-items:flex-start;gap:7px;font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:7px 11px;color:#1e3a8a;}
+.blocker-action::before{content:'→';font-weight:700;flex-shrink:0;}
+.blocker-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:6px;}
+.tobe-intro{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:18px;padding:13px 17px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;}
+.tobe-intro strong{color:var(--text);}
+.phase-list{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+.phase{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
+.phase-header{display:flex;align-items:center;gap:12px;padding:11px 17px;border-bottom:1px solid var(--border);}
+.phase-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#fff;padding:2px 10px;border-radius:3px;}
+.phase-num.p1{background:var(--red);} .phase-num.p2{background:var(--amber);} .phase-num.p3{background:var(--green);}
+.phase-title{font-size:14px;font-weight:700;}
+.phase-time{margin-left:auto;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 8px;}
+.phase-body{padding:12px 17px;}
+.action-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.action-item:last-child{border-bottom:none;}
+.action-resolve{font-size:10px;font-family:'IBM Plex Mono',monospace;background:#fee2e2;color:var(--red);border:1px solid #fca5a5;padding:2px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.action-desc{flex:1;font-size:12px;color:var(--text);line-height:1.7;}
+.action-owner{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:3px;}
+.unlock-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:13px 17px;}
+.unlock-title{font-size:12px;font-weight:700;color:var(--green);margin-bottom:7px;}
+.unlock-items{font-size:12px;color:var(--muted);line-height:2;}
+.glossary-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.glossary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;position:relative;}
+.glossary-card.a{border-top:3px solid var(--amber);}
+.glossary-card.b{border-top:3px solid var(--blue);}
+.glossary-card.c{border-top:3px solid var(--teal);}
+.glossary-card.d{border-top:3px solid var(--purple);}
+.glossary-term{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;margin-bottom:4px;}
+.glossary-term.a{color:var(--amber);} .glossary-term.b{color:var(--blue);} .glossary-term.c{color:var(--teal);} .glossary-term.d{color:var(--purple);}
+.glossary-def{font-size:13px;color:var(--text);line-height:1.8;margin-bottom:6px;}
+.glossary-example{font-size:11px;color:var(--muted);background:var(--surface2);border-radius:5px;padding:6px 10px;line-height:1.7;}
+.glossary-example strong{color:var(--text);}
+@media(max-width:768px){.glossary-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<a class="back-link" href="../index.html">← ドキュメント一覧に戻る</a>
+<div class="cover">
+  <div class="cover-tag">EFSO アーキテクチャ判断資料</div>
+  <h1><em>#11</em> 仕入管理の Core スコープ</h1>
+  <p class="cover-sub">仕入管理機能を EFSO Core に含めるか、GWCS に残すか</p>
+  <div class="cover-meta">
+    <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#11 / #23（finance 独立ドメイン化と連動）</span></div>
+    <div class="meta-item"><span class="meta-label">Owner</span><span class="meta-value">CTO + 開発</span></div>
+    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">未着手 → 要方針 Fix</span></div>
+    <div class="meta-item"><span class="meta-label">影響ドメイン</span><span class="meta-value">仕入先入荷/返送、売上/仕入</span></div>
+  </div>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">01</span><span class="sec-title" style="color:var(--amber)">AS-IS — 現状のシステム構成</span></div>
+  <div class="sys-grid">
+    <div class="sys-box core"><div class="sys-name a">EFS（現行 Core）</div><div class="sys-fn"><span>発注情報管理（入荷予定 SoT）</span><span>仕入先（マーチャント）マスタ</span><span>仕入明細・調整明細登録</span><span>支払保留金額の設定</span><span>月次締め処理（売上仕入）</span><span>仕入報告書出力</span><span class="hi">→ BO: payments / merchants</span></div></div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--blue)">⇄</div><div class="arr-label" style="color:var(--blue)">EFS販売<br>商品情報</div></div>
+    <div class="sys-box gwcs"><div class="sys-name p">GWCS（段階廃止予定）</div><div class="sys-fn"><span class="hi">外注入荷報告（仕入）</span><span>仕入先連携（販売商品情報）</span><span>売上入金明細連携</span><span>店舗在庫・実績管理</span><span>実績集計・管理会計</span><span class="hi">→ 段階的廃止フェーズ</span></div></div>
+    <div class="arr-col"><div style="font-size:13px;color:var(--muted)">→</div><div class="arr-label">支払報告書</div></div>
+    <div class="sys-box"><div class="sys-name g">外部システム</div><div class="sys-fn"><span>アットトバス（支払報告書 郵送）</span><span>管理会計システム</span><span>DWH（売上データ配信）</span><span>取引先 EDI（IL-19 計画）</span><span>WMS（仕入先入荷・返送）</span></div></div>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ 現行の月次仕入フロー</p>
+  <div class="flow-row">
+    <div class="fstep"><div class="fstep-lbl">月末</div><div class="fstep-name">仕入訂正<br>相殺登録</div></div><div class="farr">→</div>
+    <div class="fstep"><div class="fstep-lbl">月頭</div><div class="fstep-name">仕入報告書<br>出力（EFS）</div></div><div class="farr">→</div>
+    <div class="fstep hi"><div class="fstep-lbl">確認</div><div class="fstep-name">調達・仕入先<br>支払予定確認</div></div><div class="farr">→</div>
+    <div class="fstep"><div class="fstep-lbl">締め後</div><div class="fstep-name">月締め処理<br>（EFS）</div></div><div class="farr">→</div>
+    <div class="fstep"><div class="fstep-lbl">アットトバス</div><div class="fstep-name">支払報告書<br>郵送</div></div><div class="farr">→</div>
+    <div class="fstep"><div class="fstep-lbl">仕入先</div><div class="fstep-name">着荷・<br>支払確認</div></div>
+  </div>
+  <div class="note-bar"><strong>重要:</strong> EFS は「発注〜月次支払額確定」まで管理。出金管理（厳密な買掛管理）は EFS スコープ外で会計システムが担当。GWCS は「外注入荷報告（仕入）」をまだ保持しており、廃止時の Core 側への移行可否が未確認。</div>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">02</span><span class="sec-title">論点の整理</span></div>
+  <div class="issue-grid">
+    <div class="issue-box"><div class="issue-num">論点 A</div><div class="issue-title">機能の重複</div><div class="issue-body">EFS と GWCS の仕入関連機能が一部重複。GWCS 廃止時にどちらに集約するかを先に決めないと仕入機能が宙に浮く。</div></div>
+    <div class="issue-box"><div class="issue-num">論点 B</div><div class="issue-title">EDI 連携（IL-19）</div><div class="issue-body">Option A（Core 化）の場合、取引先 EDI（IL-19）が必要。Core が発注ワークフローを持つなら IL 経由で EDI 接続を設計する必要がある。</div></div>
+    <div class="issue-box"><div class="issue-num">論点 C</div><div class="issue-title">#23 ドメイン分離</div><div class="issue-body">#23（売上/仕入の独立ドメイン化）と連動。finance を独立ドメインにするかどうかの方針と整合が必要。</div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">03</span><span class="sec-title">選択肢の比較</span></div>
+  <div class="options-grid">
+    <div class="opt-card a recommended"><div class="opt-label a">OPTION A</div><div class="opt-title">EFSO Core に含める</div><div class="mini-arch"><div class="mini-row"><div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">発注ワークフロー</span></div></div><div class="mini-row"><div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">支払/請求管理</span></div><div class="marr">→</div><div class="mbox il">IL（統合レイヤー）<br><span style="font-size:9px;font-weight:400">IL-19 取引先 EDI</span></div></div><div class="mini-row"><div class="mbox dead">GWCS 廃止</div><div class="marr" style="font-size:10px">→</div><div class="mini-note">仕入機能を Core へ移行</div></div></div><div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">仕入〜売上のデータが Core 内で完結<br>GWCS 廃止後も業務継続可能<br>GWCS 廃止のブロッカーを解消</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">発注ワークフロー実装のスコープ追加<br>IL-19（EDI）設計が必要<br>GWCS 仕入機能の調査・移行コスト</div></div></div></div>
+    <div class="opt-card b"><div class="opt-label b">OPTION B</div><div class="opt-title">GWCS に残す</div><div class="mini-arch"><div class="mini-row"><div class="mbox core">EFSO Core<br><span style="font-size:9px;font-weight:400">売上・在庫のみ</span></div></div><div class="mini-row"><div class="mbox gwcs">GWCS（継続）<br><span style="font-size:9px;font-weight:400">仕入管理を保持</span></div></div><div class="mini-row"><div class="mini-note">⚠ GWCS「段階廃止」方針と矛盾</div></div></div><div class="pc-grid"><div class="pros"><div class="pc-label p">✓ メリット</div><div class="pc-body">Core のスコープを絞れる<br>GWCS 既存機能をそのまま活用<br>短期の開発コスト低</div></div><div class="cons"><div class="pc-label c">✗ デメリット</div><div class="pc-body">GWCS 廃止方針と矛盾<br>仕入データが Core 外になり整合性リスク<br>中長期で技術負債が増大</div></div></div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">04</span><span class="sec-title">比較表</span></div>
+  <table class="cmp-table">
+    <thead><tr><th style="width:18%">観点</th><th>Option A — Core に含める</th><th>Option B — GWCS に残す</th></tr></thead>
+    <tbody>
+      <tr><td class="asp">アーキテクチャ整合性</td><td class="a">◎ 仕入〜売上を Core 内で一元管理。GWCS 廃止後も一貫性を保てる</td><td class="b">✕ GWCS 廃止方針に逆行。Core 外に仕入データが残りデータ整合リスク</td></tr>
+      <tr><td class="asp">短期開発コスト</td><td class="a">△ 発注ワークフロー・IL-19 の追加実装が必要</td><td class="b">◎ 既存 GWCS 機能を継続利用するだけで追加実装は最小</td></tr>
+      <tr><td class="asp">中長期保守性</td><td class="a">◎ GWCS 廃止後も Core が自己完結。保守コスト低</td><td class="b">✕ GWCS を維持し続ける保守コスト・技術負債が蓄積</td></tr>
+      <tr><td class="asp">GWCS 廃止リスク</td><td class="a">◎ GWCS 廃止のブロッカーを除去できる</td><td class="b">✕ 仕入機能を理由に GWCS 廃止が遅延するリスク</td></tr>
+      <tr><td class="asp">#23 との整合</td><td class="a">◎ finance 独立ドメイン化と親和性高い</td><td class="b">△ finance を独立ドメイン化しても仕入は GWCS に分散</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num green">05</span><span class="sec-title" style="color:var(--green)">推奨方針</span></div>
+  <div class="verdict"><div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A — EFSO Core に仕入管理を含める</span></div><div class="verdict-body"><p><strong>根拠①（GWCS 廃止との整合）:</strong> GWCS は段階的廃止フェーズにあります。仕入管理を GWCS に残すと廃止のブロッカーになり、中長期で技術負債が増大します。</p><p><strong>根拠②（現行設計の自然な延長）:</strong> EFS は既に発注管理・月次締め・支払管理の主要機能を保持しており、Core 化は現行設計の自然な延長です。</p><p><strong>根拠③（#23 との連動）:</strong> finance を独立ドメインとして分離する方向で #23 の方針 Fix と同時に判断することで、整合した設計が可能になります。</p></div></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">■ TO-BE スコープ境界（Option A 採用時）</p>
+  <div class="scope-grid">
+    <div class="scope-box core"><div class="scope-label a">EFSO Core（finance ドメイン）</div><div class="scope-items">発注ワークフロー管理<br>仕入先（マーチャント）マスタ<br>仕入明細・調整明細<br>支払保留・月次締め処理<br>仕入報告書出力</div></div>
+    <div class="scope-box il"><div class="scope-label c">IL（統合レイヤー）</div><div class="scope-items">IL-19: 取引先 EDI<br>アットトバス連携<br>管理会計システム連携<br>DWH 売上データ配信</div></div>
+    <div class="scope-box out"><div class="scope-label g">Core スコープ外（会計システム）</div><div class="scope-items">出金管理（厳密な買掛管理）<br>財務会計・P/L 確定<br>→ 外部会計システムが担当</div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num amber">06</span><span class="sec-title">確認事項リスト</span></div>
+  <ul class="checklist">
+    <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">CTO + 開発</span><div>GWCS が現在保持する仕入関連機能（外注入荷報告 等）の全量調査を実施し、EFSO Core への移行可否と移行コストを見積もる</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">CTO + 開発</span><div>IL-19（取引先 EDI）の接続先・プロトコル・実装工数を確認。Option A 採用時の必須要件として先行設計に組み込む</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag lnk">#23</span><span class="chk-owner">CTO + dev</span><div>finance を独立ドメインとして分離するかを #11 と同時に判断する。#23 の方針 Fix と同一セッションで確定推奨</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">ビジネス・調達</span><div>アットトバス連携（支払報告書郵送）の継続可否と、IL 経由への移行要否を確認</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#11</span><span class="chk-owner">CTO + 開発</span><div>消化仕入商品（発注なし）の仕入フローが EFSO Core 移行後も正しく動作するよう、売上と仕入の同時計上ロジックの設計確認</div></div></li>
+  </ul>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の5項目が未解決のまま残ると、Option A を採用しても詳細設計・移行計画の策定に着手できません。優先度順に解消してください。</p>
+  <div class="blocker-grid">
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">GWCS 側に残っている仕入機能の全体像が把握できていない</span><span class="priority-badge critical">CRITICAL</span></div><div class="blocker-body"><div class="blocker-why"><strong>何が問題か:</strong> 現行は仕入関連の機能が EFS と GWCS の両方に分散している。既に判明している「外注入荷報告（仕入）」以外にも、GWCS 側で動いている仕入機能があるかもしれないが、誰もその全体像を把握していない。<br><br><strong>具体例:</strong> 発注書の作成画面、支払予定の登録画面、仕入先マスタの保守画面などが GWCS にあるかもしれない。</div><div class="blocker-impact">「どこからどこまで Core に移すのか」が決まらないため、工数見積もりができず、プロジェクトのスケジュールが組めない。調査漏れの機能があった場合、移行後に「この機能が動かない」という本番障害に直結する。</div><div class="blocker-action">2 週間以内に GWCS の仕入関連機能を棚卸し、「EFS にある機能」「GWCS にある機能」「両方に重複している機能」を一覧化する。</div><div class="blocker-owner">Owner: CTO + 開発チーム / 期間: 2 週間以内</div></div></div>
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">取引先との電子データ連携（EDI）が本当に作れるか不明</span><span class="priority-badge critical">CRITICAL</span></div><div class="blocker-body"><div class="blocker-why"><strong>EDI とは:</strong> 発注書・納品書・請求書などを紙や FAX ではなく、<strong>システム間で直接データをやり取りする仕組み</strong>。取引先（仕入先メーカー等）と自社システムをつなぐ専用の通信経路が必要。<br><br><strong>何が問題か:</strong> Option A（Core に仕入管理を含める）を選ぶと、取引先 EDI（IL-19 と呼ばれる統合レイヤーの1つ）を新たに作る必要がある。しかし「接続先の取引先がどんなフォーマット・プロトコルを要求するか」「取引先側がこちらの仕様変更に付き合ってくれるか」が未確認。</div><div class="blocker-impact">EDI 接続先が多い・技術的に難しい・取引先の協力が得られない場合、開発コストが想定の数倍になる可能性がある。場合によっては Option A 自体を諦めて Option B（GWCS に残す）に戻す判断が必要になる。</div><div class="blocker-action">主要な取引先 2〜3 社と話し、(1) 現在使っている EDI のフォーマット (2) Core 移行に伴う仕様変更に対応可能か (3) 接続方式（専用線/インターネット/クラウドサービス経由）を確認する。</div><div class="blocker-owner">Owner: CTO + 開発チーム / 連携: 調達</div></div></div>
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">「売上仕入」を独立ドメインにするかの方針が未決定（#23 と連動）</span><span class="priority-badge high">HIGH</span></div><div class="blocker-body"><div class="blocker-why"><strong>何が問題か:</strong> 別課題 #23 で「売上/仕入（finance）を 1 つの独立した大きなドメインとして設計するか、受注ドメインの中に含めたままにするか」が未決定。仕入管理（#11）は売上仕入の一部なので、#23 の方針次第で Core 内の置き場所が変わる。<br><br><strong>具体例:</strong><br>・#23 で「独立ドメイン」確定 → 仕入管理は finance ドメインの下に配置<br>・#23 で「受注ドメイン統合」確定 → 仕入管理は受注ドメインの下に配置</div><div class="blocker-impact">#11 だけ先に決めて設計を始めると、#23 の結論と矛盾して、あとから大幅な作り直しが発生する。テーブル設計・API 設計・画面設計すべてに影響が出る。</div><div class="blocker-action">#11 と #23 を同じアーキテクチャ判断会で同時に決定する。CTO がオーナーとなり、開発チームと判断会を設定する。</div><div class="blocker-owner">Owner: CTO + 開発</div></div></div>
+    <div class="blocker-card"><div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">消化仕入（売れたら仕入計上）の仕組みが Core で再現できるか未検証</span><span class="priority-badge high">HIGH</span></div><div class="blocker-body"><div class="blocker-why"><strong>消化仕入とは:</strong> メーカーから商品を受け取った時点では仕入にせず、<strong>顧客に売れた瞬間に初めて「売上」と「仕入」を同時に計上する</strong>取引形態。売れ残りは自社の在庫にならずメーカーに返す。アパレルでは一般的。<br><br><strong>何が問題か:</strong> 通常の買取仕入（先に発注→入荷→在庫→売上）とはフローが全く異なり、「発注なし・出荷イベントで売上と仕入を同時計上」という特殊処理が必要。この特殊ロジックが現行 EFS にあるが、新 Core で同じように動かせるかが設計レベルで未確認。</div><div class="blocker-impact">アパレルでは消化仕入の比率が高いため、このフローが動かないと売上・仕入データが狂い、<strong>月次決算の数字が合わなくなる</strong>。発見が遅れると本番障害になる。</div><div class="blocker-action">開発チームが消化仕入の現行ロジックを読み込み、EFSO Core のデータモデルに移植できるかを設計レビューする。移植困難な部分があれば TO-BE 設計書に影響を反映する。</div><div class="blocker-owner">Owner: CTO + 開発チーム</div></div></div>
+    <div class="blocker-card" style="grid-column:1/-1"><div class="blocker-header"><span class="blocker-id">B-5</span><span class="blocker-title">アットトバス（支払報告書の郵送代行サービス）を今後も使うか未決定</span><span class="priority-badge medium">MEDIUM</span></div><div class="blocker-body"><div class="blocker-why"><strong>アットトバスとは:</strong> 仕入先への支払報告書（「今月はこれだけお支払いします」の明細書）を<strong>印刷して郵送する代行サービス</strong>を提供する外部ベンダー。EFS は現在このサービスにデータを渡して郵送を任せている。<br><br><strong>何が問題か:</strong> 新システムでもこの郵送代行を使い続けるのか、電子メール配信や取引先向けポータルに切り替えるのかがビジネス側で決まっていない。外部ベンダーとの契約・連携仕様が Core 側の設計スコープに直接影響する。</div><div class="blocker-impact">継続する場合は統合レイヤー（IL-19）にアットトバス連携を含める必要があり、設計規模が増える。廃止する場合は電子配信の新規設計が必要。どちらにせよ「決まらないと設計に着手できない」領域。</div><div class="blocker-action">調達・ビジネスチームで (1) 郵送継続が業務上必須か (2) 電子化の合意が取引先から得られるか (3) 契約更新時期はいつか を確認し、TO-BE 方針を決定する。</div><div class="blocker-owner">Owner: ビジネス・調達 / 連携: CTO</div></div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="sec-label"><span class="sec-num orange">08</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
+  <div class="tobe-intro"><strong>推奨方針は Option A（EFSO Core に仕入管理を含める）で確定済み。</strong><br>ただし B-1〜B-5 のブロッカーを解消しないと移行スコープと IL 設計の確定ができません。以下のフェーズで順番に解消してください。</div>
+  <div class="phase-list">
+    <div class="phase"><div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">情報収集 — 判断に必要なインプットを揃える</span><span class="phase-time">目標: 2週間以内</span></div><div class="phase-body">
+      <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>GWCS 仕入機能の全量調査（棚卸し）</b><br>GWCS が保持する仕入関連機能をすべて洗い出し、EFS との重複・非重複を一覧化する。「外注入荷報告」以外の機能がある場合は移行コストに含める。</div><div class="action-owner">担当: CTO + 開発チーム / 成果物: GWCS 仕入機能一覧</div></div></div>
+      <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>IL-19（取引先 EDI）の技術的実現性を評価</b><br>取引先側の EDI 要件を確認し、接続プロトコル・実装工数を見積もる。実現困難な場合は Option A のコスト試算を見直す。</div><div class="action-owner">担当: CTO + 開発チーム / 期間: 並行実施</div></div></div>
+      <div class="action-item"><span class="action-resolve">B-5 確認</span><div><div class="action-desc"><b>アットトバス連携の継続方針を確認</b><br>ビジネス・調達サイドに現行アットトバス連携の TO-BE における継続可否を確認。IL 設計に含めるかどうかの判断材料を揃える。</div><div class="action-owner">担当: ビジネス・調達</div></div></div>
+    </div></div>
+    <div class="phase"><div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">意思決定 — #11 と #23 を同時 Fix</span><span class="phase-time">Phase 1 完了後 1〜2週間</span></div><div class="phase-body">
+      <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>#11 と #23 を同一セッションで方針 Fix</b><br>Phase 1 の調査結果をインプットに、CTO がオーナーとなりアーキテクチャ判断会を開催。finance を独立ドメインとして分離するか否かと、#11 Option A 採用を同時に確定する。</div><div class="action-owner">担当: CTO + dev / 会議体: アーキテクチャ判断会</div></div></div>
+      <div class="action-item"><span class="action-resolve">B-4 解消</span><div><div class="action-desc"><b>消化仕入ロジックの設計レビュー</b><br>消化仕入（発注なし・出荷時同時計上）のフローを EFSO Core に移植可能か技術的に評価。移植困難な場合は移行アーキテクチャを別途設計。</div><div class="action-owner">担当: 開発チーム / 並行実施</div></div></div>
+    </div></div>
+    <div class="phase"><div class="phase-header"><span class="phase-num p3">Phase 3</span><span class="phase-title">設計着手 — ブロッカー解消後</span><span class="phase-time">Phase 1 + 2 完了後</span></div><div class="phase-body">
+      <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>GWCS 仕入機能の EFSO Core 移行設計</b><br>調査結果をもとに、移行対象機能・移行シーケンス・並行稼働期間を定めた移行設計書を作成。IL-19・アットトバス連携の IF 仕様も同時に確定。</div><div class="action-owner">担当: 開発チーム / 成果物: 仕入機能移行設計書</div></div></div>
+      <div class="action-item"><span class="action-resolve">Doc 更新</span><div><div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#11 を「決定済み: Option A」としてクローズ。to-be/ ディレクトリに finance ドメイン責務定義ドキュメントを作成。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+    </div></div>
+  </div>
+  <div class="unlock-box"><div class="unlock-title">✓ ブロッカー全解消後に動き出せること</div><div class="unlock-items">GWCS 仕入機能の移行シーケンス確定（GWCS 廃止ロードマップ策定）<br>IL-19（取引先 EDI）の接続仕様書・実装スケジュール確定<br>finance ドメインのデータモデル設計（#23 と統合）<br>efso-document の to-be/ ディレクトリへのドキュメント登録</div></div>
+</div>
+<!-- ===== 09 用語解説 ===== -->
+<div class="section">
+  <div class="sec-label"><span class="sec-num" style="background:var(--blue)">09</span><span class="sec-title" style="color:var(--blue)">補足 &mdash; 用語解説</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">本資料に登場する専門用語を「たとえ」付きで解説します。</p>
+
+  <div class="glossary-grid">
+    <div class="glossary-card a">
+      <div class="glossary-term a">仕入管理</div>
+      <div class="glossary-def">商品を仕入先から<strong>買う（または預かる）</strong>一連の業務。発注・入荷・検収・支払・請求までを含む。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> レストランが食材を業者から仕入れるのと同じ流れ。「何を何個発注→届いたか確認→今月いくら払うか計算→支払」の一連の業務。EC では売上を支える根幹業務。</div>
+    </div>
+    <div class="glossary-card a">
+      <div class="glossary-term a">買取仕入 / 消化仕入</div>
+      <div class="glossary-def"><strong>買取仕入</strong> = 先に買い取って在庫にする通常の仕入。<br><strong>消化仕入</strong> = 商品を預かり、<strong>売れた分だけ仕入計上</strong>する仕入形態。売れ残りはメーカーに返品。</div>
+      <div class="glossary-example"><strong>たとえ:</strong><br>・買取仕入 = スーパーで野菜を 100 個買って店頭に並べる（売れなくても自腹）<br>・消化仕入 = 委託販売の雑貨屋。お店にあるが売れた分だけ作家さんにお金を払う。アパレルでは消化仕入の比率が高い。</div>
+    </div>
+    <div class="glossary-card b">
+      <div class="glossary-term b">EDI（電子データ交換）</div>
+      <div class="glossary-def">取引先との間で<strong>発注・納品・請求などのデータを電子的にやり取りする仕組み</strong>。紙・FAX・メール添付ではなく、システム間で直接連携する。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> FAX で発注書を送っていたのを、<strong>システム同士で自動的にデータを送受信</strong>する仕組みに変えたもの。人手が要らず、速く正確。取引先ごとにフォーマットが違うのが難点。</div>
+    </div>
+    <div class="glossary-card b">
+      <div class="glossary-term b">IL-19（取引先 EDI コネクタ）</div>
+      <div class="glossary-def">新システムで想定されている<strong>取引先 EDI 用の統合レイヤー（IL）機能</strong>の識別番号。取引先ごとのフォーマット差異を吸収する役割。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 各取引先が別々の言語を話す状態を、<strong>通訳（IL-19）</strong>を間に置いて Core が 1 つの共通言語で話せばよいようにする仕組み。</div>
+    </div>
+    <div class="glossary-card c">
+      <div class="glossary-term c">GWCS（店舗/倉庫基幹システム）</div>
+      <div class="glossary-def">店舗・倉庫の業務を担う<strong>現行の基幹系システム</strong>。POS 売上集約、店舗棚卸、配分指示、在庫予算、管理会計など広範な機能を持つ。存続が確定している。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 店舗・倉庫側の「司令塔」。EC 側の EFS（→ Core）と役割分担していて、今回は<strong>仕入機能をどちらに寄せるか</strong>が論点。</div>
+    </div>
+    <div class="glossary-card c">
+      <div class="glossary-term c">外注入荷報告（仕入）</div>
+      <div class="glossary-def">外部倉庫や仕入先メーカーから「入荷が完了しました」という報告を受け取り、<strong>仕入として計上する処理</strong>。現行は GWCS 側で実施。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 外部倉庫の担当者が「荷物を受け取りました」という報告書を本社に送るイメージ。この報告をトリガーにして仕入計上が走る。</div>
+    </div>
+    <div class="glossary-card d">
+      <div class="glossary-term d">アットトバス（支払報告書郵送サービス）</div>
+      <div class="glossary-def">仕入先への「今月はこれだけお支払いします」という<strong>支払報告書を印刷・郵送代行する外部サービス</strong>。EFS がデータを連携して郵送を委託している。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 自社で印刷・封入・切手貼り・投函をやる代わりに、<strong>外部業者に一括委託</strong>している状態。電子メール送付やポータル掲載に切り替えるかが論点（B-5）。</div>
+    </div>
+    <div class="glossary-card d">
+      <div class="glossary-term d">finance ドメイン / 売上仕入</div>
+      <div class="glossary-def">売上計上・仕入計上・請求・支払など<strong>お金の流れを扱う業務領域</strong>のまとまり。#23 で独立ドメインにするかが議論中。</div>
+      <div class="glossary-example"><strong>たとえ:</strong> 会社の「経理部門」に相当する機能群。現在は受注ドメインの中に混在しているが、独立した部門（ドメイン）として切り出すかを検討中。#11 の配置先が変わる。</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
