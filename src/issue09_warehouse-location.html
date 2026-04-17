@@ -247,7 +247,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   </div>
 
   <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 差異報告 API の乱立（計 10 エンドポイント）</p>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">WMS が「倉庫の現物と EFS の帳簿が合っていない」と検知した場合に使う通信口（API）が <strong>10 個も並存</strong>している。</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;"><strong>棚卸実施時</strong>および WMS 側のシステム補正時に、EFS の論理在庫と WMS の物理在庫の差異を連携するためのイベント駆動 API。計算式は「差異 = EFS 論理在庫 &minus; WMS 物理在庫」で、入出力スキーマは判明しているが、<strong>業務ロジック（しきい値・自動/手動判定・調整仕訳生成）は未解明</strong>で <strong>10 個も並存</strong>している。</p>
   <div class="api-scatter">
     <div class="api-chip gw">GW v1</div>
     <div class="api-chip gw">GW v1-2</div>
@@ -426,11 +426,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 3 項目が未解決のまま残ると、TO-BE の詳細設計・移行計画の策定に着手できません。</p>
   <div class="blocker-grid">
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">在庫数のズレを検知する 10 個の API の業務ルールが不明</span><span class="priority-badge high">HIGH</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">差異報告 API の業務ロジックと倉庫別使用状況が未解明</span><span class="priority-badge high">HIGH</span></div>
       <div class="blocker-body">
-        <div class="blocker-why"><strong>差異報告 API とは:</strong> 倉庫の実際の在庫数と EFS の帳簿在庫数に<strong>ズレが出たときに通知する仕組み</strong>。現在はなぜか 10 種類もの API が並存している。<br><br><strong>何が問題か:</strong> 10 個の API それぞれについて、「何個ズレたら通知するのか（しきい値）」「自動で補正するのか、担当者が承認するのか」「どの倉庫からの通知か」などの業務ルールが文書化されていない。新システムに統合する際、どのルールを残すべきかが判断できない。</div>
-        <div class="blocker-impact">業務ルールが分からないまま統合すると、<strong>ズレ検知の漏れ</strong>が発生。実在庫と帳簿在庫のズレが放置され、「売れる在庫がない」「ない在庫が売れる」状態になり、返金・謝罪対応が増える。</div>
-        <div class="blocker-action">Biprogy に 10 個の API それぞれの業務ロジック（トリガー条件・しきい値・調整方法）を確認依頼。並行して EFS 側の API 定義（swagger）を突合調査する。</div>
+        <div class="blocker-why"><strong>前提（AS-IS 確認済み）:</strong><br>・<strong>使用タイミング</strong>: 棚卸実施時 + WMS 側のシステム補正時に使用。日時バッチで常時監視するものではなく<strong>イベント駆動</strong>で動く<br>・<strong>計算式</strong>: 差異数量 = EFS 論理在庫 - WMS 物理在庫（入出力スキーマは判明済み）<br>・<strong>10 本の内訳</strong>: GW 系 7 本（Gateway 経由、GW_* ワークテーブル経由で取込）+ 非 GW 系 3 本（直接取込）。v1/v2/v3 は倉庫番号ではなく<strong>商品特定キー</strong>（basic_item_id_sku / product_identification_key_sku 等）のバリエーション<br><br><strong>未解明（本当の論点）:</strong><br>① 差異検出の判定ルール（何個ズレたら通知するか・しきい値）<br>② 自動調整 vs 手動承認の分岐ルール<br>③ 調整仕訳の生成ロジック（efs-bo に判定コード未発見・OI-E02）<br>④ 倉庫ごとにどの API を使っているかのマッピング<br>⑤ 10 本すべてが本当に必要か（統廃合の余地）</div>
+        <div class="blocker-impact">業務ロジックを解明せずに IL（統合レイヤー）を設計すると、<strong>ズレ検知の漏れ</strong>や<strong>調整フローの誤り</strong>が発生する。実在庫と帳簿在庫のズレが放置されると、「売れる在庫がない」「ない在庫が売れる」状態になり、キャンセル・返金・謝罪対応が増える。</div>
+        <div class="blocker-action">Biprogy に (1) 差異検出のしきい値、(2) 自動/手動の判定ルール、(3) 調整仕訳の生成ロジック、(4) 倉庫 × API のマッピング、(5) 10 本の使い分けの必要性、を確認依頼。並行して efs-api wms.yaml（lines 23574-23908）と efs-bo inventories/ の実装を突合調査する。</div>
         <div class="blocker-owner">Owner: 開発 / 確認先: Biprogy（OI-E02）</div>
       </div>
     </div>
@@ -467,7 +467,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
     <div class="phase">
       <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">調査 &mdash; 判断に必要なファクトを揃える</span><span class="phase-time">目標: 2 週間以内</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>差異報告 API 10 本の業務ロジック調査</b><br>Biprogy に GW 系 7 本 + 非 GW 系 3 本の差分（トリガー条件・しきい値・自動調整 vs 手動調整）を確認。並行で efs-api swagger 定義を突合する。</div><div class="action-owner">担当: 開発 / 期間: 2 週間以内</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>差異報告 API の業務ロジック + 倉庫別使用状況調査</b><br>Biprogy に以下 5 点を確認: (1) 差異検出のしきい値、(2) 自動調整 vs 手動承認の判定ルール、(3) 調整仕訳の生成ロジック、(4) 倉庫ごとの使用 API マッピング、(5) 10 本の統廃合可否。並行で efs-api wms.yaml（23574-23908 行）と efs-bo inventories/ の実装を突合する。</div><div class="action-owner">担当: 開発 / 期間: 2 週間以内 / 確認先: Biprogy（OI-E02）</div></div></div>
         <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>在庫テーブル統合設計の詳細化</b><br>(1) LOCATION_STOCK / GW_LOCATION_STOCK の全カラム差分を efs-db で確認、(2) GW テーブルを参照しているバッチ・API・画面を efs-db/efs-bo/efs-batch-web で洗い出し、(3) PK 統合方式（複合ユニーク制約 vs 単一 PK）の設計、(4) カラム追加時のパフォーマンス影響評価を実施。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
         <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>棚卸 3 パターンの使用状況調査</b><br>ケース1（EFS 起点）/ ケース2（WMS 起点・差異のみ）/ ケース3（WMS 起点・全在庫出力）それぞれを使っている倉庫・SKU・業務シーンを洗い出し。IL で統一するか個別維持するかの判断材料を揃える。</div><div class="action-owner">担当: 開発 + 倉庫運用 / 期間: 並行実施</div></div></div>
       </div>
