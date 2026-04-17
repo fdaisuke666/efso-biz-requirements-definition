@@ -185,7 +185,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   <div class="cover-meta">
     <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#9 / #15（移動出荷/入荷）</span></div>
     <div class="meta-item"><span class="meta-label">Owner</span><span class="meta-value">CTO + 開発</span></div>
-    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">未着手 &rarr; 3 インスタンス統合方針の確定が最優先</span></div>
+    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">未着手 &rarr; 差異報告 API 調査が最優先</span></div>
     <div class="meta-item"><span class="meta-label">影響ドメイン</span><span class="meta-value">共通マスタ管理、在庫管理</span></div>
     <div class="meta-item"><span class="meta-label">優先度</span><span class="meta-value" style="color:var(--red);font-weight:700;">高</span></div>
   </div>
@@ -291,11 +291,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
     </div>
   </div>
 
-  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 3 インスタンス問題の影響</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 3 インスタンス構成と TO-BE での扱い</p>
   <table class="resp-table">
     <thead><tr><th>インスタンス</th><th>環境</th><th>役割</th><th>TO-BE での扱い</th></tr></thead>
     <tbody>
-      <tr><td style="font-weight:600">DS</td><td>Data Source</td><td>データ配信元</td><td rowspan="3" style="color:var(--amber);font-weight:500">シングルインスタンスに統合する方向で検討中。ただし統合方針が未決定のため、3 インスタンスのどれが在庫の SoT を持つかが曖昧なまま。</td></tr>
+      <tr><td style="font-weight:600">DS</td><td>Data Source</td><td>データ配信元</td><td rowspan="3" style="color:var(--green);font-weight:500">EFSO では<strong>シングルインスタンスに統合</strong>する方針（TO-BE 設計の前提）。AS-IS でも論理在庫の SoT は「EFS」として統合的に定義済み（as-is/inventory/01_overview.md Section 2-1）のため、この方針で SoT 定義に矛盾は生じない。残る論点は移行タイムライン（#18 データモデル移行計画で扱う）。</td></tr>
       <tr><td style="font-weight:600">EFS-WOS</td><td>World Online Store</td><td>自社 EC の在庫管理</td></tr>
       <tr><td style="font-weight:600">EFS-FCL</td><td>Fashion Co-Lab</td><td>モール出店の在庫管理</td></tr>
     </tbody>
@@ -423,19 +423,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <!-- ===== 07 ブロッカー ===== -->
 <div class="section">
   <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 4 項目が未解決のまま残ると、Option A/B いずれを選択するかの最終判断ができません。</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 3 項目が未解決のまま残ると、TO-BE の詳細設計・移行計画の策定に着手できません。</p>
   <div class="blocker-grid">
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">3 つの EFS 環境を 1 つにまとめるかが未決定</span><span class="priority-badge critical">CRITICAL</span></div>
-      <div class="blocker-body">
-        <div class="blocker-why"><strong>何が問題か:</strong> 現行 EFS は <strong>DS（データ配信元）／ WOS（自社 EC）／ FCL（モール出店）</strong>の 3 つの別々の環境に分かれて動いている。新システムで 1 つに統合するのか、3 つのまま残すのか、残す場合はどれが「在庫数の正本」を持つのかが決まっていない。<br><br><strong>具体例:</strong> 自社 EC で「在庫 10 個」と表示されているのに、モール側では「在庫 8 個」と表示される、というズレが発生し得る。どちらの数字を信じるかが決まっていない状態。</div>
-        <div class="blocker-impact"><strong>在庫表示の矛盾</strong>により顧客からの「在庫はある？」の問い合わせが増え、EC 運営チームの対応コストが跳ね上がる。最悪、売れたのに在庫がない「引当不能」が発生し、<strong>キャンセル・クレーム</strong>に直結する。</div>
-        <div class="blocker-action">CTO 主導で「統合する／しない」「どの環境を正本にする」「いつまでに移行する」を決定。#18（データ移行計画）と同時に判断する。</div>
-        <div class="blocker-owner">Owner: CTO / 関連: #18（データモデル移行計画）</div>
-      </div>
-    </div>
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">在庫数のズレを検知する 10 個の API の業務ルールが不明</span><span class="priority-badge high">HIGH</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">在庫数のズレを検知する 10 個の API の業務ルールが不明</span><span class="priority-badge high">HIGH</span></div>
       <div class="blocker-body">
         <div class="blocker-why"><strong>差異報告 API とは:</strong> 倉庫の実際の在庫数と EFS の帳簿在庫数に<strong>ズレが出たときに通知する仕組み</strong>。現在はなぜか 10 種類もの API が並存している。<br><br><strong>何が問題か:</strong> 10 個の API それぞれについて、「何個ズレたら通知するのか（しきい値）」「自動で補正するのか、担当者が承認するのか」「どの倉庫からの通知か」などの業務ルールが文書化されていない。新システムに統合する際、どのルールを残すべきかが判断できない。</div>
         <div class="blocker-impact">業務ルールが分からないまま統合すると、<strong>ズレ検知の漏れ</strong>が発生。実在庫と帳簿在庫のズレが放置され、「売れる在庫がない」「ない在庫が売れる」状態になり、返金・謝罪対応が増える。</div>
@@ -444,7 +435,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       </div>
     </div>
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">在庫管理用の 2 つのテーブルを 1 つに統合する影響が未調査</span><span class="priority-badge medium">MEDIUM</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">在庫管理用の 2 つのテーブルを 1 つに統合する影響が未調査</span><span class="priority-badge medium">MEDIUM</span></div>
       <div class="blocker-body">
         <div class="blocker-why"><strong>何が問題か:</strong> 現行は「通常の在庫」と「GW（WMS 連携）用の在庫」で<strong>在庫データを別々のテーブル（データの入れ物）で管理</strong>している。新システムでこの 2 つを 1 つに統合したいが、<strong>この在庫データを参照している既存のバッチ処理・管理画面・API</strong> が社内のどこに何個あるか誰も把握していない。<br><br><strong>具体例:</strong> 夜間バッチで在庫を参照する処理、BO 画面で在庫を表示する箇所、外部モール連携で在庫数を送信する API など、すべてが影響を受ける可能性がある。</div>
         <div class="blocker-impact">影響範囲を調べずに統合を進めると、<strong>夜間バッチが止まる・管理画面にエラーが出る・モール連携で古い在庫数が送られる</strong>などの本番障害が発生し、EC 運営に直接的な影響を与える。</div>
@@ -453,7 +444,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       </div>
     </div>
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">倉庫ごとに異なる 3 つの棚卸パターンを標準化するか未決定</span><span class="priority-badge medium">MEDIUM</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">倉庫ごとに異なる 3 つの棚卸パターンを標準化するか未決定</span><span class="priority-badge medium">MEDIUM</span></div>
       <div class="blocker-body">
         <div class="blocker-why"><strong>前提:</strong> WMS は現行を据え置く方針のため、<strong>棚卸自体はAS-IS通りWMSで実施でき、差異を EFS に連携するフローも稼働中</strong>。ただし現状は倉庫ごとに連携仕様が異なり、棚卸フローが 3 パターン並存している:<br>・<strong>ケース1</strong>（EFS 起点）: EFS が事前に論理在庫を WMS に送り、WMS 側で補正してから棚卸<br>・<strong>ケース2</strong>（WMS 起点・差異のみ）: 棚卸後、ズレた分の差異票だけを EFS に返す<br>・<strong>ケース3</strong>（WMS 起点・全在庫出力）: 差異票に加えて全在庫データも EFS に返す<br><br><strong>何が問題か:</strong> TO-BE の IL（統合レイヤー）でどのパターンを標準にするか、全パターン維持するかが未決定。</div>
         <div class="blocker-impact">1 パターンに統一すれば IL 設計がシンプルになり保守コストが下がるが、既存倉庫の連携仕様変更が必要となり<strong>倉庫側の改修コスト</strong>が発生する。全パターン維持なら IL 側に複数ルート保守が残り、運用コストが続く。</div>
@@ -469,24 +460,24 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   <div class="sec-label"><span class="sec-num orange">08</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
   <div class="tobe-intro">
     <strong>推奨方針は「Option A（責務分離: Core = 論理在庫、WMS = 物理在庫）を基本路線とする」。</strong><br>
-    WMS は現行据え置き方針のため、AS-IS の棚卸フローは TO-BE でも引き継げる。最優先タスクは B-1（3 インスタンス統合方針の確定）。
+    <strong>EFSO ではシングルインスタンス構成を前提</strong>とし、AS-IS で確立済みの「論理在庫 SoT = EFS」定義をそのまま踏襲する。WMS も現行据え置き方針のため、AS-IS の棚卸フローは TO-BE でも引き継げる。残る論点は IL 設計の詳細（B-1〜B-3）と移行タイムライン（#18 連動）。
   </div>
 
   <div class="phase-list">
     <div class="phase">
       <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">調査 &mdash; 判断に必要なファクトを揃える</span><span class="phase-time">目標: 2 週間以内</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>差異報告 API 10 本の業務ロジック調査</b><br>Biprogy に GW 系 7 本 + 非 GW 系 3 本の差分（トリガー条件・しきい値・自動調整 vs 手動調整）を確認。並行で efs-api swagger 定義を突合する。</div><div class="action-owner">担当: 開発 / 期間: 2 週間以内</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>GW テーブルの利用実態調査</b><br>GW_LOCATION_STOCK を参照しているバッチ・API・画面を efs-db/efs-bo/efs-batch-web で洗い出し。統合コストの概算を算出する。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-4 解消</span><div><div class="action-desc"><b>棚卸 3 パターンの使用状況調査</b><br>ケース1（EFS 起点）/ ケース2（WMS 起点・差異のみ）/ ケース3（WMS 起点・全在庫出力）それぞれを使っている倉庫・SKU・業務シーンを洗い出し。IL で統一するか個別維持するかの判断材料を揃える。</div><div class="action-owner">担当: 開発 + 倉庫運用 / 期間: 並行実施</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>差異報告 API 10 本の業務ロジック調査</b><br>Biprogy に GW 系 7 本 + 非 GW 系 3 本の差分（トリガー条件・しきい値・自動調整 vs 手動調整）を確認。並行で efs-api swagger 定義を突合する。</div><div class="action-owner">担当: 開発 / 期間: 2 週間以内</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>GW テーブルの利用実態調査</b><br>GW_LOCATION_STOCK を参照しているバッチ・API・画面を efs-db/efs-bo/efs-batch-web で洗い出し。統合コストの概算を算出する。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>棚卸 3 パターンの使用状況調査</b><br>ケース1（EFS 起点）/ ケース2（WMS 起点・差異のみ）/ ケース3（WMS 起点・全在庫出力）それぞれを使っている倉庫・SKU・業務シーンを洗い出し。IL で統一するか個別維持するかの判断材料を揃える。</div><div class="action-owner">担当: 開発 + 倉庫運用 / 期間: 並行実施</div></div></div>
       </div>
     </div>
 
     <div class="phase">
       <div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">意思決定 &mdash; #9 と #15 を同時 Fix</span><span class="phase-time">Phase 1 完了後 1 週間</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>インスタンス統合方針の確定</b><br>Phase 1 の調査結果をインプットに、CTO がオーナーとなり方針を確定。3 インスタンス &rarr; シングルインスタンスへの移行タイムラインを策定。#18（データモデル移行計画）と連動。</div><div class="action-owner">担当: CTO / 会議体: アーキテクチャ判断会</div></div></div>
-        <div class="action-item"><span class="action-resolve">連動判断</span><div><div class="action-desc"><b>#9 と #15 の同時方針 Fix</b><br>#9（倉庫ロケーション管理）と #15（移動出荷/入荷の Core 管理範囲）は相互依存。同一セッションで確定する。棚卸 3 パターン（B-4）についても、IL 標準化（1 パターンに統一）/ 個別維持のいずれかを同時に判断する。</div><div class="action-owner">担当: CTO + 開発 / 会議体: アーキテクチャ判断会</div></div></div>
+        <div class="action-item"><span class="action-resolve">方針 Fix</span><div><div class="action-desc"><b>#9 と #15 の同時方針 Fix</b><br>#9（倉庫ロケーション管理）と #15（移動出荷/入荷の Core 管理範囲）は相互依存のため、同一のアーキテクチャ判断会で確定する。シングルインスタンス化は TO-BE 設計の前提として確定し、移行タイムラインのみ #18 と連動して策定する。</div><div class="action-owner">担当: CTO + 開発 / 会議体: アーキテクチャ判断会</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>棚卸 3 パターンの標準化方針確定</b><br>Phase 1 の調査結果をもとに、棚卸 3 パターン（ケース1/2/3）を IL で 1 パターンに統一するか、全パターン維持するかを確定する。倉庫側の改修コストも踏まえて判断。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
       </div>
     </div>
 
