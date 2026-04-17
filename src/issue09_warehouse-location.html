@@ -181,11 +181,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <div class="cover">
   <div class="cover-tag">EFSO アーキテクチャ判断資料</div>
   <h1><em>#9</em> 倉庫ロケーション管理の責務境界</h1>
-  <p class="cover-sub">新システム（EFSO）で倉庫の在庫管理を「どこまで Core が持つか、どこから WMS に任せるか」を決める必要がある</p>
+  <p class="cover-sub">基本方針として周辺システム（WMS/GWCS/倉庫側）は改修しない。新システム（EFSO）で倉庫の在庫管理を「どこまで Core が持つか、どこから WMS に任せるか」を決める</p>
   <div class="cover-meta">
     <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#9 / #15（移動出荷/入荷）</span></div>
     <div class="meta-item"><span class="meta-label">Owner</span><span class="meta-value">CTO + 開発</span></div>
-    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">未着手 &rarr; 差異報告 API 調査が最優先</span></div>
+    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">Option A（責務分離）で方針確定方向。残作業は IL-5 個別対応設計</span></div>
     <div class="meta-item"><span class="meta-label">影響ドメイン</span><span class="meta-value">共通マスタ管理、在庫管理</span></div>
     <div class="meta-item"><span class="meta-label">優先度</span><span class="meta-value" style="color:var(--red);font-weight:700;">高</span></div>
   </div>
@@ -194,6 +194,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <!-- ===== 01 AS-IS ===== -->
 <div class="section">
   <div class="sec-label"><span class="sec-num amber">01</span><span class="sec-title" style="color:var(--amber)">AS-IS &mdash; 現行の在庫管理構成</span></div>
+
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:20px;">
+    <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:5px;font-family:'IBM Plex Mono',monospace;">&#9733; EFSO プロジェクト基本方針</div>
+    <div style="font-size:13px;color:#166534;line-height:1.8;"><strong>周辺システム（WMS / GWCS / 倉庫側）は改修しない。</strong>これに伴い、AS-IS で並存している多様な連携パターン（差異報告 API 10 本、棚卸フロー 3 パターン等）は<strong>すべて現状維持</strong>とし、IL（統合レイヤー）の物流コネクタ（IL-5）で<strong>個別対応する方針</strong>で設計する。</div>
+  </div>
 
   <p style="font-size:12px;color:var(--muted);margin-bottom:14px;font-weight:600;">&#9632; 3 つのシステムの役割分担</p>
   <div class="sys-grid">
@@ -230,24 +235,16 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
     </div>
   </div>
 
-  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 在庫テーブルの二重管理（現行の技術的な問題）</p>
-  <div class="dual-table">
-    <div class="dual-table-title">なぜ同じ「在庫」なのに 2 つのテーブルがあるのか？</div>
-    <table class="resp-table" style="margin-bottom:10px;">
-      <thead><tr><th>場所区分</th><th>種類</th><th>管理テーブル</th><th>説明</th></tr></thead>
-      <tbody>
-        <tr><td>01</td><td>物流（倉庫）</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>標準の在庫テーブル</td></tr>
-        <tr><td>02</td><td>本部</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>同上</td></tr>
-        <tr><td>03</td><td>店舗</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>同上</td></tr>
-        <tr><td>04</td><td>外部 EC</td><td><span class="badge-efs">LOCATION_STOCK</span></td><td>同上</td></tr>
-        <tr style="background:#ecfeff"><td style="font-weight:700;color:var(--cyan)">05</td><td style="font-weight:700;color:var(--cyan)">GW 管理</td><td><span class="badge-wms">GW_LOCATION_STOCK</span></td><td style="color:var(--cyan);font-weight:500">WMS Gateway 専用の別テーブル</td></tr>
-      </tbody>
-    </table>
-    <div class="note-bar"><strong>問題:</strong> 場所区分 05（GW 管理）だけが別テーブルで管理されている。テーブル構造はほぼ同じだが、GW 版は WMS 連携エラー追跡用のカラムが追加されている。TO-BE でこの二重構造を引き継ぐか一本化するかの判断が必要。</div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 在庫テーブルの二重管理（参考情報 / 本課題のスコープ外）</p>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:18px;">
+    <div style="font-size:12px;color:var(--muted);line-height:1.9;">
+      現行は場所区分 05（GW 管理）のみが GW_LOCATION_STOCK という別テーブルで管理されている。ただし、これは <strong>GWCS 連携側の実装都合</strong>であり、論理在庫の責務境界の議論とは別論点。<br>
+      基本方針（周辺システム改修なし）に基づき、GWCS 側の構造は維持されるため、<strong>本課題（#9）のスコープでは扱わない</strong>。EFSO Core 側で GW_* テーブル相当の連携データを受け取る設計詳細は Phase 3 の実装タスクで扱う。
+    </div>
   </div>
 
-  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 差異報告 API の乱立（計 10 エンドポイント）</p>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;"><strong>棚卸実施時</strong>および WMS 側のシステム補正時に、EFS の論理在庫と WMS の物理在庫の差異を連携するためのイベント駆動 API。計算式は「差異 = EFS 論理在庫 &minus; WMS 物理在庫」で、入出力スキーマは判明しているが、<strong>業務ロジック（しきい値・自動/手動判定・調整仕訳生成）は未解明</strong>で <strong>10 個も並存</strong>している。</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 差異報告 API（計 10 エンドポイント・現状維持）</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;"><strong>棚卸実施時</strong>および WMS 側のシステム補正時に、EFS の論理在庫と WMS の物理在庫の差異を連携するためのイベント駆動 API。計算式は「差異 = EFS 論理在庫 &minus; WMS 物理在庫」。現在は 10 個並存しており、基本方針（周辺システム改修なし）のため <strong>TO-BE でも 10 本すべてを維持</strong>し、IL-5 で個別に吸収する。</p>
   <div class="api-scatter">
     <div class="api-chip gw">GW v1</div>
     <div class="api-chip gw">GW v1-2</div>
@@ -273,33 +270,84 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <!-- ===== 02 論点整理 ===== -->
 <div class="section">
   <div class="sec-label"><span class="sec-num amber">02</span><span class="sec-title">論点の整理</span></div>
-  <div class="issue-grid">
+  <div class="issue-grid" style="grid-template-columns:1fr 1fr;">
     <div class="issue-box">
-      <div class="issue-num">論点 A</div>
-      <div class="issue-title">倉庫在庫の管理レベル</div>
-      <div class="issue-body">新システム（Core）が「場所レベル」の在庫だけ管理するか、「棚番号（ロケーション）レベル」まで管理するか。前者なら WMS に棚卸を任せ、後者なら Core 側でも棚卸結果を保持する。</div>
+      <div class="issue-num">論点 A（主論点）</div>
+      <div class="issue-title">倉庫在庫の管理レベル（責務境界）</div>
+      <div class="issue-body">新システム（Core）が「場所レベル」の在庫だけ管理するか、「棚番号（ロケーション）レベル」まで管理するか。前者なら WMS に棚卸を任せ、後者なら Core 側でも棚卸結果を保持する。<br><strong>基本方針（周辺システム改修なし）に照らすと前者（責務分離・Option A）が妥当。</strong></div>
     </div>
     <div class="issue-box">
       <div class="issue-num">論点 B</div>
-      <div class="issue-title">在庫テーブルの統合</div>
-      <div class="issue-body">現行の 2 テーブル構造（LOCATION_STOCK + GW_LOCATION_STOCK）を TO-BE で 1 テーブルに統合するか、GW 連携の特殊性を残して分離を維持するか。</div>
-    </div>
-    <div class="issue-box">
-      <div class="issue-num">論点 C</div>
-      <div class="issue-title">差異報告の標準化</div>
-      <div class="issue-body">10 個の差異報告 API を IL で何本に標準化するか。GW 系と非 GW 系を統合するか、商品識別キーの違い（v1/v2/v3）をどう吸収するか。</div>
+      <div class="issue-title">IL-5 の個別対応範囲</div>
+      <div class="issue-body">10 本の差異報告 API・3 パターンの棚卸フロー・倉庫ごとの連携仕様差を、IL-5（物流コネクタ）で<strong>すべて個別対応する</strong>方針。標準化しないため、IL-5 の実装ボリュームが課題となる。</div>
     </div>
   </div>
 
-  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 3 インスタンス構成と TO-BE での扱い</p>
-  <table class="resp-table">
-    <thead><tr><th>インスタンス</th><th>環境</th><th>役割</th><th>TO-BE での扱い</th></tr></thead>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; AS-IS: 3 インスタンス構成のデータフロー</p>
+  <div class="flow-row" style="margin-bottom:18px;">
+    <div class="fstep" style="border-color:#fca5a5;background:#fef2f2;opacity:0.6;"><div class="fstep-lbl" style="color:var(--red)">DS</div><div class="fstep-name">データ配信元<br><span style="font-size:9px;font-weight:400">2024/9 終息</span></div></div>
+    <div class="farr">&rarr;</div>
+    <div class="fstep hi"><div class="fstep-lbl">EFS(WOS)</div><div class="fstep-name">自社EC用<br><span style="font-size:9px;font-weight:400">受注・引当</span></div></div>
+    <div class="farr">&rarr;</div>
+    <div class="fstep"><div class="fstep-lbl">外部EC中間</div><div class="fstep-name">中継層</div></div>
+    <div class="farr">&rarr;</div>
+    <div class="fstep hi"><div class="fstep-lbl">EFS(FCL)</div><div class="fstep-name">モール連携用<br><span style="font-size:9px;font-weight:400">FCL機能併設</span></div></div>
+    <div class="farr">&rarr;</div>
+    <div class="fstep" style="border-color:#ddd6fe;background:#f5f3ff;"><div class="fstep-lbl" style="color:var(--purple)">モール各社</div><div class="fstep-name">ZOZO/Rakuten<br>LOHACO 等</div></div>
+  </div>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; 3 インスタンスの役割詳細</p>
+  <table class="resp-table" style="margin-bottom:18px;">
+    <thead><tr><th style="width:14%">インスタンス</th><th style="width:14%">正式名</th><th>具体的な用途</th><th style="width:24%">TO-BE での扱い</th></tr></thead>
     <tbody>
-      <tr><td style="font-weight:600">DS</td><td>Data Source</td><td>データ配信元</td><td rowspan="3" style="color:var(--green);font-weight:500">EFSO では<strong>シングルインスタンスに統合</strong>する方針（TO-BE 設計の前提）。AS-IS でも論理在庫の SoT は「EFS」として統合的に定義済み（as-is/inventory/01_overview.md Section 2-1）のため、この方針で SoT 定義に矛盾は生じない。残る論点は移行タイムライン（#18 データモデル移行計画で扱う）。</td></tr>
-      <tr><td style="font-weight:600">EFS-WOS</td><td>World Online Store</td><td>自社 EC の在庫管理</td></tr>
-      <tr><td style="font-weight:600">EFS-FCL</td><td>Fashion Co-Lab</td><td>モール出店の在庫管理</td></tr>
+      <tr style="opacity:0.7">
+        <td style="font-weight:600;color:var(--red)">DS</td>
+        <td>Data Source<br>（データ配信元）</td>
+        <td>
+          EFS へのベースデータ初期配信元<br>
+          主な連携: <code>STELAX27</code>（LT 限度数全件）/ <code>STELBW</code>（在庫連携全件）<br>
+          <strong style="color:var(--red)">※ 2024 年 9 月に終息済み</strong><br>
+          旧 DS の LT 在庫引当 API（<code>STELAX28</code>）の連携先は<strong>在庫Ctrl に移管</strong>（2024/9/17）
+        </td>
+        <td style="color:var(--muted);font-weight:500">すでに機能縮退・終息済みのため、EFSO では<strong>考慮不要</strong></td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--amber)">EFS(WOS)</td>
+        <td>World Online Store<br>（自社EC用）</td>
+        <td>
+          <strong>自社 EC の EFS 本体</strong>。受注・売上・在庫管理の中核<br>
+          ストア構成: 02:WOS（自社EC）/ 32:社販 / 52:店頭受注 / 12:楽天・Yahoo（テンポスター経由）/ 22:FFW・Alinoma・LOHACO<br>
+          主な連携: <code>STELAX09</code>/<code>STELAX25</code>/<code>STELAX28</code>/<code>STELAB29</code>
+        </td>
+        <td style="color:var(--green);font-weight:500"><strong>EFSO Core の中核</strong>として吸収。自社 EC 機能の本丸</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--purple)">EFS(FCL)</td>
+        <td>Fashion Co-Lab<br>（モール出店用）</td>
+        <td>
+          <strong>モール出店側の EFS + FCL（Front Commerce Layer）機能</strong>を併せ持つ<br>
+          FCL: 在庫Ctrl と EC/モールを繋ぐ<strong>API 中継層</strong>。各モール仕様にデータ変換して配信・受信<br>
+          ストア構成: 01:FFW / 01:Alinoma / 12:LOHACO(WOS)<br>
+          接続先: ZOZO / Rakuten / マガシーク / アウトレットピーク / ルミネ / 集英社 等
+        </td>
+        <td style="color:var(--green);font-weight:500">EFS 部分は <strong>Core に吸収</strong>、モール連携部分は <strong>IL-6（外部モールコネクタ）に移行</strong></td>
+      </tr>
     </tbody>
   </table>
+
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">&#9632; TO-BE: シングルインスタンス統合イメージ</p>
+  <div class="flow-row">
+    <div class="fstep" style="border-color:#a5f3fc;background:#ecfeff;"><div class="fstep-lbl" style="color:var(--cyan)">在庫Ctrl</div><div class="fstep-name">チャネル配分<br><span style="font-size:9px;font-weight:400">(旧 DS 責務を吸収)</span></div></div>
+    <div class="farr">&harr;</div>
+    <div class="fstep hi" style="min-width:150px;"><div class="fstep-lbl" style="color:var(--green)">EFSO Core</div><div class="fstep-name"><strong>シングルインスタンス</strong><br><span style="font-size:9px;font-weight:400">WOS + FCL を統合<br>論理在庫 SoT</span></div></div>
+    <div class="farr">&harr;</div>
+    <div class="fstep" style="border-color:#a5f3fc;background:#ecfeff;"><div class="fstep-lbl" style="color:var(--cyan)">IL-6</div><div class="fstep-name">外部モール<br>コネクタ</div></div>
+    <div class="farr">&rarr;</div>
+    <div class="fstep" style="border-color:#ddd6fe;background:#f5f3ff;"><div class="fstep-lbl" style="color:var(--purple)">モール各社</div><div class="fstep-name">ZOZO/Rakuten<br>LOHACO 等</div></div>
+  </div>
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:12px;color:#166534;line-height:1.7;">
+    <strong>統合ポイント:</strong> AS-IS で「論理在庫 SoT = EFS」として統合的に定義済み（as-is/inventory/01_overview.md §2-1）のため、シングルインスタンス化しても SoT 定義に矛盾は生じない。DS は終息済み・モール連携は IL-6 に移行するため、Core はシンプルな構成で自社EC と モール出店の両方をカバーできる。残る論点は移行タイムラインのみ（#18 連動）。
+  </div>
 </div>
 
 <!-- ===== 03 選択肢 ===== -->
@@ -320,8 +368,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
         <div class="mini-row"><div class="mini-ok">棚卸は WMS 側の責務。Core は結果（差異）を受け取るだけ</div></div>
       </div>
       <div class="pc-grid">
-        <div class="pros"><div class="pc-label p">&#10003; メリット</div><div class="pc-body">責務が明確（Core は帳簿、WMS は現場）<br>Core の複雑度を抑制<br>WMS 側の棚卸機能をフル活用<br>GW テーブルの二重構造を解消可能</div></div>
-        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">物理在庫の詳細を Core で即座に参照不可<br>倉庫ごとに異なる棚卸連携の統一が必要<br>差異報告 API の標準化設計が必要</div></div>
+        <div class="pros"><div class="pc-label p">&#10003; メリット</div><div class="pc-body">責務が明確（Core は帳簿、WMS は現場）<br>Core の複雑度を抑制<br>WMS 側の棚卸機能をフル活用<br>周辺システム改修なし方針と整合</div></div>
+        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">物理在庫の詳細を Core で即座に参照不可<br>IL-5 で 10 API + 3 パターン分の個別実装が必要<br>IL-5 の実装ボリュームが大きい</div></div>
       </div>
     </div>
     <div class="opt-card b">
@@ -337,7 +385,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       </div>
       <div class="pc-grid">
         <div class="pros"><div class="pc-label p">&#10003; メリット</div><div class="pc-body">在庫データが Core に完全集約<br>リアルタイムで物理在庫も参照可能<br>WMS への依存度が低下</div></div>
-        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">Core の複雑度が大幅に増加<br>棚卸ロジックを Core に新規実装<br>WMS の既存棚卸機能が無駄に<br>現行 GW テーブルの二重管理を引き継ぐリスク</div></div>
+        <div class="cons"><div class="pc-label c">&#10007; デメリット</div><div class="pc-body">Core の複雑度が大幅に増加<br>棚卸ロジックを Core に新規実装<br>WMS の既存棚卸機能が無駄に<br><strong>周辺システム改修なし方針と矛盾（非推奨）</strong></div></div>
       </div>
     </div>
   </div>
@@ -352,10 +400,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       <tr><td class="asp">Core の複雑度</td><td class="a">&compfn; 論理在庫に集中。場所レベルで管理</td><td class="b">&times; 物理在庫+ロケーション+棚卸を全て抱える</td></tr>
       <tr><td class="asp">棚卸の実行主体</td><td class="a">&compfn; WMS の既存機能を活用</td><td class="b">&triangle; Core に棚卸ロジックを新規実装</td></tr>
       <tr><td class="asp">在庫の可視性</td><td class="a">&triangle; 物理在庫の詳細は WMS に問い合わせ</td><td class="b">&compfn; Core でリアルタイム参照可能</td></tr>
-      <tr><td class="asp">テーブル二重管理</td><td class="a">&compfn; GW テーブルを廃止し IL 経由に統一</td><td class="b">&times; 二重管理が残る可能性</td></tr>
-      <tr><td class="asp">差異報告 API</td><td class="a">&compfn; IL で標準化し 10 → 1〜2 本に削減</td><td class="b">&triangle; Core が全 API を直接処理する複雑さ</td></tr>
-      <tr><td class="asp">WMS 変更時の影響</td><td class="a">&compfn; IL が吸収。Core への影響なし</td><td class="b">&times; Core の物理在庫ロジックに直接影響</td></tr>
-      <tr><td class="asp">開発コスト</td><td class="a">&compfn; IL の差異報告標準化のみ</td><td class="b">&times; 棚卸 + ロケーション管理の新規開発</td></tr>
+      <tr><td class="asp">周辺システム改修</td><td class="a">&compfn; 不要（基本方針と整合）</td><td class="b">&times; 改修が発生する可能性（方針と矛盾）</td></tr>
+      <tr><td class="asp">差異報告 API（10 本）</td><td class="a">&compfn; 現状維持。IL-5 で個別対応</td><td class="b">&triangle; Core が全 API を直接処理する複雑さ</td></tr>
+      <tr><td class="asp">棚卸フロー（3 パターン）</td><td class="a">&compfn; 現状維持。IL-5 で個別対応</td><td class="b">&times; Core で棚卸ロジックを新規実装</td></tr>
+      <tr><td class="asp">開発コスト</td><td class="a">&triangle; IL-5 の実装ボリュームが大きい</td><td class="b">&times; 棚卸 + ロケーション管理の新規開発</td></tr>
     </tbody>
   </table>
 </div>
@@ -364,12 +412,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <div class="section">
   <div class="sec-label"><span class="sec-num green">05</span><span class="sec-title" style="color:var(--green)">推奨方針</span></div>
   <div class="verdict">
-    <div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A &mdash; 責務分離（Core = 論理在庫、WMS = 物理在庫）</span></div>
+    <div class="verdict-header"><span class="verdict-badge">方針確定</span><span class="verdict-title">Option A &mdash; 責務分離（Core = 論理在庫、WMS = 物理在庫）</span></div>
     <div class="verdict-body">
-      <p><strong>前提条件:</strong> WMS は現行を据え置く方針のため、AS-IS の棚卸フロー（WMS 側で棚卸 → 差異を EFS に連携）は引き続き利用可能。TO-BE では IL 経由で標準化する。</p>
-      <p><strong>根拠&dagger;（責務の明確化）:</strong> 「帳簿は Core、現場は WMS」と明確に分けることで、Core のスコープを抑制し保守性を確保します。現行 EFS でも論理在庫の SoT は EFS 側であり、この原則を踏襲します。</p>
-      <p><strong>根拠&Dagger;（二重管理の解消）:</strong> GW テーブル（GW_LOCATION_STOCK）を廃止し、WMS との連携を IL 経由に一本化することで、現行の 2 テーブル構造を解消できます。</p>
-      <p><strong>根拠&sect;（差異報告の標準化）:</strong> 10 個の差異報告 API を IL の物流コネクタ（IL-5）で 1〜2 本に標準化します。商品識別キーの違いは IL 側のデータ変換で吸収します。</p>
+      <p><strong>基本方針:</strong> 周辺システム（WMS / GWCS / 倉庫側）は<strong>改修しない</strong>。これに伴い、棚卸・差異報告・在庫テーブル構造は<strong>すべて AS-IS を踏襲</strong>し、IL-5（物流コネクタ）で個別対応する。</p>
+      <p><strong>根拠&dagger;（責務の明確化）:</strong> 「帳簿は Core、現場は WMS」と明確に分けることで、Core のスコープを抑制し保守性を確保する。現行 EFS でも論理在庫の SoT は EFS 側であり、この原則をそのまま踏襲する。</p>
+      <p><strong>根拠&Dagger;（AS-IS 踏襲）:</strong> 棚卸フローは WMS 側で既に稼働中（3 パターンはそのまま維持）。差異報告 API 10 本も現状のまま利用し、IL-5 ですべて個別に受信する。</p>
+      <p><strong>残リスク:</strong> 周辺システム改修なし方針のため、IL-5 の実装ボリュームが大きくなる点が開発コスト上の課題。Phase 3 の IL-5 設計で対応範囲を精査する。</p>
     </div>
   </div>
 
@@ -389,9 +437,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       <div class="scope-label c">IL（統合レイヤー）</div>
       <div class="scope-items">
         IL-5: 物流コネクタ<br>
-        差異報告 API の標準化（10 &rarr; 1〜2 本）<br>
-        入出荷実績の変換・ルーティング<br>
-        商品識別キーの統一変換<br>
+        差異報告 API 10 本の<strong>個別受信</strong><br>
+        棚卸フロー 3 パターンの<strong>個別対応</strong><br>
+        商品識別キーの変換<br>
         Core &harr; WMS 間のメッセージ監視
       </div>
     </div>
@@ -412,44 +460,25 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <div class="section">
   <div class="sec-label"><span class="sec-num amber">06</span><span class="sec-title">確認事項リスト</span></div>
   <ul class="checklist">
-    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">CTO + 開発</span><div>3 インスタンス（DS / WOS / FCL）の統合方針を確定。シングルインスタンスに移行するタイムラインとデータ移行計画を策定する</div></div></li>
-    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">開発</span><div>差異報告 API 10 本の業務ロジック差分を調査。GW 系 7 本と非 GW 系 3 本で処理が異なる部分を特定し、IL での標準化設計に必要な要件を整理する</div></div></li>
-    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">開発</span><div>GW_LOCATION_STOCK テーブルの利用実態を調査。場所区分 05 に紐づく在庫レコード数と GW 専用カラムの使用頻度を確認し、テーブル統合の影響を見積もる</div></div></li>
-    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">CTO + 開発</span><div>現行 3 パターンの棚卸フロー（EFS 起点／WMS 起点・差異のみ／WMS 起点・全在庫出力）を IL で統一するか、全パターン維持するかを判断する（IL-5 設計の前提）</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">開発</span><div>差異報告 API 10 本それぞれの業務ロジック（しきい値・自動/手動判定・調整仕訳生成）を Biprogy に確認し、IL-5 での<strong>個別受信設計</strong>に必要な要件を整理する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">開発</span><div>棚卸フロー 3 パターン（EFS 起点／WMS 起点・差異のみ／WMS 起点・全在庫出力）それぞれの連携仕様を確認し、IL-5 で<strong>全パターン個別対応</strong>する実装計画を策定する</div></div></li>
+    <li><div class="chk-box"></div><div><span class="tag iss">#9</span><span class="chk-owner">開発</span><div>IL-5 の実装ボリューム（API 10 本 × 棚卸 3 パターン × 倉庫別仕様差）を見積もり、開発工数の試算を行う</div></div></li>
     <li><div class="chk-box"></div><div><span class="tag lnk">#15</span><span class="chk-owner">CTO + 開発</span><div>#15（移動出荷/入荷の Core 管理範囲）との整合確認。移動指示を Core が発行するか WMS に任せるかは #9 の責務境界に依存する</div></div></li>
   </ul>
 </div>
 
 <!-- ===== 07 ブロッカー ===== -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 3 項目が未解決のまま残ると、TO-BE の詳細設計・移行計画の策定に着手できません。</p>
+  <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">残リスク（ブロッカーではないが追跡が必要）</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">基本方針「周辺システム改修なし」の確定により、意思決定を阻むブロッカーは解消された。ただし、以下 1 項目は IL-5 設計時に追跡すべきリスクとして残る。</p>
   <div class="blocker-grid">
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">差異報告 API の業務ロジックと倉庫別使用状況が未解明</span><span class="priority-badge high">HIGH</span></div>
+    <div class="blocker-card" style="grid-column:1/-1">
+      <div class="blocker-header"><span class="blocker-id">R-1</span><span class="blocker-title">IL-5 の実装ボリュームが大きい（開発コストリスク）</span><span class="priority-badge medium">MEDIUM</span></div>
       <div class="blocker-body">
-        <div class="blocker-why"><strong>前提（AS-IS 確認済み）:</strong><br>・<strong>使用タイミング</strong>: 棚卸実施時 + WMS 側のシステム補正時に使用。日時バッチで常時監視するものではなく<strong>イベント駆動</strong>で動く<br>・<strong>計算式</strong>: 差異数量 = EFS 論理在庫 - WMS 物理在庫（入出力スキーマは判明済み）<br>・<strong>10 本の内訳</strong>: GW 系 7 本（Gateway 経由、GW_* ワークテーブル経由で取込）+ 非 GW 系 3 本（直接取込）。v1/v2/v3 は倉庫番号ではなく<strong>商品特定キー</strong>（basic_item_id_sku / product_identification_key_sku 等）のバリエーション<br><br><strong>未解明（本当の論点）:</strong><br>① 差異検出の判定ルール（何個ズレたら通知するか・しきい値）<br>② 自動調整 vs 手動承認の分岐ルール<br>③ 調整仕訳の生成ロジック（efs-bo に判定コード未発見・OI-E02）<br>④ 倉庫ごとにどの API を使っているかのマッピング<br>⑤ 10 本すべてが本当に必要か（統廃合の余地）</div>
-        <div class="blocker-impact">業務ロジックを解明せずに IL（統合レイヤー）を設計すると、<strong>ズレ検知の漏れ</strong>や<strong>調整フローの誤り</strong>が発生する。実在庫と帳簿在庫のズレが放置されると、「売れる在庫がない」「ない在庫が売れる」状態になり、キャンセル・返金・謝罪対応が増える。</div>
-        <div class="blocker-action">Biprogy に (1) 差異検出のしきい値、(2) 自動/手動の判定ルール、(3) 調整仕訳の生成ロジック、(4) 倉庫 × API のマッピング、(5) 10 本の使い分けの必要性、を確認依頼。並行して efs-api wms.yaml（lines 23574-23908）と efs-bo inventories/ の実装を突合調査する。</div>
-        <div class="blocker-owner">Owner: 開発 / 確認先: Biprogy（OI-E02）</div>
-      </div>
-    </div>
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">在庫テーブル統合の方針はほぼ確定。残る確認事項は影響範囲と PK 設計</span><span class="priority-badge medium">MEDIUM</span></div>
-      <div class="blocker-body">
-        <div class="blocker-why"><strong>前提（AS-IS 確認済み）:</strong> 現行の LOCATION_STOCK（通常在庫）と GW_LOCATION_STOCK（WMS 連携用）は<strong>ほぼ同一構造</strong>（as-is/inventory/02_data-definition.md Section 4-3）。TO-BE では <strong>1 テーブルに統合する方針で設計</strong>する。GW 管理の区別は、連携系統を識別するカラム（例: <code>DATA_LINKAGE_SYSTEM_ID</code>）を本体テーブルに追加することで吸収する。<br><br><strong>残る確認事項:</strong><br>① PK 構造の調整設計（LOCATION_STOCK の複合ユニーク制約 vs GW_LOCATION_STOCK の単一 PK）<br>② 「ほぼ同一」の裏取り（本体テーブルの全カラム差分を efs-db で確認）<br>③ 現行 GW テーブルを参照している既存のバッチ・API・画面の網羅調査（影響範囲把握）<br>④ カラム追加に伴うパフォーマンス影響の検証（全件更新バッチの重さ等）</div>
-        <div class="blocker-impact">方針自体は大きな論点ではないが、<strong>影響範囲を調べずに移行すると夜間バッチ・管理画面・外部モール連携で本番障害が発生</strong>するリスクがある。また PK 設計を誤ると参照整合性が崩れる。</div>
-        <div class="blocker-action">開発チームが (1) 本体テーブルのカラム差分を efs-db で確認、(2) GW テーブルを参照している全コードを efs-db / efs-bo / efs-batch-web で横断検索、(3) PK 統合方式の設計、の 3 タスクを実施する。</div>
-        <div class="blocker-owner">Owner: 開発</div>
-      </div>
-    </div>
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">棚卸フロー 3 パターンを IL で統一するか未決定（IL 設計の前提）</span><span class="priority-badge medium">MEDIUM</span></div>
-      <div class="blocker-body">
-        <div class="blocker-why"><strong>前提:</strong> 棚卸機能自体は WMS が保持する方針で確定（責務境界の論点ではない）。本ブロッカーは <strong>IL（統合レイヤー）側のデータ連携設計</strong>に関する論点。<br><br>現状は倉庫ごとに棚卸結果の EFS への連携仕様が異なり、3 パターン並存している:<br>・<strong>ケース1</strong>（EFS 起点）: EFS が事前に論理在庫を WMS に送り、WMS 側で補正してから棚卸<br>・<strong>ケース2</strong>（WMS 起点・差異のみ）: 棚卸後、ズレた分の差異票だけを EFS に返す<br>・<strong>ケース3</strong>（WMS 起点・全在庫出力）: 差異票に加えて全在庫データも EFS に返す<br><br><strong>何が問題か:</strong> TO-BE の IL-5（物流コネクタ）でどのパターンを標準にするか、全パターン維持するかが未決定。これが決まらないと IL-5 の詳細設計・工数見積もりに着手できない。</div>
-        <div class="blocker-impact">1 パターンに統一すれば IL 設計がシンプルになり保守コストが下がるが、<strong>既存倉庫側の連携仕様変更コスト</strong>が発生する。全パターン維持なら IL 側に複数ルート保守が残り、<strong>運用・保守コストが継続的に発生</strong>する。方針未決定のままでは IL 設計規模が見積もれない。</div>
-        <div class="blocker-action">3 パターンそれぞれを使っている倉庫を洗い出し、IL で統一するか個別対応するかを CTO + 開発が判断。倉庫側の改修コストも併せて見積もる。</div>
-        <div class="blocker-owner">Owner: CTO + 開発 / 関連: AS-IS `04_1_warehouse-wms.md` §10</div>
+        <div class="blocker-why"><strong>背景:</strong> 周辺システム改修なしの方針により、AS-IS の多様な連携仕様を IL-5（物流コネクタ）で<strong>すべて個別に受け止める</strong>必要がある。具体的には:<br>・差異報告 API <strong>10 本</strong>（GW 系 7 本 + 非 GW 系 3 本）それぞれを個別受信<br>・棚卸フロー <strong>3 パターン</strong>（EFS 起点 / WMS 起点・差異のみ / WMS 起点・全在庫出力）を個別対応<br>・倉庫ごとの商品特定キーのバリエーション（basic_item_id_sku / product_identification_key_sku 等）の変換<br>・場所区分 05（GW 管理）の連携データ受信<br><br><strong>結果:</strong> IL-5 の実装範囲が広く、開発工数とテスト範囲が大きくなる。</div>
+        <div class="blocker-impact">IL-5 の開発工数が膨らむと、EFSO プロジェクト全体のスケジュールに影響する。テストケースも 10 × 3 × 倉庫数の組み合わせを網羅する必要があり、<strong>品質保証コストも増大</strong>する。</div>
+        <div class="blocker-action">Phase 3 の IL-5 設計時に、(1) Biprogy から 10 API × 3 パターンの詳細仕様を取得、(2) 倉庫別の使用 API マッピング作成、(3) 共通化できる部分（商品特定キーの変換層等）の抽出、(4) テストケース設計、を実施して工数を精査する。</div>
+        <div class="blocker-owner">Owner: CTO + 開発 / 確認先: Biprogy</div>
       </div>
     </div>
   </div>
@@ -459,45 +488,42 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <div class="section">
   <div class="sec-label"><span class="sec-num orange">08</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
   <div class="tobe-intro">
-    <strong>推奨方針は「Option A（責務分離: Core = 論理在庫、WMS = 物理在庫）を基本路線とする」。</strong><br>
-    <strong>EFSO ではシングルインスタンス構成を前提</strong>とし、AS-IS で確立済みの「論理在庫 SoT = EFS」定義をそのまま踏襲する。WMS も現行据え置き方針のため、AS-IS の棚卸フローは TO-BE でも引き継げる。残る論点は IL 設計の詳細（B-1〜B-3）と移行タイムライン（#18 連動）。
+    <strong>基本方針「周辺システム改修なし」のもと、Option A（責務分離: Core = 論理在庫、WMS = 物理在庫）で方針確定方向。</strong><br>
+    AS-IS で確立済みの「論理在庫 SoT = EFS」定義をそのまま踏襲し、差異報告 API 10 本・棚卸フロー 3 パターンはすべて現状維持で IL-5 が個別対応する。残作業は <strong>IL-5 個別対応設計</strong>と #15 との同時 Fix、#18 連動の移行タイムライン策定。
   </div>
 
   <div class="phase-list">
     <div class="phase">
-      <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">調査 &mdash; 判断に必要なファクトを揃える</span><span class="phase-time">目標: 2 週間以内</span></div>
+      <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">意思決定 &mdash; #9 と #15 を同時 Fix</span><span class="phase-time">即時対応可</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>差異報告 API の業務ロジック + 倉庫別使用状況調査</b><br>Biprogy に以下 5 点を確認: (1) 差異検出のしきい値、(2) 自動調整 vs 手動承認の判定ルール、(3) 調整仕訳の生成ロジック、(4) 倉庫ごとの使用 API マッピング、(5) 10 本の統廃合可否。並行で efs-api wms.yaml（23574-23908 行）と efs-bo inventories/ の実装を突合する。</div><div class="action-owner">担当: 開発 / 期間: 2 週間以内 / 確認先: Biprogy（OI-E02）</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>在庫テーブル統合設計の詳細化</b><br>(1) LOCATION_STOCK / GW_LOCATION_STOCK の全カラム差分を efs-db で確認、(2) GW テーブルを参照しているバッチ・API・画面を efs-db/efs-bo/efs-batch-web で洗い出し、(3) PK 統合方式（複合ユニーク制約 vs 単一 PK）の設計、(4) カラム追加時のパフォーマンス影響評価を実施。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>棚卸 3 パターンの使用状況調査</b><br>ケース1（EFS 起点）/ ケース2（WMS 起点・差異のみ）/ ケース3（WMS 起点・全在庫出力）それぞれを使っている倉庫・SKU・業務シーンを洗い出し。IL で統一するか個別維持するかの判断材料を揃える。</div><div class="action-owner">担当: 開発 + 倉庫運用 / 期間: 並行実施</div></div></div>
+        <div class="action-item"><span class="action-resolve">方針 Fix</span><div><div class="action-desc"><b>#9 と #15 の同時方針 Fix</b><br>#9（倉庫ロケーション管理）と #15（移動出荷/入荷の Core 管理範囲）は相互依存のため、同一のアーキテクチャ判断会で確定する。基本方針「周辺システム改修なし」に基づき <strong>Option A（責務分離）で確定</strong>。移行タイムラインは #18（データモデル移行計画）と連動して策定する。</div><div class="action-owner">担当: CTO + 開発 / 会議体: アーキテクチャ判断会</div></div></div>
       </div>
     </div>
 
     <div class="phase">
-      <div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">意思決定 &mdash; #9 と #15 を同時 Fix</span><span class="phase-time">Phase 1 完了後 1 週間</span></div>
+      <div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">IL-5 要件定義 &mdash; 個別対応範囲の精査</span><span class="phase-time">Phase 1 完了後</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">方針 Fix</span><div><div class="action-desc"><b>#9 と #15 の同時方針 Fix</b><br>#9（倉庫ロケーション管理）と #15（移動出荷/入荷の Core 管理範囲）は相互依存のため、同一のアーキテクチャ判断会で確定する。シングルインスタンス化は TO-BE 設計の前提として確定し、移行タイムラインのみ #18 と連動して策定する。</div><div class="action-owner">担当: CTO + 開発 / 会議体: アーキテクチャ判断会</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>棚卸 3 パターンの統合方針確定</b><br>Phase 1 の調査結果をもとに、棚卸 3 パターン（ケース1/2/3）を IL で 1 パターンに統一するか、全パターン維持するかを確定する。倉庫側の改修コストも踏まえて判断し、IL-5 設計の前提として確定させる。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+        <div class="action-item"><span class="action-resolve">R-1 対応</span><div><div class="action-desc"><b>IL-5 個別対応範囲の精査（Biprogy 連携）</b><br>Biprogy から以下を取得: (1) 差異報告 API 10 本それぞれの業務ロジック（しきい値・自動/手動判定・仕訳生成）、(2) 棚卸フロー 3 パターンの詳細仕様、(3) 倉庫別の使用 API マッピング、(4) 商品特定キーのバリエーション一覧。並行で efs-api wms.yaml（23574-23908 行）と efs-bo inventories/ の実装を突合する。</div><div class="action-owner">担当: 開発 / 確認先: Biprogy（OI-E02）</div></div></div>
+        <div class="action-item"><span class="action-resolve">R-1 対応</span><div><div class="action-desc"><b>IL-5 実装工数の試算</b><br>上記調査結果をもとに、API 10 本 &times; 棚卸 3 パターン &times; 倉庫別仕様差の組み合わせで IL-5 の実装工数とテスト範囲を試算。共通化できる変換層（商品特定キー変換等）を抽出して工数削減策を検討する。</div><div class="action-owner">担当: 開発 / 成果物: IL-5 実装工数試算書</div></div></div>
       </div>
     </div>
 
     <div class="phase">
-      <div class="phase-header"><span class="phase-num p3">Phase 3</span><span class="phase-title">設計着手 &mdash; 方針確定後</span><span class="phase-time">Phase 2 完了後</span></div>
+      <div class="phase-header"><span class="phase-num p3">Phase 3</span><span class="phase-title">設計着手 &mdash; IL-5 詳細設計</span><span class="phase-time">Phase 2 完了後</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>IL 物流コネクタ（IL-5）の差異報告標準化設計</b><br>10 API &rarr; 1〜2 本に標準化。商品識別キーの変換ルール、GW 系と非 GW 系の統合方式を IL 設計に反映。棚卸フロー（B-3 で確定した統合方針）も合わせて IL-5 に実装。</div><div class="action-owner">担当: 開発 / 成果物: IL-5 差異報告・棚卸 IF 仕様書</div></div></div>
-        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>在庫データモデルの TO-BE 設計</b><br>GW テーブル統合の可否を反映し、EFSO Core の在庫テーブル構造を確定。シングルインスタンス前提の在庫階層を設計する。</div><div class="action-owner">担当: 開発 / 成果物: 在庫ドメインモデル設計書</div></div></div>
-        <div class="action-item"><span class="action-resolve">Doc 更新</span><div><div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#9 を「決定済み」としてクローズ。to-be/ に在庫責務定義ドキュメントを作成。efs-business/mapping/ の在庫管理セクションを確定ステータスに更新。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>IL 物流コネクタ（IL-5）の個別対応設計</b><br>差異報告 API 10 本を個別受信する設計、棚卸フロー 3 パターンを個別対応する設計、商品特定キーの変換層の設計を実施。テストケースは 10 &times; 3 &times; 倉庫数の組み合わせを網羅する。</div><div class="action-owner">担当: 開発 / 成果物: IL-5 差異報告・棚卸 IF 仕様書</div></div></div>
+        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>在庫データモデルの TO-BE 設計</b><br>シングルインスタンス前提の在庫階層を設計。GW 管理連携のデータ受信部分は IL-5 経由で Core に取り込む形で設計する。</div><div class="action-owner">担当: 開発 / 成果物: 在庫ドメインモデル設計書</div></div></div>
+        <div class="action-item"><span class="action-resolve">Doc 更新</span><div><div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#9 を「決定済み: Option A」としてクローズ。to-be/ に在庫責務定義ドキュメントを作成。efs-business/mapping/ の在庫管理セクションを確定ステータスに更新。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
       </div>
     </div>
   </div>
 
   <div class="unlock-box">
-    <div class="unlock-title">&#10003; ブロッカー全解消後に動き出せること</div>
+    <div class="unlock-title">&#10003; 方針確定後の作業</div>
     <div class="unlock-items">
-      IL-5（物流コネクタ）の差異報告 API 標準化設計<br>
-      EFSO Core の在庫テーブル TO-BE 設計（統合方針確定 + 影響範囲対応完了）<br>
-      シングルインスタンス移行のデータ移行計画策定<br>
-      WMS &harr; Core 間の棚卸連携 IF 仕様確定（3 パターン統合方針に基づき IL-5 に実装）<br>
+      IL-5（物流コネクタ）の個別対応設計（10 API &times; 3 パターン &times; 倉庫別）<br>
+      EFSO Core の在庫テーブル TO-BE 設計（シングルインスタンス前提）<br>
+      シングルインスタンス移行のデータ移行計画策定（#18 連動）<br>
       #15（移動出荷/入荷）の Core 管理範囲確定<br>
       efso-document の to-be/ ディレクトリへのドキュメント登録
     </div>
