@@ -435,11 +435,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       </div>
     </div>
     <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">在庫管理用の 2 つのテーブルを 1 つに統合する影響が未調査</span><span class="priority-badge medium">MEDIUM</span></div>
+      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">在庫テーブル統合の方針はほぼ確定。残る確認事項は影響範囲と PK 設計</span><span class="priority-badge medium">MEDIUM</span></div>
       <div class="blocker-body">
-        <div class="blocker-why"><strong>何が問題か:</strong> 現行は「通常の在庫」と「GW（WMS 連携）用の在庫」で<strong>在庫データを別々のテーブル（データの入れ物）で管理</strong>している。新システムでこの 2 つを 1 つに統合したいが、<strong>この在庫データを参照している既存のバッチ処理・管理画面・API</strong> が社内のどこに何個あるか誰も把握していない。<br><br><strong>具体例:</strong> 夜間バッチで在庫を参照する処理、BO 画面で在庫を表示する箇所、外部モール連携で在庫数を送信する API など、すべてが影響を受ける可能性がある。</div>
-        <div class="blocker-impact">影響範囲を調べずに統合を進めると、<strong>夜間バッチが止まる・管理画面にエラーが出る・モール連携で古い在庫数が送られる</strong>などの本番障害が発生し、EC 運営に直接的な影響を与える。</div>
-        <div class="blocker-action">開発チームが社内の EFS 関連ソースコード（efs-db / efs-bo / efs-batch-web）を横断検索し、GW 在庫テーブルを参照している全箇所をリストアップする。</div>
+        <div class="blocker-why"><strong>前提（AS-IS 確認済み）:</strong> 現行の LOCATION_STOCK（通常在庫）と GW_LOCATION_STOCK（WMS 連携用）は<strong>ほぼ同一構造</strong>（as-is/inventory/02_data-definition.md Section 4-3）。TO-BE では <strong>1 テーブルに統合する方針で設計</strong>する。GW 管理の区別は、連携系統を識別するカラム（例: <code>DATA_LINKAGE_SYSTEM_ID</code>）を本体テーブルに追加することで吸収する。<br><br><strong>残る確認事項:</strong><br>① PK 構造の調整設計（LOCATION_STOCK の複合ユニーク制約 vs GW_LOCATION_STOCK の単一 PK）<br>② 「ほぼ同一」の裏取り（本体テーブルの全カラム差分を efs-db で確認）<br>③ 現行 GW テーブルを参照している既存のバッチ・API・画面の網羅調査（影響範囲把握）<br>④ カラム追加に伴うパフォーマンス影響の検証（全件更新バッチの重さ等）</div>
+        <div class="blocker-impact">方針自体は大きな論点ではないが、<strong>影響範囲を調べずに移行すると夜間バッチ・管理画面・外部モール連携で本番障害が発生</strong>するリスクがある。また PK 設計を誤ると参照整合性が崩れる。</div>
+        <div class="blocker-action">開発チームが (1) 本体テーブルのカラム差分を efs-db で確認、(2) GW テーブルを参照している全コードを efs-db / efs-bo / efs-batch-web で横断検索、(3) PK 統合方式の設計、の 3 タスクを実施する。</div>
         <div class="blocker-owner">Owner: 開発</div>
       </div>
     </div>
@@ -468,7 +468,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
       <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">調査 &mdash; 判断に必要なファクトを揃える</span><span class="phase-time">目標: 2 週間以内</span></div>
       <div class="phase-body">
         <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>差異報告 API 10 本の業務ロジック調査</b><br>Biprogy に GW 系 7 本 + 非 GW 系 3 本の差分（トリガー条件・しきい値・自動調整 vs 手動調整）を確認。並行で efs-api swagger 定義を突合する。</div><div class="action-owner">担当: 開発 / 期間: 2 週間以内</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>GW テーブルの利用実態調査</b><br>GW_LOCATION_STOCK を参照しているバッチ・API・画面を efs-db/efs-bo/efs-batch-web で洗い出し。統合コストの概算を算出する。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
+        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>在庫テーブル統合設計の詳細化</b><br>(1) LOCATION_STOCK / GW_LOCATION_STOCK の全カラム差分を efs-db で確認、(2) GW テーブルを参照しているバッチ・API・画面を efs-db/efs-bo/efs-batch-web で洗い出し、(3) PK 統合方式（複合ユニーク制約 vs 単一 PK）の設計、(4) カラム追加時のパフォーマンス影響評価を実施。</div><div class="action-owner">担当: 開発 / 期間: 並行実施</div></div></div>
         <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>棚卸 3 パターンの使用状況調査</b><br>ケース1（EFS 起点）/ ケース2（WMS 起点・差異のみ）/ ケース3（WMS 起点・全在庫出力）それぞれを使っている倉庫・SKU・業務シーンを洗い出し。IL で統一するか個別維持するかの判断材料を揃える。</div><div class="action-owner">担当: 開発 + 倉庫運用 / 期間: 並行実施</div></div></div>
       </div>
     </div>
@@ -495,7 +495,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
     <div class="unlock-title">&#10003; ブロッカー全解消後に動き出せること</div>
     <div class="unlock-items">
       IL-5（物流コネクタ）の差異報告 API 標準化設計<br>
-      EFSO Core の在庫テーブル TO-BE 設計（GW 統合 or 分離の確定）<br>
+      EFSO Core の在庫テーブル TO-BE 設計（統合方針確定 + 影響範囲対応完了）<br>
       シングルインスタンス移行のデータ移行計画策定<br>
       WMS &harr; Core 間の棚卸連携 IF 仕様確定（3 パターン標準化 or 個別維持の確定）<br>
       #15（移動出荷/入荷）の Core 管理範囲確定<br>
