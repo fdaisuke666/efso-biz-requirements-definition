@@ -172,9 +172,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
   <div class="cover-meta">
     <div class="meta-item"><span class="meta-label">関連課題</span><span class="meta-value">#12 / #11（仕入管理） / #13（店舗基幹売上・解決済）</span></div>
     <div class="meta-item"><span class="meta-label">Owner</span><span class="meta-value">CTO + 開発</span></div>
-    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">ToDo &rarr; 取引量調査が先行タスク</span></div>
+    <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value" style="color:var(--green);font-weight:700;">実装方針 判断可 &rarr; 設計フェーズ移行可</span></div>
     <div class="meta-item"><span class="meta-label">影響ドメイン</span><span class="meta-value">卸出荷/返品、売上/仕入、フルフィルメント</span></div>
-    <div class="meta-item"><span class="meta-label">優先度</span><span class="meta-value" style="color:var(--red);font-weight:700;">高</span></div>
+    <div class="meta-item"><span class="meta-label">前提</span><span class="meta-value">GWCS 存続確定・周辺改修なし</span></div>
   </div>
 </div>
 
@@ -344,12 +344,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 <div class="section">
   <div class="sec-label"><span class="sec-num green">05</span><span class="sec-title" style="color:var(--green)">推奨方針</span></div>
   <div class="verdict">
-    <div class="verdict-header"><span class="verdict-badge">推奨</span><span class="verdict-title">Option A &mdash; Core に EC 卸売を残す（条件付き）</span></div>
+    <div class="verdict-header"><span class="verdict-badge">確定可</span><span class="verdict-title">Option A &mdash; Core に EC 卸売、GWCS に店舗系卸売を残す（役割分担を維持）</span></div>
     <div class="verdict-body">
-      <p><strong>前提条件:</strong> EC 経由の卸売取引量が「ゼロではない」ことが確認された場合。取引量調査の結果、完全にゼロであれば Option B を採用する。</p>
-      <p><strong>根拠&dagger;（SoT 一元性）:</strong> 現行 EFS が卸売上の SoT であり、この一元性を崩すと月次の売上突合フローが複雑化します。Core に卸売機能を残すことで、EC 売上（BtoC）と EC 卸売上（BtoB）を同一ドメインで管理できます。</p>
-      <p><strong>根拠&Dagger;（#11 との整合）:</strong> #11 で仕入管理を Core に含める方針と連動し、仕入&rarr;卸売上&rarr;月次請求の一連のフローを finance ドメイン内で完結させることで、アーキテクチャの整合性が保たれます。</p>
-      <p><strong>根拠&sect;（外販展開）:</strong> next-EFS は外販を前提とした EC システム。BtoB 卸売機能は外販先テナントにも求められる可能性が高く、Core に持たせる合理性があります。</p>
+      <p><strong>大方針:</strong> GWCS 存続確定・周辺改修なしの前提のもと、現行 EFS/GWCS 間の役割分担をそのまま引き継ぐ。<strong>EC 起点の BtoB 卸売は Core</strong>、<strong>店舗 POS 系経由の卸売集約は GWCS</strong>、<strong>卸売上 SoT は Core</strong>という現行構造を変更しない。</p>
+      <p><strong>根拠&dagger;（現行 EFS が主体で成立済み）:</strong> 卸売上は既に EFS が SoT。GWCS は店舗 POS 系実績の集約&middot;通知役割に限定されており、両者は「重複」ではなく「役割分担」。新 Core は EFS 側の卸売機能をそのまま引き継げばよい（#11 と同一論理）。</p>
+      <p><strong>根拠&Dagger;（#11 との整合）:</strong> #11 で仕入管理を Core に引き継ぐ方針と連動し、仕入&rarr;卸売上&rarr;月次請求を finance ドメイン内で完結。消化仕入の「売上+仕入同時計上」も Core 内で一貫処理できる。</p>
+      <p><strong>根拠&sect;（実装方針判断ブロッカーは消滅）:</strong> 取引量調査（B-1）は実装方針判断ではなく「Core 側卸売機能のサイジング判断」に降格。B-3（コード体系）、B-4（#11 連動）は設計フェーズで消化。方針 Fix を妨げる未解決ブロッカーは残っていない。</p>
     </div>
   </div>
 
@@ -404,91 +404,71 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 
 <!-- ===== 07 ブロッカー ===== -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num red">07</span><span class="sec-title" style="color:var(--red)">決定を阻む不確定要素（ブロッカー）</span></div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下の 4 項目が未解決のまま残ると、Option A/B いずれを選択するかの最終判断ができません。</p>
+  <div class="sec-label"><span class="sec-num green">07</span><span class="sec-title" style="color:var(--green)">実装方針判断ブロッカーは全解消 &mdash; 残るのは設計フェーズ課題</span></div>
+  <div class="note-bar" style="background:#f0fdf4;border-left-color:var(--green);color:#065f46;margin-bottom:16px;"><strong>前提の変化による解消:</strong> 「GWCS 存続確定」「周辺システム改修なし」の前提が固まり、#11 と同一論理で「EFS→Core 引継」方針が成立することが確認された。以前 Critical / High として挙げていたブロッカーは<strong>実装方針判断レベルでは解消</strong>し、以下 2 項目はサイジング／詳細設計フェーズに降格した。</div>
+
+  <p style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;">&blk14; 解消済ブロッカー（判断には影響しない）</p>
+  <table class="resp-table" style="margin-bottom:22px;">
+    <thead><tr><th style="width:8%">ID</th><th style="width:32%">旧ブロッカー</th><th style="width:60%">解消根拠</th></tr></thead>
+    <tbody>
+      <tr><td>B-1</td><td>EC 卸売の取引量が未調査</td><td>取引量は Option A/B の選択ではなく「Core 側卸売機能のサイジング」に降格。役割分担を維持する以上、Core 側に EC 卸売機能を持つこと自体は確定</td></tr>
+      <tr><td>B-2</td><td>売上データ突合方式が未設計</td><td>突合は Core &harr; GWCS 間 IL 設計の一部。実装方針判断を妨げず、設計フェーズで FS-6 と同時に詰める</td></tr>
+      <tr><td>B-3</td><td>在庫異動区分コードの逆転可能性</td><td>詳細設計フェーズで efs-db/efs-bo 実装値と照合。方針判断には影響しない</td></tr>
+      <tr><td>B-4</td><td>#11 との連動判断</td><td>#11 が「EFS→Core 引継」で判断可となったため、#12 も同一論理で確定可能。独立に判断できる</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:10px;">&blk14; 設計フェーズで解消する残課題（方針判断は妨げない）</p>
   <div class="blocker-grid">
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-1</span><span class="blocker-title">EC 卸売の取引量が未調査</span><span class="priority-badge critical">CRITICAL</span></div>
-      <div class="blocker-body">
-        <div class="blocker-why">EC（EFS BO）経由の卸出荷/返品件数が不明。この数値が Option A/B の選択を直接決定する最重要ファクター。</div>
-        <div class="blocker-impact">取引量なしに方針を決めると、過剰実装（量ゼロなのに卸売機能を作る）または機能欠落（量があるのに GWCS 一本化）のリスク。</div>
-        <div class="blocker-action">Biprogy に過去 12 か月の EC 卸出荷/返品の件数・金額データを依頼。2 週間以内にデータを取得する。</div>
-        <div class="blocker-owner">Owner: CTO + 開発 / 確認先: Biprogy（此松さん、長嶋 春奈さん）</div>
-      </div>
-    </div>
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-2</span><span class="blocker-title">売上データ突合方式が未設計</span><span class="priority-badge high">HIGH</span></div>
-      <div class="blocker-body">
-        <div class="blocker-why">Core（EC 売上 SoT）と GWCS（店舗/卸売実績）の売上データ突合方式が未設計。月次締め時の整合チェックをどのレイヤーで実行するかが不明。</div>
-        <div class="blocker-impact">突合方式が決まらないと、Core &harr; GWCS 間の IL 設計が確定できず、FS-6（GWCS 売上連携）の要件定義が遅延する。</div>
-        <div class="blocker-action">売上突合の要件（頻度・粒度・不一致時のエスカレーション）を定義し、IL 設計に反映。</div>
-        <div class="blocker-owner">Owner: CTO + 開発</div>
-      </div>
-    </div>
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-3</span><span class="blocker-title">在庫異動区分コードの逆転可能性</span><span class="priority-badge high">HIGH</span></div>
-      <div class="blocker-body">
-        <div class="blocker-why">ドキュメント上は区分⑦=卸、⑧=外部EC だが、CodeConsts では 071-072=外部EC、081-082=卸 と逆転の可能性がある。データ移行時に売上区分を誤ると財務データが破損する。</div>
-        <div class="blocker-impact">コード体系の取り違えにより、卸売上と外部 EC 売上のデータが混在し、月次決算の正確性に影響。</div>
-        <div class="blocker-action">efs-db/efs-bo の実装コードを確認し、正しいコード体系を特定。ドキュメントとの乖離があれば修正する。</div>
-        <div class="blocker-owner">Owner: 開発チーム / 確認先: Biprogy</div>
-      </div>
-    </div>
-    <div class="blocker-card">
-      <div class="blocker-header"><span class="blocker-id">B-4</span><span class="blocker-title">#11 仕入管理スコープとの連動判断</span><span class="priority-badge medium">MEDIUM</span></div>
-      <div class="blocker-body">
-        <div class="blocker-why">#11 で仕入管理を Core に含めるか GWCS に残すかの方針が卸売の処理フローに影響。消化仕入商品の場合、卸出荷時に「売上+仕入の同時計上」が発生するため、仕入側の SoT と卸売上側の SoT を同一システムに置く必要がある。</div>
-        <div class="blocker-impact">#11 と #12 を別々に判断すると、消化仕入フローが Core と GWCS に分断され、同時計上ロジックの整合性が崩れるリスク。</div>
-        <div class="blocker-action">#11 と #12 を同一の意思決定セッションで方針 Fix する。CTO がオーナーとなり判断会を設定。</div>
-        <div class="blocker-owner">Owner: CTO + 開発 / 連携: 長谷川さん、築地さん</div>
-      </div>
-    </div>
+    <div class="blocker-card"><div class="blocker-header" style="background:#fffbeb;"><span class="blocker-id" style="background:var(--amber);">D-1</span><span class="blocker-title">EC 卸売取引量に基づく Core 機能サイジング</span><span class="priority-badge medium">DESIGN</span></div><div class="blocker-body"><div class="blocker-why"><strong>内容:</strong> 過去 12 か月の EC 卸出荷/返品件数・金額を確認し、BO 画面・バッチ・請求管理の詳細実装粒度を決める。ゼロに近ければ最小限の機能、一定量あれば現行同等機能を実装。</div><div class="blocker-action">Biprogy に取引量データを依頼し、Core finance ドメイン詳細設計時にサイジング判断。</div><div class="blocker-owner">Owner: CTO + 開発 / タイミング: 詳細設計フェーズ</div></div></div>
+    <div class="blocker-card"><div class="blocker-header" style="background:#fffbeb;"><span class="blocker-id" style="background:var(--amber);">D-2</span><span class="blocker-title">Core &harr; GWCS 売上突合方式の設計</span><span class="priority-badge medium">DESIGN</span></div><div class="blocker-body"><div class="blocker-why"><strong>内容:</strong> 月次の卸売上整合チェックについて、突合頻度（日次/月次）、粒度（明細/集計）、不一致エスカレーション方式を決定。FS-6（GWCS 売上連携）と一体設計。</div><div class="blocker-action">IL 設計フェーズで要件を詰める。</div><div class="blocker-owner">Owner: 開発チーム / タイミング: IL 設計フェーズ</div></div></div>
+    <div class="blocker-card"><div class="blocker-header" style="background:#fffbeb;"><span class="blocker-id" style="background:var(--amber);">D-3</span><span class="blocker-title">在庫異動区分コード体系の確定</span><span class="priority-badge medium">DESIGN</span></div><div class="blocker-body"><div class="blocker-why"><strong>内容:</strong> ドキュメント上の⑦=卸/⑧=外部EC と CodeConsts 実装値（071-072 / 081-082）の割当てを正確に特定。データ移行時の誤マッピングを防ぐ。</div><div class="blocker-action">efs-db/efs-bo 実装を直接確認し、ドキュメントを正として as-is に反映。</div><div class="blocker-owner">Owner: 開発チーム / タイミング: データ移行設計時</div></div></div>
+    <div class="blocker-card"><div class="blocker-header" style="background:#fffbeb;"><span class="blocker-id" style="background:var(--amber);">D-4</span><span class="blocker-title">インボイス（適格請求書）発行要件</span><span class="priority-badge medium">DESIGN</span></div><div class="blocker-body"><div class="blocker-why"><strong>内容:</strong> 卸売上のインボイス発行を Core が担う場合のデータモデル・帳票設計。外販展開時の対応要件も含めて整理。</div><div class="blocker-action">Biz 側要件と法令要件を確認し、finance ドメイン詳細設計で対応。</div><div class="blocker-owner">Owner: ビジネス + 開発 / タイミング: 詳細設計フェーズ</div></div></div>
   </div>
 </div>
 
-<!-- ===== 08 TO-BE & NEXT ACTION ===== -->
+<!-- ===== 08 NEXT ACTION ===== -->
 <div class="section">
-  <div class="sec-label"><span class="sec-num orange">08</span><span class="sec-title" style="color:var(--orange)">TO-BE 推奨アプローチ &amp; ネクストアクション</span></div>
+  <div class="sec-label"><span class="sec-num green">08</span><span class="sec-title" style="color:var(--green)">ネクストアクション</span></div>
   <div class="tobe-intro">
-    <strong>推奨方針は「取引量調査の結果に基づき Option A（Core に EC 卸売を残す）を基本路線とする」。</strong><br>
-    ただし B-1（取引量調査）の結果が「完全ゼロ」であれば Option B に切り替える。まず取引量データの取得が最優先タスク。
+    <strong>実装方針は Option A（役割分担維持＝EC 卸売を Core／店舗 POS 系卸売を GWCS）で確定可。</strong><br>
+    残る設計フェーズ課題（D-1〜D-4）は設計開始後に順次解消する位置付けで、方針 Fix を妨げません。以下はそのまま設計フェーズに入るためのネクストアクションです。
   </div>
 
   <div class="phase-list">
     <div class="phase">
-      <div class="phase-header"><span class="phase-num p1">Phase 1</span><span class="phase-title">データ収集 &mdash; 判断に必要なファクトを揃える</span><span class="phase-time">目標: 2 週間以内</span></div>
+      <div class="phase-header"><span class="phase-num p3">Step 1</span><span class="phase-title">実装方針の正式 Fix（#11 と同時）</span><span class="phase-time">直近</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">B-1 解消</span><div><div class="action-desc"><b>EC 卸売取引量の調査</b><br>Biprogy（此松さん・長嶋 春奈さん）に過去 12 か月の EC 経由卸出荷/返品の件数・金額データを依頼。「月間 0 件」「月間 10 件未満」「月間 10 件以上」の 3 段階で判定する。</div><div class="action-owner">担当: CTO + 開発 / 期間: 2 週間以内</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-3 解消</span><div><div class="action-desc"><b>在庫異動区分コードの正確な特定</b><br>efs-db の CodeConsts と efs-bo の実装を突合し、卸(⑦)=071-072 か 081-082 かを確定。ドキュメント修正が必要であれば open-issues に登録。</div><div class="action-owner">担当: 開発チーム / 並行実施</div></div></div>
-        <div class="action-item"><span class="action-resolve">参考情報</span><div><div class="action-desc"><b>EC チームへのヒアリング</b><br>卸売注文の業務フロー（誰が BO で卸注文を登録しているか、頻度、卸先の数）を EC 運営チームに確認。取引量データの裏取りとする。</div><div class="action-owner">担当: 尻江さん / 期間: 並行実施</div></div></div>
+        <div class="action-item"><span class="action-resolve" style="background:#f0fdf4;color:var(--green);border-color:#bbf7d0;">判断</span><div><div class="action-desc"><b>CTO + 開発で Option A を正式合意</b><br>GWCS 存続確定・周辺改修なしの前提のもと、EC 卸売を Core、店舗 POS 系卸売を GWCS、卸売上 SoT を Core という現行役割分担をそのまま継承する方針を公式決定。#11 と同一セッションで確定推奨。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+        <div class="action-item"><span class="action-resolve" style="background:#f0fdf4;color:var(--green);border-color:#bbf7d0;">文書</span><div><div class="action-desc"><b>efso-document/open-decisions.md を更新</b><br>#12 を「決定済み: Option A（役割分担維持）」としてクローズ。to-be/finance または to-be/order に卸売責務定義ドキュメントを作成。</div><div class="action-owner">担当: 開発</div></div></div>
       </div>
     </div>
 
     <div class="phase">
-      <div class="phase-header"><span class="phase-num p2">Phase 2</span><span class="phase-title">意思決定 &mdash; #11 と #12 を同時 Fix</span><span class="phase-time">Phase 1 完了後 1 週間</span></div>
+      <div class="phase-header"><span class="phase-num p1">Step 2</span><span class="phase-title">設計フェーズキックオフ</span><span class="phase-time">Step 1 完了後</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">B-4 解消</span><div><div class="action-desc"><b>#11 と #12 の同時方針 Fix</b><br>Phase 1 の取引量データをインプットに、CTO がオーナーとなりアーキテクチャ判断会を開催。仕入管理（#11）と卸売責務（#12）を同一セッションで確定。<br>&bull; 取引量が「月間 10 件以上」&rarr; Option A 確定<br>&bull; 取引量が「月間 10 件未満だがゼロではない」&rarr; Option A を推奨（外販展開を考慮）<br>&bull; 取引量が「完全ゼロ」&rarr; Option B を採用</div><div class="action-owner">担当: CTO + 長谷川さん + 築地さん / 会議体: アーキテクチャ判断会</div></div></div>
-        <div class="action-item"><span class="action-resolve">B-2 解消</span><div><div class="action-desc"><b>売上データ突合方式の設計</b><br>Option A/B いずれの場合も Core &harr; GWCS 間の売上突合は必要。突合の頻度（日次 or 月次）、粒度（明細 or 集計）、不一致時の対応フローを設計し IL 要件に組み込む。</div><div class="action-owner">担当: 開発チーム / FS-6（GWCS 売上連携）と同時設計</div></div></div>
+        <div class="action-item"><span class="action-resolve">D-1 解消</span><div><div class="action-desc"><b>EC 卸売取引量データの取得とサイジング</b><br>Biprogy に過去 12 か月の EC 卸出荷/返品件数・金額を依頼。Core 側 BO 画面・バッチ・請求管理の詳細実装粒度を決定。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+        <div class="action-item"><span class="action-resolve">D-2 解消</span><div><div class="action-desc"><b>Core &harr; GWCS 売上突合方式の設計</b><br>突合頻度・粒度・不一致時のエスカレーション方式を定義。FS-6（GWCS 売上連携）と一体で IL 設計に反映。</div><div class="action-owner">担当: 開発チーム</div></div></div>
       </div>
     </div>
 
     <div class="phase">
-      <div class="phase-header"><span class="phase-num p3">Phase 3</span><span class="phase-title">設計着手 &mdash; 方針確定後</span><span class="phase-time">Phase 2 完了後</span></div>
+      <div class="phase-header"><span class="phase-num p2">Step 3</span><span class="phase-title">詳細設計</span><span class="phase-time">Step 2 完了後</span></div>
       <div class="phase-body">
-        <div class="action-item"><span class="action-resolve">設計開始</span><div><div class="action-desc"><b>卸売責務境界のドメインモデル確定</b><br>Option A の場合: Core/フルフィルメントドメインに卸出荷/返品を、Core/売上ドメインに卸売上/請求管理を配置。イベント駆動で卸出荷完了 &rarr; 卸売上計上を自動連携。<br>Option B の場合: Core の卸売関連機能を設計対象外とし、GWCS &rarr; Core への卸売上データ連携の IL 仕様のみ設計。</div><div class="action-owner">担当: 開発チーム / 成果物: 卸売ドメインモデル設計書</div></div></div>
-        <div class="action-item"><span class="action-resolve">Doc 更新</span><div><div class="action-desc"><b>efso-document の open-decisions.md を更新</b><br>#12 を「決定済み」としてクローズ。to-be/ に卸売責務定義ドキュメントを作成。efs-business/mapping/ の卸出荷/返品セクションを確定ステータスに更新。</div><div class="action-owner">担当: CTO + 開発</div></div></div>
+        <div class="action-item"><span class="action-resolve">D-3 解消</span><div><div class="action-desc"><b>在庫異動区分コード体系の確定</b><br>efs-db/efs-bo の実装値（071-072 / 081-082）と⑦卸/⑧外部EC の対応を正確に特定。ドキュメント修正が必要な場合は as-is に反映。</div><div class="action-owner">担当: 開発チーム</div></div></div>
+        <div class="action-item"><span class="action-resolve">D-4 解消</span><div><div class="action-desc"><b>インボイス発行要件の確定</b><br>卸売上の適格請求書発行を Core で担う場合のデータモデル・帳票設計。Biz 側要件と法令要件を整理。</div><div class="action-owner">担当: ビジネス + 開発</div></div></div>
       </div>
     </div>
   </div>
 
   <div class="unlock-box">
-    <div class="unlock-title">&#10003; ブロッカー全解消後に動き出せること</div>
+    <div class="unlock-title">&#10003; 方針 Fix 後にすぐ動き出せること</div>
     <div class="unlock-items">
-      Core &harr; GWCS 売上突合バッチの IL 設計確定（FS-6 連動）<br>
-      卸売上のインボイス発行要件確定（適格請求書対応）<br>
-      消化仕入在庫の同時計上ロジック設計（#11 と統合）<br>
-      卸出荷/返品の WMS 連携 IF 仕様確定（IL/物流コネクタ）<br>
-      efso-document の to-be/ ディレクトリへのドキュメント登録
+      Core 卸出荷/返品&middot;請求管理のドメインモデル設計着手<br>
+      FS-6（Core &harr; GWCS 売上連携）の IL 仕様確定<br>
+      消化仕入の売上+仕入同時計上ロジック設計（#11 と統合）<br>
+      efso-document の to-be/ ディレクトリへの卸売責務定義登録<br>
+      efs-business/mapping/ の卸出荷/返品セクションを確定ステータスに更新
     </div>
   </div>
 </div>
